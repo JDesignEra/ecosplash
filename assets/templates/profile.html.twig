@@ -1,0 +1,160 @@
+{% extends "base.html.twig" %}
+{% set title = 'Profile' %}
+
+{% block main %}
+<section id="profile">
+    <div class="row">
+        <div class="col-12 col-md-5">
+            <div id="basicProfile" class="card shadow mt-4">
+                <div class="card-body">
+                    <div class="pic mx-auto shadow-sm"></div>
+                    <h5 id="name" class="text-center pt-4"></h5>
+
+                    <hr />
+
+                    <h6>Bio</h6>
+                    <div id="bio" class="text-justify">
+                        <h6 class="text-muted">
+                            It seems that you do not need any introduction to the world.
+                        </h6>
+                    </div>
+
+                    <hr />
+
+                    <h6><i class="fas fa-leaf mr-1"></i> EcoPoints</h6>
+                    <h5 id="ecopoints" class="text-primary">0</h5>
+                    <a class="btn btn-primary btn-block btn-sm" href="./">Redeem EcoPoints</a>
+                </div>
+            </div>
+
+            <div class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="pb-4">Account Details</h4>
+                    <h6>Email</h6>
+                    <span id="email"></span>
+                </div>
+            </div>
+
+            <div id="daily-task" class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="pb-4">Daily Challenges</h4>
+
+                    <form id="dailyTask" method="post">
+                        <p class="small text-muted">
+                            Daily challenges are based on user trust and integrity, we hope and trust that users do not abuse the system.
+                        </p>
+                        <div class="form-check">
+                            <input id="dt1" class="form-check-input" type="checkbox" name="0">
+                            <label class="form-check-label" for="dt1"></label>
+                        </div>
+                        <div class="form-check">
+                            <input id="dt2" class="form-check-input" type="checkbox" name="1">
+                            <label class="form-check-label" for="dt2"></label>
+                        </div>
+                        <div class="form-check">
+                            <input id="dt3" class="form-check-input" type="checkbox" name="2">
+                            <label class="form-check-label" for="dt3"></label>
+                        </div>
+                        <div class="form-check">
+                            <input id="dt4" class="form-check-input" type="checkbox" name="3">
+                            <label class="form-check-label" for="dt4"></label>
+                        </div>
+                        <div class="form-check">
+                            <input id="dt5" class="form-check-input" type="checkbox" name="4">
+                            <label class="form-check-label" for="dt5"></label>
+                        </div>
+
+                        <button class="btn btn-success btn-block btn-sm mt-2">Update</button>
+                    </form>
+
+                    <p class="small text-danger text-center mt-2 mb-0">
+                        Each completed challenges will award you 1 EcoPoints.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-7">
+            <div id="redeemed-history" class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="pb-4">Redeemed History</h4>
+
+                    <div id="redeem-history-table">
+                        <hr />
+                        <h6 class="text-muted text-center">
+                            It seems that you have not redeemed your EcoPoints yet.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            <div id="event-history" class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="pb-4">Participated Event History History</h4>
+
+                    <div id="event-history-table">
+                        <hr />
+                        <h6 class="text-muted text-center">
+                            It seems that you have not participated in any events yet.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quiz-list" class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="pb-4">Quiz Lists</h4>
+
+                    <div id="quiz-list-table">
+                        <hr />
+                        <h6 class="text-muted text-center">
+                            It seems that you have not published any environmental friendly quiz yet.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            <div id="event-list" class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="pb-4">Event Lists</h4>
+
+                    <div id="event-list-table">
+                        <hr />
+                        <h6 class="text-muted text-center">
+                            It seems that you have not hosted any environmental friendly event yet.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block afterMain %}
+<div id="dailyTaskModal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Daily Challenges Update Successful</h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                You are awarded <span class="award-ecopoints text-primary">0</span> EcoPoints.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">Dismiss</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/profile.js"></script>
+{% endblock %}

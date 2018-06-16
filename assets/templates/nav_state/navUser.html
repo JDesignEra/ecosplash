@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<li id="notificationDropdown" class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" tooltip-toggle="nav-tooltip" data-placement="left" title="Notifications">
+        <span class="badge badge-pill badge-primary count"></span> <i class="fas fa-bell fa-lg"></i>
+    </a>
+
+    <div  class="dropdown-menu dropdown-menu-right bounceInShort">
+        <h6 class="dropdown-header">Notifications</h6>
+
+        <div class="noti-content">
+            <h6 class="empty text-center text-muted">
+                Looks like you do not have any notifications.
+            </h6>
+        </div>
+    </div>
+</li>
+<li class="nav-item dropdown">
+    <a id="profileDropdown" class="nav-link dropdown-toggle" href="" data-toggle="dropdown" tooltip-toggle="nav-tooltip" data-placement="left" title="Profile Actions">
+        <i class="fas fa-user-circle fa-lg"></i>
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-right bounceInShort">
+        <h6 class="dropdown-header">
+            Hi <span id="name"></span>,
+        </h6>
+
+        <a class="dropdown-item" href="./profile">
+            <i class="far fa-user mr-2"></i> Profile
+        </a>
+        <a class="dropdown-item" href="./">
+            <i class="far fa-user-friends mr-2"></i> Friends
+        </a>
+        <a class="dropdown-item" href="./">
+            <i class="far fa-calculator mr-2"></i> Utilities Usage
+        </a>
+        <a class="dropdown-item" href="./">
+            <i class="far fa-calendar-alt mr-2"></i> Event History
+        </a>
+        <a class="dropdown-item" href="./">
+            <i class="far fa-history mr-2"></i> Redeemed History
+        </a>
+        <a class="dropdown-item" href="./">
+            <i class="far fa-calendar-check mr-2"></i> Claim Event EcoPoints
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <h6 class="dropdown-header">
+            <i class="fas fa-leaf mr-2"></i> EcoPoints Available
+        </h6>
+        <div class="px-4">
+            <h5 id="ecopoints" class="text-primary">0</h5>
+            <a class="btn btn-primary btn-block btn-sm" href="./">Redeem EcoPoints</a>
+        </div>
+
+        <div class="dropdown-divider"></div>
+
+        <a id="logout" class="dropdown-item" href="">
+            <i class="far fa-power-off mr-2"></i> Logout
+        </a>
+    </div>
+</li>
