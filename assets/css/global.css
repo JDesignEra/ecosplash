@@ -12,6 +12,9 @@ main {
 
 /* nav */
 .navbar {
+    -webkit-transition: all 0.35s ease-in-out;
+    -moz-transition: all 0.35s ease-in-out;
+    -o-transition: all 0.35s ease-in-out;
     transition: all 0.35s ease-in-out;
 }
 
@@ -29,6 +32,9 @@ main {
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
+    -webkit-transition: all 0.35s ease-in-out;
+    -moz-transition: all 0.35s ease-in-out;
+    -o-transition: all 0.35s ease-in-out;
     transition: all 0.35s ease-in-out;
 }
 
@@ -41,6 +47,9 @@ main {
 }
 
 .navbar .nav-link {
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
 }
 
@@ -50,6 +59,9 @@ main {
 
 @media (min-width: 768px) {
     .navbar .nav-item.active {
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        -o-transition: all 0.3s ease-in-out;
         transition: all 0.3s ease-in-out;
     }
 

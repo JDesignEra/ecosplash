@@ -181,7 +181,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
             $fcode = checkInput($_POST['fcode']);
 
             if (empty($email)) {
-                $errors['email'] = 'This is embarassing, but it seems like there was a technical issue. Please refresh the page and try again.';
+                $errors['email'] = 'Email is missing!';
             }
 
             if (empty($fcode)) {
@@ -208,7 +208,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
             $cfmPassword = checkInput($_POST['cfmPassword']);
 
             if (empty($email) || empty($fcode)) {
-                $errors['email'] = 'This is embarassing, but it seems like there was a technical issue. Please refresh the page and try again.';
+                $errors['email'] = 'Email and Code is missing!';
             }
 
             if (empty($password) || empty($cfmPassword)) {
@@ -266,10 +266,10 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                 break;
 
             case 'updateUserTask':
-                    $email = checkInput($_POST['email']);
+                    $uid = checkInput($_POST['uid']);
 
-                    if (empty($email)) {
-                        $data['errors'] = 'This is embarassing, but it seems like there was a technical issue. Please refresh the page and try again.';
+                    if (empty($uid)) {
+                        $data['uid'] = 'User ID is missing!';
                     }
                     else {
                         $result = $mysqli -> query("SELECT dailyTask, ecoPoints FROM users WHERE email = '$email'");
@@ -295,6 +295,27 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                         }
                     }
                 break;
+
+                case 'getRedeemHistory':
+                    $uid = checkInput($_POST['uid']);
+
+                    if (empty($uid)) {
+                        $errors['uid'] = 'User ID is missing!';
+                    }
+                    else {
+                        $result = $mysqli -> query("SELECT * FROM redeemed_history WHERE uid = '$uid'");
+                        if ($result -> num_rows > 0) {
+                            while ($row = $result -> fetch_array()) {
+                                $lists[] = $row;
+                            }
+
+                            $data['redeem_histories'] = $lists;
+                        }
+                        else {
+                            $errors['redeem_histories'] = 'No redeemed history!';
+                        }
+                    }
+                    break;
     }
 
     if (empty($errors)) {
