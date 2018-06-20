@@ -63,6 +63,18 @@
     }
 }
 
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 100%, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
 @keyframes fadeInRight {
     from {
         opacity: 0;
@@ -85,6 +97,17 @@
     }
 }
 
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translate3d(0, 100%, 0);
+    }
+}
+
 @keyframes fadeOutLeft {
     from {
         opacity: 1;
@@ -100,12 +123,20 @@
     animation-name: fadeIn;
 }
 
+.fadeInUp {
+    animation-name: fadeInUp;
+}
+
 .fadeInRight {
     animation-name: fadeInRight;
 }
 
 .fadeOut {
     animation-name: fadeOut;
+}
+
+.fadeOutDown {
+    animation-name: fadeOutDown;
 }
 
 .fadeOutLeft {
@@ -141,6 +172,60 @@
 
 .slideOutDown {
     animation-name: slideOutDown;
+}
+
+/* flip */
+@keyframes flipInX {
+    from {
+        transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+        animation-timing-function: ease-in;
+        opacity: 0;
+    }
+
+    40% {
+        transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+        animation-timing-function: ease-in;
+    }
+
+    60% {
+        transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+        opacity: 1;
+    }
+
+    80% {
+        transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+    }
+
+    to {
+        transform: perspective(400px);
+    }
+}
+
+@keyframes flipOutX {
+    from {
+        transform: perspective(400px);
+    }
+
+    30% {
+        transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+        opacity: 1;
+    }
+
+    to {
+        transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+        opacity: 0;
+    }
+}
+
+.flipInX {
+    backface-visibility: visible !important;
+    animation-name: flipInX;
+}
+
+.flipOutX {
+    animation-duration: 0.75s;
+    animation-name: flipOutX;
+    backface-visibility: visible !important;
 }
 
 /* Zoom */
@@ -231,11 +316,15 @@
 }
 
 .fadeIn,
+.fadeInUp,
 .fadeInRight,
 .fadeOut,
+.fadeOutDown,
 .fadeOutLeft,
 .slideInUp,
 .slideOutDown,
+.flipInX,
+.flipOutX,
 .zoomIn,
 .pulse,
 .shake,
@@ -247,11 +336,15 @@
 }
 
 .fadeIn.short,
+.fadeInUp.short,
 .fadeInRight.short,
 .fadeOut.short,
+.fadeOutDown.short,
 .fadeOutLeft.short,
 .slideInUp.short,
 .slideOutDown.short,
+.flipInX.short,
+.flipOutX.short,
 .zoomIn.short,
 .pulse.short,
 .shake.short,
@@ -260,14 +353,58 @@
 }
 
 .fadeIn.shorter,
+.fadeInUp.shorter,
 .fadeInRight.shorter,
 .fadeOut.shorter,
+.fadeOutDown.shorter,
 .fadeOutLeft.shoter,
 .slideInUp.shorter,
 .slideOutDown.shorter,
+.flipInX.shorter,
+.flipOutX.shorter,
 .zoomIn.shorter,
 .pulse.shorter,
 .shake.shorter,
 .shakeSmall.shorter {
     animation-duration: 0.35s;
+}
+
+.fadeIn.long,
+.fadeInUp.long,
+.fadeInRight.long,
+.fadeOut.long,
+.fadeOutDown.long,
+.fadeOutLeft.long,
+.slideInUp.long,
+.slideOutDown.long,
+.flipInX.long,
+.flipOutX.long,
+.zoomIn.long,
+.pulse.long,
+.shake.long,
+.shakeSmall.long {
+    -webkit-animation-duration: 1.35s;
+    animation-duration: 1.35s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.fadeIn.longer,
+.fadeInUp.longer,
+.fadeInRight.longer,
+.fadeOut.longer,
+.fadeOutDown.longer,
+.fadeOutLeft.longer,
+.slideInUp.longer,
+.slideOutDown.longer,
+.flipInX.longer,
+.flipOutX.longer,
+.zoomIn.longer,
+.pulse.longer,
+.shake.longer,
+.shakeSmall.longer {
+    -webkit-animation-duration: 1.55s;
+    animation-duration: 1.55s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
 }

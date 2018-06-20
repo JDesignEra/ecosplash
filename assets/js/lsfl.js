@@ -1,18 +1,4 @@
-// animation end fix
-var animationEnd = (function(el) {
-        var animations = {
-            "animation": "animationend",
-            "OAnimation": "oAnimationEnd",
-            "MozAnimation": "mozAnimationEnd",
-            "WebkitAnimation": "webkitAnimationEnd"
-        };
-
-        for(var t in animations) {
-            if(el.style[t] !== undefined) {
-                return animations[t];
-            }
-        }
-})(document.createElement("fakeelement"));
+'use strict';
 
 loginForm('loginForm');
 loginForm('mLoginForm')
@@ -33,7 +19,7 @@ $(document).on('click', '#logout', function(e) {
         sessionStorage.clear();
     }
 
-    $modal = $('#logoutModal');
+    var $modal = $('#logoutModal');
 
     $modal.on('shown.bs.modal', function() {
         $modal.find('button[data-dismiss=modal]').focus();
@@ -70,7 +56,10 @@ function loginForm($formID) {
             type: 'POST',
             url: 'assets/db/db.php',
             data: $data,
-            dataType: 'json'
+            dataType: 'json',
+            error: function(data) {
+                console.log(data);
+            }
         })
         .done(function(data) {
             // console.log(data); // Debugging Purpose
@@ -86,7 +75,7 @@ function loginForm($formID) {
                     sessionStorage.setItem('accType', data.accType);
                 }
 
-                $modal = $('#loginSuccessModal');
+                var $modal = $('#loginSuccessModal');
                 $modal.find('.name').html(data.name);
 
                 $modal.on('shown.bs.modal', function() {
@@ -103,7 +92,7 @@ function loginForm($formID) {
                 $modal.modal("show");
             }
             else if (data.errors) {
-                $focus = $('#' + $formID + ' #password');
+                var $focus = $('#' + $formID + ' #password');
                 if (data.errors.password) {
                     $focus.addClass('invalid');
                     $focus.find('.feedback').html(data.errors.password);
@@ -148,7 +137,7 @@ function signupForm($formID) {
             $('form#' + $formID).find('button[type=submit] .load-text').addClass('d-none');
 
             if (data.success) {
-                $modal = $('#signupModal');
+                var $modal = $('#signupModal');
 
                 $modal.on('shown.bs.modal', function() {
                     $modal.find('button[data-dimiss=modal]').focus();
@@ -165,7 +154,7 @@ function signupForm($formID) {
                 $modal.modal("show");
             }
             else if (data.errors) {
-                $focus = $('#' + $formID + ' #password');
+                var $focus = $('#' + $formID + ' #password');
                 if (data.errors.password) {
                     $focus.addClass('invalid');
                     $focus.find('.feedback').html(data.errors.password);
@@ -208,7 +197,7 @@ function forgotPasswordForm($formID) {
         $(this).find('button[type=submit] .change-pass-text').addClass('d-none');
         $(this).find('button[type=submit] .load-text').removeClass('d-none');
 
-        $data = $(this).serialize() + '&action=' + $formID;
+        var $data = $(this).serialize() + '&action=' + $formID;
         if ($formID == 'fpass_2') {
             $data = $(this).serialize() + '&email=' + $('#fpass_1 input[name=email]').val() + '&action=' + $formID;
         }
@@ -230,27 +219,27 @@ function forgotPasswordForm($formID) {
 
             if (data.success) {
                 if ($formID == 'fpass_1') {
-                    $('#' + $formID).addClass('fadeOutLeft').one(animationEnd, function() {
+                    $('#' + $formID).addClass('fadeOutLeft').one($animationEnd, function() {
                         $('#' + $formID).addClass('d-none');
                         $('#' + $formID).removeClass('fadeOutLeft');
 
-                        $('#fpass_2').addClass('fadeInRight d-block').one(animationEnd, function() {
+                        $('#fpass_2').addClass('fadeInRight d-block').one($animationEnd, function() {
                             $('#fpass_2').removeClass('fadeInRight');
                         });
                     });
                 }
                 else if ($formID == 'fpass_2') {
-                    $('#' + $formID).addClass('fadeOutLeft').one(animationEnd, function() {
+                    $('#' + $formID).addClass('fadeOutLeft').one($animationEnd, function() {
                         $('#' + $formID).addClass('d-none');
                         $('#' + $formID).removeClass('fadeOutLeft d-block');
 
-                        $('#fpass_3').addClass('fadeInRight d-block').one(animationEnd, function() {
+                        $('#fpass_3').addClass('fadeInRight d-block').one($animationEnd, function() {
                             $('#fpass_3').removeClass('fadeInRight');
                         });
                     });
                 }
                 else if ($formID == 'fpass_3') {
-                    $modal = $('#fpassModal');
+                    var $modal = $('#fpassModal');
 
                     $modal.on('shown.bs.modal', function() {
                         $modal.find('button[data-dimiss=modal]').focus();
@@ -268,7 +257,7 @@ function forgotPasswordForm($formID) {
                 }
             }
             else if (data.errors) {
-                $focus = $('#' + $formID + ' #email')
+                var $focus = $('#' + $formID + ' #email')
                 if (data.errors.email) {
                     $focus.addClass('invalid');
                     $focus.find('.feedback').html(data.errors.email);

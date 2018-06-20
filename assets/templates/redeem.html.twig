@@ -1,0 +1,65 @@
+{% extends "base.html.twig" %}
+{% set title = 'Edit Profile' %}
+
+{% block main %}
+<section id="redeem">
+    <div class="row">
+        <div class="col-12 order-first col-md-6 order-md-last">
+            <div class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="text-center pb-4">Redeem EcoPoints</h4>
+                    <div class="row">
+                        <div class="col-6">
+                            <h6>EcoPoints Available</h6>
+                            <h5 id="ecopoints" class="text-primary">0</h5>
+                        </div>
+
+                        <div class="col-6 text-right">
+                            <button id="addItem" class="btn btn-primary" type="button">Add More Item <i class="fas fa-cart-plus ml-1"></i></button>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <form id="redeemForm" method="post" novalidate>
+                        <div id="item" class="form-group">
+                            <select id="items" class="custom-select">
+                                <option value="none" selected disabled>
+                                    Select Item
+                                </option>
+                            </select>
+                        </div>
+
+                        <div id="qty" class="form-label-group">
+                            <input id="quantity" class="form-control" type="number" min="0" step="1" placeholder="Quantity" name="qty" />
+                            <label for="quantity">Quantity</label>
+                        </div>
+
+                        <button class="btn btn-success btn-block" type="submit">Redeem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="itemsList" class="col-12 order-last col-md-6 order-md-first">
+            <div class="card shadow mt-4">
+                <div class="card-body">
+                    <h4 class="text-center pb-4">Items List</h4>
+
+                    <div id="items-table">
+                        <h6 class="text-muted text-center">
+                            Whoops! It seems that there isn't any items.
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block afterMain %}{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/redeem.js"></script>
+{% endblock %}

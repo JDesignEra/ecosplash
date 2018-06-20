@@ -1,6 +1,6 @@
 <img src="assets/img/logo/ecosplash_colored.png" />
 
-Framework / API / Library
+Frameworks / Libraries / APIs
 ------
 * [Twig v2.4.8](https://twig.symfony.com/)
 * [PHPMailer v6.0.5](https://github.com/PHPMailer/PHPMailer)

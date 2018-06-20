@@ -39,4 +39,8 @@ $font-family-sans-serif: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", 
 $navbar-light-hover-color: $primary !default;
 $navbar-light-active-color: $primary !default;
 
+// Table
+$table-striped-order: even !default;
+$table-accent-bg: lighten(#13547a, 68%) !default;
+
 @import 'bootstrap';

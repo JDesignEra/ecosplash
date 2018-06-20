@@ -8,6 +8,7 @@ main {
     flex: auto;
     min-height: calc(100vh - 221px);
     animation: fadeIn 1s both;
+    max-width: 2560px;
 }
 
 /* nav */
@@ -16,6 +17,10 @@ main {
     -moz-transition: all 0.35s ease-in-out;
     -o-transition: all 0.35s ease-in-out;
     transition: all 0.35s ease-in-out;
+}
+
+.navbar .container-fluid {
+    max-width: 2560px;
 }
 
 .navbar li {
@@ -259,21 +264,37 @@ form .valid .feedback {
 
 /* fixed action */
 #fixed-action {
+    z-index: 1070;
     position: fixed;
     bottom: 1rem;
     right: 1rem;
 }
 
-#fixed-action .dropdown-menu {
-    width: 3.5rem;
-    min-width: 3.5rem;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-}
+@media (max-width: 767.98px) {
+    #fixed-action .dropdown-menu {
+        width: calc(2.5rem * 11 + 2px * 11 + 0.5rem * 11);
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
 
-#fixed-action .dropdown-menu .btn {
-    margin-top: 0.5rem;
+    #fixed-action .dropdown-menu .btn {
+        margin: 0 0.5rem 0 0;
+    }
+
+    @media (min-height: 565px) {
+        #fixed-action .dropdown-menu {
+            width: 3.5rem;
+            min-width: 3.5rem;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        #fixed-action .dropdown-menu .btn {
+            margin: 0.5rem 0 0 0;
+        }
+    }
 }
 
 /* buttons */
@@ -313,6 +334,10 @@ form .valid .feedback {
 }
 
 /* footer */
+footer .container-fluid {
+    max-width: 2560px;
+}
+
 footer hr {
     border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
@@ -337,8 +362,12 @@ footer .inLink:hover {
     border-radius: 6px;
 }
 
-/* Profile Section */
-section#profile .pic {
+/*
+Profile Section
+editProfile Section
+*/
+section#profile .pic,
+section#editProfile .pic {
     width: 150px;
     height: 150px;
     max-width: 150px;
@@ -350,6 +379,24 @@ section#profile .pic {
     border-radius: 8px;
 }
 
-section#profile th {
-    text-align: initial;
+section#editProfile .pic {
+    cursor: pointer;
+}
+
+#uploadPhotoModal #uploadPhoto #pictureDrop {
+    cursor: pointer;
+}
+
+section#editProfile .pic .small {
+    top: calc(150px - 1.188rem - 0.5rem);
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 8px 8px;
+}
+
+/* remove number input stepper arrow */
+.form-label-group input[type = 'number']::-webkit-inner-spin-button,
+.form-label-group input[type = 'number']::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    margin: 0 !important;
 }

@@ -1,5 +1,7 @@
+'use strict';
+
 /* scrolling nav */
-$OFFSET_TOP = 0.5;
+var $OFFSET_TOP = 30.5;
 $(window).scroll(function () {
     if ($('.navbar').offset().top > $OFFSET_TOP) {
         $('.navbar').removeClass("navbar-light bg-light py-3");
@@ -11,20 +13,8 @@ $(window).scroll(function () {
     }
 });
 
-/* nav active state */
-$activeURL = $(location).attr('href').split('/');
-$activeURL = $activeURL[$activeURL.length - 2];
-$focus = $('nav .navbar-nav');
-
-switch ($activeURL) {
-    case 'localhost':
-    case $('base').attr('href').substr(1, $('base').attr('href').length - 2):
-        $focus.find('a.nav-link[href="./"]').parent().addClass('active');
-        break;
-}
-
 /* animation end fix */
-$animationEnd = (function(el) {
+var $animationEnd = (function(el) {
     var animations = {
         "animation": "animationend",
         "OAnimation": "oAnimationEnd",
@@ -38,6 +28,18 @@ $animationEnd = (function(el) {
         }
     }
 })(document.createElement("fakeelement"));
+
+/* nav link active state */
+var $activeURL = $(location).attr('href').split('/'),
+    $activeURL = $activeURL[$activeURL.length - 2],
+    $focus = $('nav .navbar-nav');
+
+switch ($activeURL) {
+    case 'localhost':
+    case $('base').attr('href').substr(1, $('base').attr('href').length - 2):
+        $focus.find('a.nav-link[href="./"]').parent().addClass('active');
+        break;
+}
 
 /* login state */
 if (localStorage.getItem('accType') == 0 || sessionStorage.getItem('accType') == 0) {
@@ -64,9 +66,8 @@ else if (localStorage.getItem('accType') == 1 || sessionStorage.getItem('accType
 }
 
 $('#fixed-action').on('shown.bs.dropdown', '#mProfileDropdown', function() {
-    $focus = '#fixed-action #mProfileDropdown button[tooltip-toggle=fabp-tooltip]';
-    $($focus + ' .fa-user-circle').addClass('d-none');
-    $($focus + ' .fa-times').removeClass('d-none');
+    $('#fixed-action #profileAction.btn .fa-user-circle').addClass('d-none');
+    $('#fixed-action #profileAction.btn .fa-times').removeClass('d-none');
     $('#mProfileDropdown > button[tooltip-toggle=fab-tooltip]').tooltip('show');
 
     $('#mProfileDropdown .dropdown-menu .btn').each(function() {
@@ -78,8 +79,8 @@ $('#fixed-action').on('shown.bs.dropdown', '#mProfileDropdown', function() {
 });
 
 $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
-    $($focus + ' .fa-user-circle').removeClass('d-none');
-    $($focus + ' .fa-times').addClass('d-none');
+    $('#fixed-action #profileAction.btn .fa-user-circle').removeClass('d-none');
+    $('#fixed-action #profileAction.btn .fa-times').addClass('d-none');
     $('#mProfileDropdown > button[tooltip-toggle=fab-tooltip]').tooltip('hide');
 
     $('#mProfileDropdown .dropdown-menu .btn').each(function() {
@@ -87,7 +88,7 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
     });
 });
 
-/* periodic worker */
+/* periodic worker every 30 mins */
 (function worker() {
     if (localStorage.getItem('uid') || sessionStorage.getItem('uid')) {
         $.ajax({
@@ -102,9 +103,11 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
                         $('nav .nav-right #name').html(data.name);
                         $('nav .nav-right #ecopoints').html(data.ecoPoints);
                         $('nav .nav-right .badge.count').html(data.newNotifications);
-                        $('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints').attr('title', (data.ecoPoints + ' EcoPoints'));
-                        $('#fixed-action #mProfileDropdown .dropdown-menu .notifications').attr('title', ('Notifications (' + data.newNotifications + ')'));
+                        $('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints').attr('data-original-title', data.ecoPoints + ' EcoPoints');
+                        $('#fixed-action #mProfileDropdown .dropdown-menu .notifications').attr('data-original-title', 'Notifications (' + data.newNotifications + ')');
                     }, 500);
+
+                    $('section#redeem').find('h5#ecopoints').html(data.ecoPoints);
                 }
             },
             complete: function() {
@@ -118,41 +121,6 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 
 /* footer year */
 $('footer .year').html((new Date()).getFullYear());
-
-/* enable tooltips */
-$(function () {
-    $('[tooltip-toggle="tooltip"]').tooltip({
-        delay: {
-            'show': 150,
-            'hide': 50,
-        }
-    });
-});
-
-$(function () {
-    $('[tooltip-toggle="nav-tooltip"]').tooltip({
-        delay: {
-            'show': 150,
-            'hide': 50
-        },
-        trigger: 'hover'
-    });
-});
-
-$(function () {
-    $('[tooltip-toggle="form-tooltip"]').tooltip({
-        template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
-        offset: '0, 10'
-    });
-});
-
-$(function () {
-    $('[tooltip-toggle="fab-tooltip"]').tooltip({
-        template: '<div class="tooltip d-block d-md-none d-lg-none d-xl-none" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
-        offset: '0, 5',
-        trigger: 'manual'
-    });
-});
 
 /* sign up animation */
 $('#signUpCard .card-header a[href="#user"]').on('show.bs.tab', function() {
@@ -168,3 +136,157 @@ $('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function
         $('#signUpCard #organization').removeClass('fadeIn');
     })
 });
+
+/* enable or re-enable tooltips */
+enableTooltip();
+enableFormToolTip();
+enableNavToolTip()
+enableFabToolTip();
+
+/* nav tooltips fix */
+$(document).on('focus', 'nav [tooltip-toggle=tooltip]', function() {
+    $(this).tooltip('hide');
+});
+
+/* mobile hamburger animation */
+$('nav .navbar-toggler').click(function() {
+    if ($('nav .navbar-toggler').hasClass('collapsed')) {
+        $('nav .navbar-toggler .fa-bars').addClass('d-none');
+        $('nav .navbar-toggler .fa-times').removeClass('d-none');
+    }
+    else {
+        $('nav .navbar-toggler .fa-bars').removeClass('d-none');
+        $('nav .navbar-toggler .fa-times').addClass('d-none');
+    }
+});
+
+/* mobile lanscape / portrait fab tooltip fix */
+if ($(window).height() < 565) {
+    fabTooltip_mobileLandscape();
+}
+else {
+    fabTooltip_mobilePortrait();
+}
+
+$(window).resize(function() {
+    if ($(window).height() < 565) {
+        fabTooltip_mobileLandscape();
+        $('[toggle-tooltip=fab-tooltip]').tooltip('hide');
+
+        if ($('#mProfileDropdown .dropdown-menu').hasClass('show')) {
+            $('#mProfileDropdown #profileAction').dropdown('toggle');
+        }
+    }
+    else {
+        fabTooltip_mobilePortrait();
+        $('[toggle-tooltip=fab-tooltip]').tooltip('hide');
+
+        if ($('#mProfileDropdown .dropdown-menu').hasClass('show')) {
+            $('#mProfileDropdown #profileAction').dropdown('toggle');
+        }
+    }
+});
+
+function enableTooltip() {
+    $(function () {
+        $('[tooltip-toggle="tooltip"]').tooltip({
+            delay: {
+                show: 150,
+                hide: 50
+            }
+        });
+    });
+}
+
+function enableNavToolTip() {
+    $(function () {
+        $('[tooltip-toggle="nav-tooltip"]').tooltip({
+            template: '<div class="tooltip" style="margin-right: -16px;" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+            delay: {
+                show: 150,
+                hide: 50
+            },
+            placement: 'left',
+            trigger: 'hover'
+        });
+    });
+}
+
+function enableFormToolTip() {
+    $(function () {
+        $('[tooltip-toggle="form-tooltip"]').tooltip({
+            template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+            offset: '0, 10'
+        });
+    });
+}
+
+function enableFabToolTip() {
+    $(function () {
+        $('[tooltip-toggle="fab-tooltip"]').tooltip({
+            template: '<div class="tooltip d-block d-md-none d-lg-none d-xl-none" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+            offset: '0, 5',
+            trigger: 'manual'
+        });
+    });
+}
+
+function fabTooltip_mobileLandscape() {
+    setTimeout(function () {
+        var $fabs = $('#fixed-action').find('#mProfileDropdown .dropdown-menu [tooltip-toggle=fab-tooltip]');
+        $($fabs).each(function() {
+            $(this).tooltip('dispose');
+
+            if ($(this).hasClass('ecopoints')) {
+
+                $(this).tooltip({
+                    template: '<div class="tooltip d-block d-md-none d-lg-none d-xl-none" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+                    offset: '0, 5',
+                    trigger: 'manual',
+                    placement: 'top'
+                });
+            }
+            else if ($(this).hasClass('notifications')) {
+                $(this).tooltip({
+                    template: '<div class="tooltip d-block d-md-none d-lg-none d-xl-none" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+                    offset: '0, 5',
+                    trigger: 'manual',
+                    placement: 'top'
+                });
+            }
+            else {
+                $(this).tooltip('disable');
+            }
+        });
+    }, 500);
+}
+
+function fabTooltip_mobilePortrait() {
+    setTimeout(function () {
+        var $fabs = $('#fixed-action').find('#mProfileDropdown .dropdown-menu [tooltip-toggle=fab-tooltip]');
+        $($fabs).each(function() {
+            $(this).tooltip('dispose');
+
+            if ($(this).hasClass('ecopoints')) {
+
+                $(this).tooltip({
+                    template: '<div class="tooltip d-block d-md-none d-lg-none d-xl-none" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+                    offset: '0, 5',
+                    trigger: 'manual',
+                    placement: 'right'
+                });
+            }
+            else if ($(this).hasClass('notifications')) {
+                $(this).tooltip({
+                    template: '<div class="tooltip d-block d-md-none d-lg-none d-xl-none" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+                    offset: '0, 5',
+                    trigger: 'manual',
+                    placement: 'right'
+                });
+            }
+            else {
+                $(this).tooltip('enable');
+            }
+        });
+    }, 500);
+}

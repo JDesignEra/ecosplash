@@ -3,11 +3,14 @@
 
 {% block main %}
 <section id="profile">
+    <div class="text-right">
+        <a class="btn btn-secondary" href="./edit_profile">Edit Profile</a>
+    </div>
     <div class="row">
         <div class="col-12 col-md-5">
             <div id="basicProfile" class="card shadow mt-4">
                 <div class="card-body">
-                    <div class="pic mx-auto shadow-sm"></div>
+                    <div class="pic mx-auto shadow"></div>
                     <h5 id="name" class="text-center pt-4"></h5>
 
                     <hr />
@@ -23,11 +26,11 @@
 
                     <h6><i class="fas fa-leaf mr-1"></i> EcoPoints</h6>
                     <h5 id="ecopoints" class="text-primary">0</h5>
-                    <a class="btn btn-primary btn-block btn-sm" href="./">Redeem EcoPoints</a>
+                    <a class="btn btn-primary btn-block btn-sm" href="./redeem">Redeem EcoPoints</a>
                 </div>
             </div>
 
-            <div class="card shadow mt-4">
+            <div id="accountDetails" class="card shadow mt-4">
                 <div class="card-body">
                     <h4 class="pb-4">Account Details</h4>
                     <h6>Email</h6>
@@ -75,9 +78,9 @@
         </div>
 
         <div class="col-12 col-md-7">
-            <div id="redeemed-history" class="card shadow mt-4">
+            <div class="card shadow mt-4">
                 <div class="card-body">
-                    <h4 class="pb-4">Redeemed History</h4>
+                    <h4 class="pb-4">Recent Redeem History</h4>
 
                     <div id="redeem-history-table">
                         <hr />
@@ -88,9 +91,9 @@
                 </div>
             </div>
 
-            <div id="event-history" class="card shadow mt-4">
+            <div class="card shadow mt-4">
                 <div class="card-body">
-                    <h4 class="pb-4">Participated Event History History</h4>
+                    <h4 class="pb-4">Recent Event History</h4>
 
                     <div id="event-history-table">
                         <hr />
@@ -149,6 +152,28 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">Dismiss</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="view-more-modal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
