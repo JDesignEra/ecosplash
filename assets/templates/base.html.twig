@@ -6,7 +6,7 @@
 {% endif %}
     <head>
         <!-- Change base accordingly -->
-        <base href="/ecosplash/">
+        <base href="/">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="msapplication-TileColor" content="#c8e6f7">
@@ -38,7 +38,7 @@
     {% else %}
     <body>
     {% endif %}
-        <nav class="navbar sticky-top navbar-expand-md navbar-light bg-light shadow-sm py-3">
+        <nav class="navbar fixed-top navbar-expand-md navbar-light bg-light shadow-sm py-3">
             <div class="container-fluid mx-auto">
                 <a class="navbar-brand" href="./">
                     <div class="brand-logo"></div>
@@ -125,6 +125,18 @@
             </div>
         </nav>
 
+        {% if mainType == "home" %}
+        <main class="home container-fluid mt-0 mb-4 mx-auto">
+        {% elseif mainType == "vCenter" %}
+        <main class="d-flex flex-column justify-content-center px-3 my-4 mx-auto">
+        {% else %}
+        <main class="container-fluid my-4 mx-auto">
+        {% endif %}
+            {% block main %}{% endblock %}
+        </main>
+
+        {% block afterMain %}{% endblock %}
+
         <!-- Mobile Login Modal -->
         <div id="loginModal" class="modal pulse" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -169,18 +181,6 @@
                 </div>
             </div>
         </div>
-
-        {% if mainType == "home" %}
-        <main class="container-fluid mx-auto">
-        {% elseif mainType == "vCenter" %}
-        <main class="d-flex flex-column justify-content-center px-3 my-4 mx-auto">
-        {% else %}
-        <main class="container-fluid my-4 mx-auto">
-        {% endif %}
-            {% block main %}{% endblock %}
-        </main>
-
-        {% block afterMain %}{% endblock %}
 
         <!-- Login Success Modal -->
         <div id="loginSuccessModal" class="modal pulse" tabindex="-1" role="dialog">
@@ -259,8 +259,7 @@
             </div>
         </footer>
 
-        <div id="fixed-action">
-        </div>
+        <div id="fixed-action"></div>
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

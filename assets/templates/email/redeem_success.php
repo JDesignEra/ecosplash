@@ -95,7 +95,7 @@
 <body>
     <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
         <tr>
-            <td background="https://www.dropbox.com/s/9uoaz2fciwhz4zb/signup.jpg?raw=1" bgcolor="#ececec" style="background-size:cover; background-position:center; background-repeat:no-repeat" valign="top">
+            <td background="https://www.dropbox.com/s/0kg5ck81wn0qjj3/redeem.jpg?raw=1" bgcolor="#ececec" style="background-size:cover; background-position:center; background-repeat:no-repeat" valign="top">
                 <table align="center" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                         <td align="center" width="550">
@@ -118,7 +118,9 @@
                                     <td align="center">
                                         <table align="center" width="90%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td align="center" style="font-family: 'Century Gothic', Arial, sans-serif; color:#414a51; font-size:28px;font-weight: bold;">Login Details Changed Successful</td>
+                                                <td align="center" style="font-family: 'Century Gothic', Arial, sans-serif; color:#414a51; font-size:28px;font-weight: bold;">
+                                                    Redeem #<?php echo (isset($_GET['oid']) ? $_GET['oid'] : '') ?>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td align="center">
@@ -134,7 +136,7 @@
                                             </tr>
                                             <tr>
                                                 <td align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:14px; line-height: 28px;">
-                                                    You have recently updated your account's login details. If you did not changed your account's login details, please contact us immediately to prevent security risk. Your new account details are show below.
+                                                    You have successfully redeem your items. Your redeemed details are shown below.
                                                 </td>
                                             </tr>
                                             <tr>
@@ -150,18 +152,79 @@
                                                 <td height="20"></td>
                                             </tr>
                                             <tr>
-                                                <td align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:14px; line-height: 28px;">
-                                                    <p>
-                                                        <u style="font-weight: bold; font-size:18px; color: #212529;">Email</u><br />
-                                                        <a class="color: #7f8c8d !important; text-decoration: none !important;" href="#">
-                                                            <?php echo (isset($_GET['email']) ? $_GET['email'] : ''); ?>
-                                                        </a>
-                                                    </p>
-                                                    <p>
+                                                <td align="center">
+                                                    <table width="100%" class="table-inner" border="0" cellspacing="0" cellpadding="0">
                                                         <?php
-                                                            echo (isset($_GET['password']) && !empty($_GET['password']) ? '<u style="font-weight: bold; font-size:18px; color: #212529;">Password</u><br />' . $_GET['password'] : '');
+                                                            if (isset($_GET['items']) && isset($_GET['itemsQty']) && isset($_GET['itemsEcoPoints'])) {
+                                                                $items = $_GET['items'];
+                                                                $quantites = $_GET['itemsQty'];
+                                                                $ecoPoints = $_GET['itemsEcoPoints'];
+
+                                                                for ($i = 0; $i < count($items); $i++) {
+                                                                    echo '<tr>
+                                                                        <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="list" data-size="list" data-color="list" mc:edit="invoice-11" width="50%" align="left" valign="top" style="font-family: \'Open Sans\', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">
+                                                                            <singleline label="list-1">
+                                                                                '.$items[$i].'
+                                                                            </singleline>
+                                                                        </td>
+                                                                        <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="list" data-size="list" data-color="list" mc:edit="invoice-12" width="20%" align="left" valign="top" style="font-family: \'Open Sans\', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">
+                                                                            <singleline label="list-2">
+                                                                                '.$quantites[$i].'
+                                                                            </singleline>
+                                                                        </td>
+                                                                        <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="list" data-size="list" data-color="list" mc:edit="invoice-13" width="30%" align="center" valign="top" style="font-family: \'Open Sans\', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">
+                                                                            <singleline label="list-3">
+                                                                                '.$ecoPoints[$i].' EcoPoints
+                                                                            </singleline>
+                                                                        </td>
+                                                                    </tr>';
+                                                                }
+                                                            }
                                                         ?>
-                                                    </p>
+                                                    </table>
+
+                                                    <table width="100%" class="table-inner" border="0" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td align="center" colspan="3">
+                                                                <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                                    <tr>
+                                                                        <td height="20" style="border-bottom:2px solid #4db6ac;"></td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td data-bgcolor="Texs BG" bgcolor="#f8f8f8" align="center">
+                                                                <table class="table-inner" align="center" width="90%" border="0" cellpadding="0" cellspacing="0">
+                                                                    <tr>
+                                                                        <td height="10">
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Texs" data-size="Texs Title" data-color="Texs Text" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase;line-height:24px;">
+                                                                            <singleline>
+                                                                                Total EcoPoints
+                                                                            </singleline>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Texs" data-size="Texs Total" data-color="Texs Text" style="font-family: 'Open Sans', Arial, sans-serif; font-size:24px; color:#13547a;  font-weight: bold;">
+                                                                            <singleline>
+                                                                                <?php
+                                                                                    echo (isset($_GET['totalEcoPoints']) ? $_GET['totalEcoPoints'] : '');
+                                                                                ?>
+                                                                            </singleline>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td height="15">
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                 </td>
                                             </tr>
                                         </table>

@@ -1,12 +1,87 @@
 {% extends "base.html.twig" %}
-{% set maintType = 'home' %}
+{% set mainType = 'home' %}
 
 {% block main %}
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+<div id="carousel" class="carousel slide shadow-lg mb-4" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carousel" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel" data-slide-to="1"></li>
+        <li data-target="#carousel" data-slide-to="2"></li>
+    </ol>
+
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="background-image: url('./assets/img/background/welcome_slide.jpg')">
+            <div class="d-flex flex-column justify-content-center h-100 text-center text-white px-4">
+                <h2 class="mb-2">Welcome to EcoSplash</h2>
+                <h6 class="mt-2">Start being environmental friendly and save our earth with us today.</h6>
+            </div>
+        </div>
+
+        <div class="carousel-item" style="background-image: url('./assets/img/background/user_signup_slide.jpg')">
+            <div class="d-flex flex-column justify-content-center h-100 text-center text-white px-4">
+                <h2 class="mb-2">Register as an individual user</h2>
+                <h6 class="mt-2">Register an account with EcoSplash and start being environmental friendly with extra incentives today.</h6>
+                <a class="btn btn-success w-25 mx-auto mt-4" href="./signup">Sign Up</a>
+            </div>
+        </div>
+
+        <div class="carousel-item" style="background-image: url('./assets/img/background/organization_signup_slide.jpg')">
+            <div class="d-flex flex-column justify-content-center h-100 text-center text-white px-4">
+                <h2 class="mb-2">Register as an organization</h2>
+                <h6 class="mt-2">Register an account with EcoSplash and promote your organization, with added benefits today.</h6>
+                <a class="btn btn-success w-25 mx-auto mt-4" href="./signup">Sign Up</a>
+            </div>
+        </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-12 col-md-8">
+        <div id="todayQuiz" class="card shadow mt-4">
+            <div class="card-body">
+                <h4 class="pb-4">Today's Quiz</h4>
+                <p>
+                    Today's quiz is <span id="quizName" class="font-weight-bold text-primary">Quiz Name</span> by <span id="name" class="font-weight-bold text-primary">Organization</span>, and it has a total of <span id="questionNo" class="font-weight-bold text-primary">5</span> questions. Users are able to earned up to a maximum of <span id="ecoPoints" class="font-weight-bold text-primary">10</span> EcoPoints.
+                </p>
+                <a class="btn btn-primary btn-block" href="./quiz">Take Quiz</a>
+            </div>
+        </div>
+
+        <div class="card shadow mt-4">
+            <div class="card-body">
+                <h4 class="pb-4">New Upcoming Events</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="card shadow mt-4">
+            <div id="topMonth" class="card-body">
+                <h4 class="pb-4">Top 5 of The Month</h4>
+
+                <div id="topMonthContent">
+                    <h6 class="text-muted">Whoops! There isn't any top 5 of the month yet.</h6>
+                </div>
+            </div>
+        </div>
+
+        <div id="challenges" class="card shadow mt-4">
+            <div class="card-body">
+                <h4 class="pb-4">Today's Challenges</h4>
+
+                <div id="challengeContent">
+                    <h6 class="text-muted">Whoops! There isn't any challenges for today.</h6>
+                </div>
+
+                <a class="btn btn-primary btn-block mt-3" href="./profile">Update Your Daily Challenges</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block afterMain %}{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/home.js"></script>
 {% endblock %}

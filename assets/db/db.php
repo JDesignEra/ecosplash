@@ -124,6 +124,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                     $data['email'] = $result['email'];
                     $data['bio'] = $result['bio'];
                     $data['ecoPoints'] = $result['ecoPoints'];
+                    $data['ecoPointsMonth'] = $result['ecoPointsMonth'];
 
                     if ($action == 'getUser') {
                         $data['dailyQuiz'] = $result['dailyQuiz'];
@@ -556,6 +557,135 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 
             $data['items'] = $items;
             break;
+
+        case 'redeemRewardItems':
+            $uid = checkInput($_POST['uid']);
+            $items = $_POST['item'];
+
+            if (empty($uid)) {
+                $errors['uid'] = 'User ID is missing!';
+            }
+
+            if (empty($items) || empty($items['rid'])) {
+                $errors['items'] = 'No items are selected!';
+            }
+            else {
+                $noneCount = count(array_filter($items['rid'], function($i) { return $i == 'none'; }));
+                if ($noneCount >= count($items['rid'])) {
+                    $errors['items'] = 'No items are selected!';
+                }
+            }
+
+            if (empty($errors)) {
+                $email;
+                $sql = [['rid'], ['items'], ['itemsQty'], ['itemsEcoPoints']];
+                $totalPoints = 0;
+                $ridArr = array_diff($items['rid'], array('none'));
+                $ridArr = implode(',', $ridArr);
+
+                $result = $mysqli -> query("SELECT rid, item, ecoPoints, quantity FROM items WHERE rid IN ($ridArr) ORDER BY rid DESC");
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $index = array_search($row['rid'], $items['rid']);
+                    $rid = $row['rid'];
+                    $qty = 0;
+
+
+                    $dupRidIndex = array_filter($items['rid'], function($i) use($rid) { return $i == $rid; });
+                    foreach ($dupRidIndex as $key => $value) {
+                        if (empty($items['qty'][$key])) {
+                            $errors['quantity'][$key] = 'Quantity is required!';
+                        }
+
+                        $qty += (is_numeric($items['qty'][$key]) ? $items['qty'][$key] : 0);
+                    }
+
+                    foreach ($dupRidIndex as $key => $value) {
+                        if ($qty > $row['quantity']) {
+                            $errors['quantity'][$key] = 'Quantity can\'t be more then stock available!';
+                        }
+                    }
+
+                    if (empty($errors)) {
+                        $totalPoints += $row['ecoPoints'] * $qty;
+                        $sql['rid'][] = $row['rid'];
+                        $sql['items'][] = $row['item'];
+                        $sql['itemsQty'][] = $qty;
+                        $sql['itemsEcoPoints'][] = $row['ecoPoints'];
+                    }
+                }
+
+                $result = $mysqli -> query("SELECT ecoPoints, email FROM users WHERE uid = '$uid'");
+                $result = $result -> fetch_array();
+                $email = $result['email'];
+                if (empty($errors) && $totalPoints > $result['ecoPoints']) {
+                    $errors['ecoPoints'] = $totalPoints - $result['ecoPoints'].' EcoPoints short!';
+                }
+
+                if (empty($errors)) {
+                    $items = implode(',', $sql['items']);
+                    $qty = implode(',', $sql['itemsQty']);
+                    $ecoPoints = implode(',', $sql['itemsEcoPoints']);
+
+                    $result = $mysqli -> query("INSERT INTO redeemed_history (uid, items, itemsQty, itemsEcoPoints, totalEcoPoints) VALUES ('$uid', '$items', '$qty', '$ecoPoints', '$totalPoints')");
+
+                    foreach ($sql['rid'] as $key => $value) {
+                        $qty = $sql['itemsQty'][$key];
+                        $result = $mysqli -> query("UPDATE items SET quantity = quantity - '$qty' WHERE rid = '$value'");
+                    }
+
+                    $result = $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints - '$totalPoints' WHERE uid = '$uid'");
+                    $result = $mysqli -> query("SELECT oid, totalEcoPoints FROM redeemed_history WHERE uid = '$uid' ORDER by oid DESC LIMIT 1");
+                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+                    $data['oid'] = $row['oid'];
+                    $data['totalEcoPoints'] = $row['totalEcoPoints'];
+
+                    $mail->addAddress($email);
+                    $mail->Subject = '[EcoSplash] Redeem #'.$row['oid'];
+                    $mail->CharSet = 'utf-8';
+                    $mail->AddEmbeddedImage('../img/logo/ecosplash_colored.png', 'logo');
+                    $mail->AddEmbeddedImage('../img/email/facebook.png', 'fb');
+                    $mail->AddEmbeddedImage('../img/email/twitter.png', 'tw');
+                    $mail->AddEmbeddedImage('../img/email/instagram.png', 'in');
+                    $mail->msgHTML(file_get_contents($currURL.'/../templates/email/redeem_success.php?'.http_build_query(array('items' => $sql['items'])).'&'.http_build_query(array('itemsQty' => $sql['itemsQty'])).'&'.http_build_query(array('itemsEcoPoints' => $sql['itemsEcoPoints'])).'&oid='.$row['oid'].'&totalEcoPoints='.$row['totalEcoPoints']), __DIR__);
+                    $mail->send();
+                }
+            }
+            break;
+
+            case 'getTopEcoPoints':
+                $result = $mysqli -> query("SELECT name, ecoPointsMonth FROM users ORDER BY ecoPointsMonth DESC LIMIT 5");
+
+                $top = [];
+                while($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $top['name'][] = $row['name'];
+                    $top['ecoPoints'][] = $row['ecoPointsMonth'];
+                }
+
+                $data['top'] = $top;
+                break;
+
+            case 'getTodayQuiz':
+                $result = $mysqli -> query("SELECT * FROM quizzes WHERE todayQuiz = 1");
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                $quiz = [];
+                $quiz['name'] = $row['name'];
+                $quiz['questions'] = explode('|', $row['questions']);
+                $quiz['ecoPoints'] = $row['ecoPoints'];
+
+                $options = explode('|', $row['options']);
+                foreach ($quiz['questions'] as $key => $value) {
+                    $quiz['options'][$key][] = array_splice($options, 0, 4);
+                }
+
+                $uid = $row['uid'];
+                $result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'");
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                $quiz['uName'] = $row['name'];
+
+                $data['quiz'] = $quiz;
+                break;
     }
 
     if (empty($errors)) {

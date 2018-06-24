@@ -22,20 +22,28 @@
                     <hr />
 
                     <form id="redeemForm" method="post" novalidate>
-                        <div id="item" class="form-group">
-                            <select id="items" class="custom-select">
-                                <option value="none" selected disabled>
-                                    Select Item
-                                </option>
-                            </select>
+                        <div id="formGrp">
+                            <div id="item" class="form-group item">
+                                <select id="items" class="custom-select" name="item[rid][]">
+                                    <option class="default" value="none" selected disabled>
+                                        Select Item
+                                    </option>
+                                </select>
+                                <div class="feedback text-danger fadeIn"></div>
+                            </div>
+
+                            <div id="qty" class="form-label-group qty">
+                                <input id="quantity" class="form-control" type="number" min="0" step="1" placeholder="Quantity" name="item[qty][]" />
+                                <label for="quantity">Quantity</label>
+                                <div class="feedback text-danger fadeIn"></div>
+                            </div>
                         </div>
 
-                        <div id="qty" class="form-label-group">
-                            <input id="quantity" class="form-control" type="number" min="0" step="1" placeholder="Quantity" name="qty" />
-                            <label for="quantity">Quantity</label>
-                        </div>
-
-                        <button class="btn btn-success btn-block" type="submit">Redeem</button>
+                        <div class="feedback fadeIn"></div>
+                        <button class="btn btn-success btn-block" type="submit">
+                            <span id="action-text" class="fadeIn">Redeem</span>
+                            <span id="loading-text" class="fadeIn d-none">Loading <i class="fas fa-cog fa-spin"></i></span>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -58,7 +66,31 @@
 </section>
 {% endblock %}
 
-{% block afterMain %}{% endblock %}
+{% block afterMain %}
+<div id="redeemSuccessModal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order #<span id="oid"></span> Redeem Successful</h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                You have redeemed your items successfully, and you have spend a total of <span id="spendEcoPoints" class="h6 text-primary"></span> EcoPoints.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
+                    Dismiss
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
 {% block scripts %}
 <script type="text/javascript" src="./assets/js/redeem.js"></script>

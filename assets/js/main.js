@@ -1,7 +1,7 @@
 'use strict';
 
 /* scrolling nav */
-var $OFFSET_TOP = 30.5;
+var $OFFSET_TOP = 50;
 $(window).scroll(function () {
     if ($('.navbar').offset().top > $OFFSET_TOP) {
         $('.navbar').removeClass("navbar-light bg-light py-3");
@@ -139,7 +139,6 @@ $('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function
 
 /* enable or re-enable tooltips */
 enableTooltip();
-enableFormToolTip();
 enableNavToolTip()
 enableFabToolTip();
 
@@ -157,6 +156,28 @@ $('nav .navbar-toggler').click(function() {
     else {
         $('nav .navbar-toggler .fa-bars').removeClass('d-none');
         $('nav .navbar-toggler .fa-times').addClass('d-none');
+    }
+});
+
+/* carousel */
+$('.carousel').carousel({
+    interval: 3500
+});
+
+/* mobile form tooltip fix */
+if ($(window).width() < 767) {
+    enableMobile_FormToolTip();
+}
+else {
+    enableFormToolTip();
+}
+
+$(window).resize(function() {
+    if ($(window).width() < 767) {
+        enableMobile_FormToolTip();
+    }
+    else {
+        enableFormToolTip();
     }
 });
 
@@ -201,7 +222,6 @@ function enableTooltip() {
 function enableNavToolTip() {
     $(function () {
         $('[tooltip-toggle="nav-tooltip"]').tooltip({
-            template: '<div class="tooltip" style="margin-right: -16px;" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
             delay: {
                 show: 150,
                 hide: 50
@@ -214,10 +234,24 @@ function enableNavToolTip() {
 
 function enableFormToolTip() {
     $(function () {
+        $('[tooltip-toggle="form-tooltip"]').tooltip('dispose');
         $('[tooltip-toggle="form-tooltip"]').tooltip({
             template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
-            offset: '0, 10'
+            offset: '0, 20'
         });
+        console.clear();
+    });
+}
+
+function enableMobile_FormToolTip() {
+    $(function () {
+        $('[tooltip-toggle="form-tooltip"]').tooltip('dispose');
+        $('[tooltip-toggle="form-tooltip"]').tooltip({
+            template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
+            offset: '0, 5',
+            placement: 'bottom'
+        });
+        console.clear();
     });
 }
 

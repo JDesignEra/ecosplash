@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 20, 2018 at 07:27 AM
+-- Generation Time: Jun 24, 2018 at 09:03 PM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.2.5
 
@@ -26,6 +26,12 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `random_select_daily_quiz` ()  BEGIN
+	UPDATE quizzes SET todayQuiz = 0;
+	UPDATE users set dailyQuiz = 0;
+	UPDATE quizzes SET todayQuiz = 1 ORDER BY RAND() LIMIT 1;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `random_select_task` ()  BEGIN
 	TRUNCATE TABLE today_task;
     UPDATE users SET dailyTask = '00000';
@@ -75,6 +81,20 @@ INSERT INTO `daily_task` (`uid`, `task`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `events`
+--
+
+CREATE TABLE `events` (
+  `eid` int(255) NOT NULL,
+  `uid` int(255) NOT NULL,
+  `dateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `event` text NOT NULL,
+  `ecoPoints` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `event_history`
 --
 
@@ -115,11 +135,39 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`rid`, `item`, `ecoPoints`, `weight`, `quantity`) VALUES
-(1, 'Random', 300, '0', 0),
-(2, 'Giant $100 Voucher', 1000, '10', 0),
-(3, 'Giant $50 Voucher', 500, '50', 350),
-(4, 'Giant $30 Voucher', 300, '70', 310),
-(5, 'Giant $25 Voucher', 250, '75', 550);
+(1, 'Giant $100 Voucher', 1000, '10', 0),
+(2, 'Giant $50 Voucher', 500, '50', 339),
+(3, 'Giant $30 Voucher', 300, '70', 300),
+(4, 'Giant $25 Voucher', 250, '75', 543);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quizzes`
+--
+
+CREATE TABLE `quizzes` (
+  `qid` int(255) NOT NULL,
+  `uid` int(255) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `name` varchar(255) NOT NULL,
+  `questions` longtext NOT NULL,
+  `options` longtext NOT NULL,
+  `answers` text NOT NULL,
+  `ecoPoints` int(255) NOT NULL,
+  `todayQuiz` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `quizzes`
+--
+
+INSERT INTO `quizzes` (`qid`, `uid`, `date`, `name`, `questions`, `options`, `answers`, `ecoPoints`, `todayQuiz`) VALUES
+(1, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0),
+(2, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0),
+(3, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0),
+(4, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0),
+(5, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 1);
 
 -- --------------------------------------------------------
 
@@ -142,17 +190,20 @@ CREATE TABLE `redeemed_history` (
 --
 
 INSERT INTO `redeemed_history` (`oid`, `uid`, `date`, `items`, `itemsQty`, `itemsEcoPoints`, `totalEcoPoints`) VALUES
-(1, 1, '2018-06-16 16:00:00', 'Giant $50 Voucher,Giant $100 Voucher', '1,1', '50,100', 150),
-(2, 1, '2018-06-16 16:00:00', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '30,50', 80),
-(3, 1, '2018-06-16 16:00:00', 'Giant $50 Voucher,Giant $100 Voucher', '1,1', '50,100', 150),
-(4, 1, '2018-06-16 16:00:00', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '30,50', 80),
-(5, 1, '2018-06-16 16:00:00', 'Giant $50 Voucher,Giant $100 Voucher', '1,1', '50,100', 150),
-(6, 1, '2018-06-16 16:00:00', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '30,50', 80),
-(7, 1, '2018-06-15 16:00:00', 'Giant $50 Voucher,Giant $100 Voucher', '1,1', '50,100', 150),
-(8, 1, '2018-06-16 16:00:00', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '30,50', 80),
-(9, 1, '2018-06-16 16:00:00', 'Giant $50 Voucher,Giant $100 Voucher', '1,1', '50,100', 150),
-(10, 1, '2018-06-16 16:00:00', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '30,50', 80),
-(11, 1, '2018-06-16 16:00:00', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '30,50', 80);
+(1, 1, '2018-06-22 16:16:24', 'Giant $50 Voucher', '1', '500', 500),
+(2, 1, '2018-06-22 16:16:48', 'Giant $30 Voucher,Giant $50 Voucher', '2,1', '300,500', 1100),
+(3, 1, '2018-06-22 16:17:29', 'Giant $25 Voucher', '1', '250', 250),
+(4, 1, '2018-06-22 16:21:40', 'Giant $25 Voucher', '2', '250', 500),
+(5, 1, '2018-06-22 16:48:44', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(6, 1, '2018-06-22 16:59:18', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(7, 1, '2018-06-22 16:59:41', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(8, 1, '2018-06-22 17:27:59', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(9, 1, '2018-06-22 17:31:19', 'Giant $30 Voucher,Giant $50 Voucher', '2,1', '300,500', 1100),
+(10, 1, '2018-06-22 17:37:32', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(11, 1, '2018-06-22 17:41:39', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(12, 1, '2018-06-22 17:43:10', 'Giant $50 Voucher', '2', '500', 1000),
+(13, 1, '2018-06-22 17:43:42', 'Giant $25 Voucher', '1', '250', 250),
+(14, 1, '2018-06-22 17:44:05', 'Giant $25 Voucher', '1', '250', 250);
 
 -- --------------------------------------------------------
 
@@ -171,10 +222,10 @@ CREATE TABLE `today_task` (
 
 INSERT INTO `today_task` (`uid`, `task`) VALUES
 (1, 'Recycle plastics'),
-(2, 'Leave your lights off during the day'),
-(3, 'Do grocery with your own grocery bag'),
-(4, 'Use public transport instead of driving to work'),
-(5, 'Recycle old newspaper');
+(5, 'Recycle old newspaper'),
+(6, 'Participate in an environmental friendly event'),
+(7, 'Finish all your meals without leaving any leftovers'),
+(8, 'Do not litter in any public places');
 
 -- --------------------------------------------------------
 
@@ -193,6 +244,7 @@ CREATE TABLE `users` (
   `newNotifications` int(255) NOT NULL DEFAULT '0',
   `dailyQuiz` tinyint(1) NOT NULL DEFAULT '0',
   `dailyTask` varchar(5) NOT NULL DEFAULT '00000',
+  `ecoPointsMonth` int(255) NOT NULL DEFAULT '0',
   `fpCode` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -200,9 +252,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoints`, `newNotifications`, `dailyQuiz`, `dailyTask`, `fpCode`) VALUES
-(1, 'tgm.joel@gmail.com', '$2y$10$afw55Nbtd43DF8IrbLZ6euDusysvUPPnGB8ei.yu5Vb1PfHDTCt..', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 31506, 0, 0, '00000', NULL),
-(2, 'joel.jdesignera@gmail.com', '$2y$10$WXI2CtA7WaWeUufQwdWoWeFrtdfnfqxCHswd6czE5tCE4s4bDRcAy', 'JDesign', '', 1, 0, 0, 0, '00000', NULL);
+INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoints`, `newNotifications`, `dailyQuiz`, `dailyTask`, `ecoPointsMonth`, `fpCode`) VALUES
+(1, 'tgm.joel@gmail.com', '$2y$10$afw55Nbtd43DF8IrbLZ6euDusysvUPPnGB8ei.yu5Vb1PfHDTCt..', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 23606, 0, 0, '00000', 30105, NULL),
+(2, 'joel.jdesignera@gmail.com', '$2y$10$WXI2CtA7WaWeUufQwdWoWeFrtdfnfqxCHswd6czE5tCE4s4bDRcAy', 'JDesign', '', 1, 0, 0, 0, '00000', 0, NULL);
 
 --
 -- Indexes for dumped tables
@@ -215,6 +267,12 @@ ALTER TABLE `daily_task`
   ADD PRIMARY KEY (`uid`);
 
 --
+-- Indexes for table `events`
+--
+ALTER TABLE `events`
+  ADD PRIMARY KEY (`eid`);
+
+--
 -- Indexes for table `event_history`
 --
 ALTER TABLE `event_history`
@@ -225,6 +283,12 @@ ALTER TABLE `event_history`
 --
 ALTER TABLE `items`
   ADD PRIMARY KEY (`rid`);
+
+--
+-- Indexes for table `quizzes`
+--
+ALTER TABLE `quizzes`
+  ADD PRIMARY KEY (`qid`);
 
 --
 -- Indexes for table `redeemed_history`
@@ -256,6 +320,12 @@ ALTER TABLE `daily_task`
   MODIFY `uid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `events`
+--
+ALTER TABLE `events`
+  MODIFY `eid` int(255) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `event_history`
 --
 ALTER TABLE `event_history`
@@ -265,13 +335,19 @@ ALTER TABLE `event_history`
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `rid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `rid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `quizzes`
+--
+ALTER TABLE `quizzes`
+  MODIFY `qid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `redeemed_history`
 --
 ALTER TABLE `redeemed_history`
-  MODIFY `oid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `oid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -283,7 +359,7 @@ DELIMITER $$
 --
 -- Events
 --
-CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set dailyQuiz = 0$$
+CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_daily_quiz()$$
 
 CREATE DEFINER=`root`@`localhost` EVENT `fpCode_reset` ON SCHEDULE EVERY 12 HOUR STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set fpCode = NULL$$
 

@@ -7,8 +7,14 @@ body {
 main {
     flex: auto;
     min-height: calc(100vh - 221px);
+    padding-top: calc(82px) !important;
     animation: fadeIn 1s both;
     max-width: 2560px;
+}
+
+main.home {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 /* nav */
@@ -29,6 +35,10 @@ main {
 
 .navbar.bg-gradient {
     background: linear-gradient(145deg, #4db6ac, #13547a);
+}
+
+.navbar.bg-gradient .badge {
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .navbar .brand-logo {
@@ -331,6 +341,29 @@ form .valid .feedback {
 .show > .btn-gradient.dropdown-toggle {
     border: #0c364e;
     background: linear-gradient(145deg, #409d94, #0e3d59);
+}
+
+/* carousel */
+.carousel {
+    margin: 0 -15px;
+}
+
+.carousel .carousel-item {
+    height: 50vh;
+    padding-top: 82px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+@media (max-width: 767.98px) {
+    .carousel .carousel-item {
+        height: 70vh;
+        padding-top: 82px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
 }
 
 /* footer */
