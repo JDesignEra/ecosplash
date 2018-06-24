@@ -13,13 +13,11 @@ Frameworks / Libraries / APIs
 
 ------
 ##### Collabrators
-<ul>
-  <sup><li><a href="https://github.com/JDesignEra">Joel [ JDesignEra ]</a></li></sup>
-  <sup><li><a href="https://github.com/Arman154khan">Arman [ Arman154khan ]</a></li></sup>
-  <sup><li><a href="https://github.com/LunarEclipz">Zyon [ LunarEclipz ]</a></li></sup>
-  <sup><li><a href="https://github.com/kaiyong2001">Yong Kai [ kaiyong2001 ]</a></li></sup>
-  <sup><li><a href="https://github.com/ZzBobTheBuilderzZ">Ryan [ ZzBobTheBuilderzZ ]</a></li></sup>
-</ul>
+* [Joel [ JDesignEra ]](https://github.com/JDesignEra)
+* [Arman [ Arman154khan ]](https://github.com/Arman154khan)
+* [Zyon [ LunarEclipz ]](https://github.com/LunarEclipz)
+* [Yong Kai [ kaiyong2001 ]](https://github.com/kaiyong2001)
+* [Ryan [ ZzBobTheBuilderzZ ]](https://github.com/ZzBobTheBuilderzZ)
 
 ------
 ##### Links
