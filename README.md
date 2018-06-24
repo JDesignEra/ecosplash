@@ -2,14 +2,14 @@
 
 Frameworks / Libraries / APIs
 ------
-* [Twig v2.4.8](https://twig.symfony.com/)
-* [PHPMailer v6.0.5](https://github.com/PHPMailer/PHPMailer)
-* [League OAuth2 v2.3.0](https://github.com/thephpleague/oauth2-client)
+* [Bootstrap v4.1](https://getbootstrap.com/)
+* [Composer v1.6.5](https://getcomposer.org/)
+* [FontAwesome Pro v5.0.13](https://fontawesome.com/)
 * [jQuery v3.3.1](https://jquery.com/)
 * [jQuery-dateFormat.js](https://github.com/phstc/jquery-dateFormat)
-* [Bootstrap v4.1](https://getbootstrap.com/)
-* [FontAwesome Pro v5.0.13](https://fontawesome.com/)
-* [Composer v1.6.5](https://getcomposer.org/)
+* [League OAuth2 v2.3.0](https://github.com/thephpleague/oauth2-client)
+* [PHPMailer v6.0.5](https://github.com/PHPMailer/PHPMailer)
+* [Twig v2.4.8](https://twig.symfony.com/)
 
 ------
 ##### Collabrators
