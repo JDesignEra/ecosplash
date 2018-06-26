@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.0.1
+-- version 4.8.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 24, 2018 at 09:03 PM
--- Server version: 10.1.32-MariaDB
--- PHP Version: 7.2.5
+-- Host: localhost
+-- Generation Time: Jun 26, 2018 at 01:59 PM
+-- Server version: 10.1.33-MariaDB
+-- PHP Version: 7.2.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -89,8 +89,19 @@ CREATE TABLE `events` (
   `uid` int(255) NOT NULL,
   `dateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `event` text NOT NULL,
+  `location` text NOT NULL,
   `ecoPoints` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `events`
+--
+
+INSERT INTO `events` (`eid`, `uid`, `dateTime`, `event`, `location`, `ecoPoints`) VALUES
+(1, 2, '2018-08-05 06:06:22', 'Clean & Green Singapore 2018', 'Suntec', 100),
+(2, 2, '2018-08-05 06:06:26', 'Food Waste Reduction Roadshow', 'Orchard', 100),
+(3, 2, '2018-10-15 06:06:31', 'Green Living 2018', 'Expo', 100),
+(4, 2, '2017-03-09 05:10:00', 'Green Living 2015', 'Expo', 100);
 
 -- --------------------------------------------------------
 
@@ -323,7 +334,7 @@ ALTER TABLE `daily_task`
 -- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
-  MODIFY `eid` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `eid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `event_history`
