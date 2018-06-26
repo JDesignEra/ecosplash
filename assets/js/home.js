@@ -22,6 +22,7 @@ $.ajax({
             if ($i != 0) {
                 $focus.append('<hr />');
             }
+
             $focus.append('<h4 class="text-secondary pb-3">' + date + '</h4>');
 
             $(this).each(function() {

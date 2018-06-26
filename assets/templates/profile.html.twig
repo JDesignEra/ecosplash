@@ -22,11 +22,13 @@
                         </h6>
                     </div>
 
-                    <hr />
+                    <div id="ecopointsContent">
+                        <hr />
 
-                    <h6><i class="fas fa-leaf mr-1"></i> EcoPoints</h6>
-                    <h5 id="ecopoints" class="text-primary">0</h5>
-                    <a class="btn btn-primary btn-block btn-sm" href="./redeem">Redeem EcoPoints</a>
+                        <h6><i class="fas fa-leaf mr-1"></i> EcoPoints</h6>
+                        <h5 id="ecopoints" class="text-primary">0</h5>
+                        <a class="btn btn-primary btn-block btn-sm" href="./redeem">Redeem EcoPoints</a>
+                    </div>
                 </div>
             </div>
 
@@ -78,7 +80,7 @@
         </div>
 
         <div class="col-12 col-md-7">
-            <div class="card shadow mt-4">
+            <div id="redeem-history" class="card shadow mt-4">
                 <div class="card-body">
                     <h4 class="pb-4">Recent Redeem History</h4>
 
@@ -91,7 +93,7 @@
                 </div>
             </div>
 
-            <div class="card shadow mt-4">
+            <div id="event-history" class="card shadow mt-4">
                 <div class="card-body">
                     <h4 class="pb-4">Recent Event History</h4>
 
@@ -106,12 +108,12 @@
 
             <div id="quiz-list" class="card shadow mt-4">
                 <div class="card-body">
-                    <h4 class="pb-4">Quiz Lists</h4>
+                    <h4 class="pb-4">Quizzes List</h4>
 
                     <div id="quiz-list-table">
                         <hr />
                         <h6 class="text-muted text-center">
-                            It seems that you have not published any environmental friendly quiz yet.
+                            It seems that you have not published any quiz yet.
                         </h6>
                     </div>
                 </div>
@@ -119,12 +121,12 @@
 
             <div id="event-list" class="card shadow mt-4">
                 <div class="card-body">
-                    <h4 class="pb-4">Event Lists</h4>
+                    <h4 class="pb-4">Events List</h4>
 
                     <div id="event-list-table">
                         <hr />
                         <h6 class="text-muted text-center">
-                            It seems that you have not hosted any environmental friendly event yet.
+                            It seems that you have not pusblished any event yet.
                         </h6>
                     </div>
                 </div>
@@ -136,7 +138,7 @@
 
 {% block afterMain %}
 <div id="dailyTaskModal" class="modal pulse" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Daily Challenges Update Successful</h5>
@@ -158,7 +160,7 @@
 </div>
 
 <div id="view-more-modal" class="modal pulse" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"></h5>

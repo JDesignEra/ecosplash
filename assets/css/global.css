@@ -6,7 +6,7 @@ body {
 
 main {
     flex: auto;
-    min-height: calc(100vh - 221px);
+    min-height: calc(100vh - 139px);
     padding-top: calc(82px) !important;
     animation: fadeIn 1s both;
     max-width: 2560px;

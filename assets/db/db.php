@@ -406,13 +406,25 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
             }
 
             if (empty($errors)) {
-                $result = $mysqli -> query("SELECT * FROM redeemed_history WHERE uid = '$uid' ORDER BY date DESC LIMIT 10");
+                $result = $mysqli -> query("SELECT oid, date, itemsQty, totalEcoPoints FROM redeemed_history WHERE uid = '$uid' ORDER BY date DESC");
                 if ($result -> num_rows > 0) {
+                    $redeemHistories = [];
                     while ($row = $result -> fetch_array()) {
-                        $lists[] = $row;
+                        $i = $i = count($redeemHistories);
+
+                        $quantities = explode(',', $row['itemsQty']);
+                        $totalQty = 0;
+                        foreach ($quantities as $key => $value) {
+                            $totalQty += $value;
+                        }
+
+                        $redeemHistories[$i]['oid'] = $row['oid'];
+                        $redeemHistories[$i]['date'] = date_format(date_create($row['date']), 'd/m/Y');
+                        $redeemHistories[$i]['totalQty'] = $totalQty;
+                        $redeemHistories[$i]['totalEcoPoints'] = $row['totalEcoPoints'];
                     }
 
-                    $data['redeem_histories'] = $lists;
+                    $data['redeem_histories'] = $redeemHistories;
                 }
                 else {
                     $errors['redeem_histories'] = 'No redeemed history!';
@@ -436,11 +448,16 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                 $result = $mysqli -> query("SELECT * FROM redeemed_history WHERE uid = '$uid' AND oid = '$oid'");
                 if ($result -> num_rows == 1) {
                     $result = $result -> fetch_array();
+
+                    $items = explode(',', $result['items']);
+                    $itemsQty = explode(',', $result['itemsQty']);
+                    $itemsEcoPoints = explode(',', $result['itemsEcoPoints']);
+
                     $data['oid'] = $result['oid'];
-                    $data['date'] = $result['date'];
-                    $data['items'] = $result['items'];
-                    $data['itemsQty'] = $result['itemsQty'];
-                    $data['itemsEcoPoints'] = $result['itemsEcoPoints'];
+                    $data['date'] = date_format(date_create($result['date']), 'd/m/Y');
+                    $data['items'] = $items;
+                    $data['itemsQty'] = $itemsQty;
+                    $data['itemsEcoPoints'] = $itemsEcoPoints;
                     $data['totalEcoPoints'] = $result['totalEcoPoints'];
                 }
                 else {
@@ -457,13 +474,20 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
             }
 
             if (empty($errors)) {
-                $result = $mysqli -> query("SELECT * FROM event_history WHERE uid = '$uid' ORDER BY joinDate DESC LIMIT 10");
+                $result = $mysqli -> query("SELECT eid, joinDate, event, status FROM event_history WHERE uid = '$uid' ORDER BY joinDate DESC");
+
                 if ($result -> num_rows > 0) {
+                    $eventHistories = [];
                     while ($row = $result -> fetch_array()) {
-                        $lists[] = $row;
+                        $i = $i = count($eventHistories);
+
+                        $eventHistories[$i]['eid'] = $row['eid'];
+                        $eventHistories[$i]['joinDate'] = date_format(date_create($row['joinDate']), 'd/m/Y');
+                        $eventHistories[$i]['event'] = $row['event'];
+                        $eventHistories[$i]['status'] = ($row['status'] == 1 ? 'Present' : 'Absent');
                     }
 
-                    $data['event_histories'] = $lists;
+                    $data['event_histories'] = $eventHistories;
                 }
                 else {
                     $errors['event_histories'] = 'No events history!';
@@ -488,14 +512,107 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
                 if ($result -> num_rows == 1) {
                     $result = $result -> fetch_array();
                     $data['eid'] = $result['eid'];
-                    $data['joinDate'] = $result['joinDate'];
+                    $data['joinDate'] = date_format(date_create($result['joinDate']), 'd/m/Y');
                     $data['event'] = $result['event'];
-                    $data['dateTime'] = $result['dateTime'];
+                    $data['date'] = date_format(date_create($result['dateTime']), 'd/m/Y');
+                    $data['time'] = date_format(date_create($result['dateTime']), 'h:i a');
                     $data['ecoPoints'] = $result['ecoPoints'];
-                    $data['status'] = $result['status'];
+                    $data['status'] = ($result['status'] == 1 ? 'Present' : 'Absent');
                 }
                 else {
                     $errors['eid'] = 'Event history ID does not exist or has more then one!';
+                }
+            }
+            break;
+
+        case 'getEventsList':
+            $uid = checkInput($_POST['uid']);
+
+            if (empty($uid)) {
+                $errors['uid'] = 'User ID is missing!';
+            }
+
+            if (empty($errors)) {
+                $result = $mysqli -> query("SELECT * FROM events WHERE uid = '$uid' ORDER BY eid DESC");
+
+                if ($result -> num_rows > 0) {
+                    $eventsList = [];
+                    while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                        $i = count($eventsList);
+                        $eventsList[$i]['eid'] = $row['eid'];
+                        $eventsList[$i]['date'] = date_format(date_create($row['dateTime']), 'd/m/Y');
+                        $eventsList[$i]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                        $eventsList[$i]['event'] = $row['event'];
+                        $eventsList[$i]['location'] = $row['location'];
+                        $eventsList[$i]['ecoPoints'] = $row['ecoPoints'];
+                    }
+
+                    $data['events_list'] = $eventsList;
+                }
+                else {
+                    $errors['events_list'] = 'No events to list!';
+                }
+            }
+            break;
+
+        case 'getQuizzesList':
+            $uid = checkInput($_POST['uid']);
+
+            if (empty($uid)) {
+                $errors['uid'] = 'User ID is missing!';
+            }
+
+            if (empty($errors)) {
+                $result = $mysqli -> query("SELECT * FROM quizzes WHERE uid = '$uid' ORDER BY qid DESC");
+
+                if ($result -> num_rows > 0) {
+                    $quizzesList = [];
+                    while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                        $i = count($quizzesList);
+                        $quizzesList[$i]['qid'] = $row['qid'];
+                        $quizzesList[$i]['date'] = date_format(date_create($row['date']), 'd/m/Y');
+                        $quizzesList[$i]['name'] = $row['name'];
+                        $quizzesList[$i]['ecoPoints'] = $row['ecoPoints'];
+                    }
+
+                    $data['quizzes_list'] = $quizzesList;
+                }
+                else {
+                    $errors['quizzes_list'] = 'No quizzes to list!';
+                }
+            }
+            break;
+
+        case 'getQuizList':
+            $uid = checkInput($_POST['uid']);
+            $qid = checkInput($_POST['qid']);
+
+            if (empty($uid)) {
+                $errors['uid'] = 'User ID is missing!';
+            }
+
+            if (empty($qid)) {
+                $errors['qid'] = 'Quiz ID is missing!';
+            }
+
+            if (empty($errors)) {
+                $result = $mysqli -> query("SELECT * FROM quizzes WHERE uid = '$uid' AND qid = '$qid'");
+                if ($result -> num_rows == 1) {
+                    $result = $result -> fetch_array();
+                    $questions = explode('|', $result['questions']);
+                    $options = explode('|', $result['options']);
+                    $answers = explode(',', $result['answers']);
+
+                    $data['qid'] = $result['qid'];
+                    $data['date'] = date_format(date_create($result['date']), 'd/m/Y');
+                    $data['name'] = $result['name'];
+                    $data['questions'] = $questions;
+                    $data['options'] = $options;
+                    $data['answers'] = $answers;
+                    $data['ecoPoints'] = $result['ecoPoints'];
+                }
+                else {
+                    $errors['eid'] = 'Quizzes ID does not exist or has more then one!';
                 }
             }
             break;
@@ -550,12 +667,18 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
         case 'getRewardItems':
             $result = $mysqli -> query("SELECT * FROM items");
 
-            $items = [];
-            while($row = $result -> fetch_array(MYSQLI_ASSOC)) {
-                $items[] = $row;
+            if ($result -> num_rows > 0) {
+                $items = [];
+                while($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $items[] = $row;
+                }
+
+                $data['items'] = $items;
+            }
+            else {
+                $errors['items'] = 'No items to list!';
             }
 
-            $data['items'] = $items;
             break;
 
         case 'redeemRewardItems':
@@ -690,27 +813,32 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
             case 'getRecentEvents':
                 $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
 
-                $events = [];
-                $i = 0;
-                while (($row = $result -> fetch_array(MYSQLI_ASSOC)) && $i < 10) {
-                    $date = date_format(date_create($row['dateTime']), 'd/m/Y');
-                    if (array_key_exists($date, $events)) {
-                        $newIndex = count($events[$date]);
-                        $events[$date][$newIndex]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
-                        $events[$date][$newIndex]['event'] = $row['event'];
-                        $events[$date][$newIndex]['location'] = $row['location'];
-                        $events[$date][$newIndex]['ecoPoints'] = $row['ecoPoints'];
+                if ($result -> num_rows > 0) {
+                    $events = [];
+                    $i = 0;
+                    while (($row = $result -> fetch_array(MYSQLI_ASSOC)) && $i < 10) {
+                        $date = date_format(date_create($row['dateTime']), 'd/m/Y');
+                        if (array_key_exists($date, $events)) {
+                            $newIndex = count($events[$date]);
+                            $events[$date][$newIndex]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                            $events[$date][$newIndex]['event'] = $row['event'];
+                            $events[$date][$newIndex]['location'] = $row['location'];
+                            $events[$date][$newIndex]['ecoPoints'] = $row['ecoPoints'];
+                        }
+                        else {
+                            $events[$date][0]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                            $events[$date][0]['event'] = $row['event'];
+                            $events[$date][0]['location'] = $row['location'];
+                            $events[$date][0]['ecoPoints'] = $row['ecoPoints'];
+                            $i++;
+                        }
                     }
-                    else {
-                        $events[$date][0]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
-                        $events[$date][0]['event'] = $row['event'];
-                        $events[$date][0]['location'] = $row['location'];
-                        $events[$date][0]['ecoPoints'] = $row['ecoPoints'];
-                        $i++;
-                    }
-                }
 
-                $data['events'] = $events;
+                    $data['events'] = $events;
+                }
+                else {
+                    $errors['events'] = 'No events to list!';
+                }
                 break;
     }
 
