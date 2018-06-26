@@ -686,6 +686,32 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 
                 $data['quiz'] = $quiz;
                 break;
+
+            case 'getRecentEvents':
+                $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
+
+                $events = [];
+                $i = 0;
+                while (($row = $result -> fetch_array(MYSQLI_ASSOC)) && $i < 10) {
+                    $date = date_format(date_create($row['dateTime']), 'd/m/Y');
+                    if (array_key_exists($date, $events)) {
+                        $newIndex = count($events[$date]);
+                        $events[$date][$newIndex]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                        $events[$date][$newIndex]['event'] = $row['event'];
+                        $events[$date][$newIndex]['location'] = $row['location'];
+                        $events[$date][$newIndex]['ecoPoints'] = $row['ecoPoints'];
+                    }
+                    else {
+                        $events[$date][0]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                        $events[$date][0]['event'] = $row['event'];
+                        $events[$date][0]['location'] = $row['location'];
+                        $events[$date][0]['ecoPoints'] = $row['ecoPoints'];
+                        $i++;
+                    }
+                }
+
+                $data['events'] = $events;
+                break;
     }
 
     if (empty($errors)) {

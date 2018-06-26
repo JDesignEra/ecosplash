@@ -1,0 +1,37 @@
+{% extends "base.html.twig" %}
+{% set title = 'Enter Tittle Here' %}
+
+{% block main %}
+    <!--
+    Your main content html goes here, check https://getbootstrap.com/docs/4.1/components/ for the components you need.
+    Navigation, Foorter, Bootstrap CSS Links, Script Links will all be retrive from extends "base.html.twig". Therefore, you neither have to
+    relink anything probably nor copy & paste the navigation & footer.
+
+    Required Steps For Setting Up:
+    1. Download XAMPP (PHP 7.2.6) from https://www.apachefriends.org/index.html.
+    2. Delete all the files in { xampp/htdocs/ } folder.
+    2. Place the project files of ecosplash in { xampp/htdocs/ } folder. ( You can download the file off GitHub and extract or
+        you can use GitKraken if you know how to clone, commit, push and pull with version controlled software ).
+    3. If you download directly from GitHub, make sure that the files in { htdocs/ } are the contents/files in ecosplash-master and
+        not the whole ecosplash-master folder.
+    3, Run XAMPP Control Panel, and start Apache & MySQL.
+    4. Enter [ localhost ] into your browser to view the pages.
+    5. You can navigate to your page with [ localhost/folder-name ] if you want to view the page you are working on.
+
+    Required Steps For Working & Testing:
+    1. Make a copy of this template and rename it appropriately as name.html.twig (e.g. signup.html.twig)
+        & make sure your template file are in { assets/templates/ } folder.
+    2. Change % title % variable accordingly to the appropiate name.
+    3. Make a new folder in the root directory with the apporiate names (e.g. /signup).
+    4. Copy & Paste index.php from { skeleton/ } folder intp the folder you just created.
+    5. Open up index.php and change % echo $twig->render('name.html.twig'); % to your template file name (e.g. signup.html.twig).
+
+    Notes:
+    - If cards are use, card should have a class of shadow to add the shadow effects to it.
+    - primary and secondary default class colors have been changed to the
+      brand primary & secondary colors (e.g. text-primary, btn-primary, text-secondary, btn-secondary & e.t.c).
+    -->
+{% endblock %}
+
+{% block afterMain %}{% endblock %}
+{% block scripts %}{% endblock %}
