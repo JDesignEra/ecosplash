@@ -8,13 +8,17 @@ if (!(localStorage.getItem('accType') || sessionStorage.getItem('accType'))) {
 document.title = 'EcoSplash \u00B7 ' + (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
 var $uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     $sectionFocus = $('section#profile'),
-    $accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType'));
+    $accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType')),
+
+    uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
+    sectionFocus = doc.querySelector('section#profile'),
+    accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType'));
 
 if ($accType !== '' && $accType !== null) {
     switch ($accType) {
         case '0':
-            $sectionFocus.find('#quiz-list.card').remove();
-            $sectionFocus.find('#event-list.card').remove();
+            sectionFocus.querySelector('#quiz-list.card').remove();
+            sectionFocus.querySelector('#event-list.card').remove();
 
             /* get today's daily challenges */
             $.ajax({
@@ -26,8 +30,9 @@ if ($accType !== '' && $accType !== null) {
             .done(function(data) {
                 // console.log(data);  // Debugging Purpose
                 if (data.success) {
-                    $sectionFocus.find('form#dailyTask label.form-check-label').each(function(i) {
-                        $(this).html(data.tasks[i]);
+                    focus = sectionFocus.querySelectorAll('form#dailyTask label.form-check-label');
+                    focus.forEach(function(el, i) {
+                        el.innerHTML = data.tasks[i];
                     });
                 }
             });
@@ -36,24 +41,25 @@ if ($accType !== '' && $accType !== null) {
             $.ajax({
                 type: 'POST',
                 url: 'assets/db/db.php',
-                data: 'uid=' + $uid + '&action=getEventHistories',
+                data: 'uid=' + uid + '&action=getEventHistories',
                 dataType: 'json'
             })
             .done(function(data) {
                 if (data.success) {
-                    console.log(data); // Debugging Purpose
-                    $.get('./assets/templates/profile/event_histories.html', function(content) {
-                        $sectionFocus.find('#event-history-table').html(content);
-                        $sectionFocus.find('#event-history-table tbody').empty();
+                    // console.log(data); // Debugging Purpose
+                    httpGet('./assets/templates/profile/event_histories.html', function(content) {
+                        sectionFocus.querySelector('#event-history-table').innerHTML = content;
+                        sectionFocus.querySelector('#event-history-table tbody').innerHTML = '';
 
                         for (var i = 0; i < data.event_histories.length && i < 10; i++) {
                             var $row = $(content).find('tbody tr').clone().attr('id', data.event_histories[i]['eid']);
+
                             $('td', $row).eq(0).html(data.event_histories[i]['eid']);
                             $('td', $row).eq(1).html(data.event_histories[i]['joinDate']);
                             $('td', $row).eq(2).html(data.event_histories[i]['event']);
                             $('td', $row).eq(3).html(data.event_histories[i]['status']);
 
-                            $sectionFocus.find('#event-history-table tbody').append($row);
+                            $(sectionFocus.querySelector('#event-history-table tbody')).append($row);
                         }
 
                         enableTooltip();
@@ -62,60 +68,65 @@ if ($accType !== '' && $accType !== null) {
             });
 
             /* event history view more button */
-            $($sectionFocus).on('click', '#event-history-table button#view-more', function() {
-                var $eid = $(this).parent().parent().attr('id');
+            window.onload = function() {
+                focus = sectionFocus.querySelectorAll('#event-history-table button#view-more');
+                focus.forEach(function(el) {
+                    el.addEventListener('click', function() {
+                        var eid = el.parentElement.parentElement.id;
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'assets/db/db.php',
-                    data: 'uid=' + $uid + '&eid=' + $eid + '&action=getEventHistory',
-                    dataType: 'json'
-                })
-                .done(function(data) {
-                    // console.log(data);  // Debugging Purpose
-                    if (data.success) {
-                        $.get('./assets/templates/profile/event_history.html', function(content) {
-                            var $focus = $('#view-more-modal');
-                            $focus.find('.modal-body').html(content);
-                            $focus.find('.modal-header .modal-title').html('# ' + data.eid + ' On ' + data.joinDate);
-                            $focus.find('.modal-body table tbody').empty();
+                        $.ajax({
+                            type: 'POST',
+                            url: 'assets/db/db.php',
+                            data: 'uid=' + uid + '&eid=' + eid + '&action=getEventHistory',
+                            dataType: 'json'
+                        })
+                        .done(function(data) {
+                            // console.log(data);  // Debugging Purpose
+                            if (data.success) {
+                                $.get('./assets/templates/profile/event_history.html', function(content) {
+                                    focus = doc.getElementById('view-more-modal');
+                                    focus.getElementsByClassName('modal-body')[0].innerHTML = content;
+                                    focus.querySelector('.modal-header .modal-title').innerHTML = '# ' + data.eid + ' On ' + data.joinDate;
+                                    focus.querySelector('.modal-body table tbody').innerHTML = '';
 
-                            var $row = $(content).find('tr').clone();
-                            $('th', $row).html('Joined Date');
-                            $('td', $row).html(data.joinDate);
-                            $focus.find('.modal-body table tbody').append($row);
+                                    var $row = $(content).find('tr').clone();
+                                    $('th', $row).html('Joined Date');
+                                    $('td', $row).html(data.joinDate);
+                                    $(focus.querySelector('.modal-body table tbody')).append($row);
 
-                            $row = $(content).find('tr').clone();
-                            $('th', $row).html('Event');
-                            $('td', $row).html(data.event);
-                            $focus.find('.modal-body table tbody').append($row);
+                                    $row = $(content).find('tr').clone();
+                                    $('th', $row).html('Event');
+                                    $('td', $row).html(data.event);
+                                    $(focus.querySelector('.modal-body table tbody')).append($row);
 
-                            $row = $(content).find('tr').clone();
-                            $('th', $row).html('Event Date');
-                            $('td', $row).html(data.date);
-                            $focus.find('.modal-body table tbody').append($row);
+                                    $row = $(content).find('tr').clone();
+                                    $('th', $row).html('Event Date');
+                                    $('td', $row).html(data.date);
+                                    $(focus.querySelector('.modal-body table tbody')).append($row);
 
-                            $row = $(content).find('tr').clone();
-                            $('th', $row).html('Event Time');
-                            $('td', $row).html(data.time);
-                            $focus.find('.modal-body table tbody').append($row);
+                                    $row = $(content).find('tr').clone();
+                                    $('th', $row).html('Event Time');
+                                    $('td', $row).html(data.time);
+                                    $(focus.querySelector('.modal-body table tbody')).append($row);
 
-                            $row = $(content).find('tr').clone();
-                            $('th', $row).html('EcoPoints');
-                            $('td', $row).html(data.ecoPoints);
-                            $focus.find('.modal-body table tbody').append($row);
+                                    $row = $(content).find('tr').clone();
+                                    $('th', $row).html('EcoPoints');
+                                    $('td', $row).html(data.ecoPoints);
+                                    $(focus.querySelector('.modal-body table tbody')).append($row);
 
-                            $row = $(content).find('tr').clone();
-                            $('th', $row).html('Status');
-                            $('td', $row).html(data.status);
-                            $focus.find('.modal-body table').append($row);
+                                    $row = $(content).find('tr').clone();
+                                    $('th', $row).html('Status');
+                                    $('td', $row).html(data.status);
+                                    $(focus.querySelector('.modal-body table tbody')).append($row);
+                                });
+
+                                $('[tooltip-toggle=tooltip]').tooltip('hide');
+                                $('#view-more-modal').modal('show');
+                            }
                         });
-
-                        $('[tooltip-toggle=tooltip]').tooltip('hide');
-                        $('#view-more-modal').modal('show');
-                    }
+                    });
                 });
-            });
+            }
 
             /* get user recent redeemed history */
             $.ajax({

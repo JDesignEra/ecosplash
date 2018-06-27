@@ -1,4 +1,5 @@
 'use strict';
+var focus;
 
 loginForm('loginForm');
 loginForm('mLoginForm')
@@ -8,58 +9,76 @@ forgotPasswordForm('fpass_1');
 forgotPasswordForm('fpass_2');
 forgotPasswordForm('fpass_3');
 
-/* logout */
-$(document).on('click', '#logout', function(e) {
-    e.preventDefault();
-
-    if (localStorage.getItem('accType')) {
-        localStorage.clear();
-    }
-    else {
-        sessionStorage.clear();
-    }
-
-    var $modal = $('#logoutModal');
-
-    $modal.on('shown.bs.modal', function() {
-        $modal.find('button[data-dismiss=modal]').focus();
-        setTimeout(function () {
-            $modal.modal('hide');
-        }, 2000);
-    });
-
-    $modal.on('hide.bs.modal', function() {
-        location.href = './';
-    });
-
-    $modal.modal("show");
+/* sign up animation */
+$('#signUpCard .card-header a[href="#user"]').on('show.bs.tab', function() {
+    focus = doc.querySelector('#signUpCard #user');
+    focus.classList.remove('fadeIn');
+    focus.classList.add('fadeIn');
 });
 
+$('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function() {
+    focus = doc.querySelector('#signUpCard #organization');
+    focus.classList.remove('fadeIn');
+    focus.classList.add('fadeIn');
+});
+
+/* logout on click */
+window.onload = function() {
+    if (doc.getElementById('logout') != null) {
+        doc.getElementById('logout').onclick = function(e) {
+            e.preventDefault();
+            if (localStorage.getItem('accType')) {
+                localStorage.clear();
+            }
+            else {
+                sessionStorage.clear();
+            }
+
+            $('#logoutModal').on('shown.bs.modal', function() {
+                doc.querySelector('#logoutModal button.btn-outline-danger[data-dismiss=modal]').focus();
+                setTimeout(function () {
+                    $('#logoutModal').modal('hide');
+                }, 2000);
+            });
+
+            $('#logoutModal').on('hide.bs.modal', function() {
+                location.href = './';
+            });
+
+            $('#logoutModal').modal("show");
+        };
+    }
+}
+
 /* login */
-function loginForm($formID) {
-    $('form#' + $formID).submit(function(e) {
+function loginForm(formID) {
+    doc.querySelector('form#' + formID).onsubmit = function(e) {
         e.preventDefault();
 
-        $(this).find(".form-label-group .feedback").empty();
-        $(this).find(".form-label-group").removeClass("invalid");
-        $(this).find(".form-label-group").removeClass("valid");
+        focus = this.querySelectorAll('.form-label-group');
+        focus.forEach(function(el) {
+            el.classList.remove('invalid');
+            el.classList.remove('valid');
+        });
 
-        var $data;
-        if (!$(this).find('#remember').is(':checked')) {
-            $data = $(this).serialize() + '&remember=&action=login';
-        }
-        else {
-            $data = $(this).serialize() + '&action=login';
+        focus = this.querySelectorAll('.form-label-group .feedback');
+        focus.forEach(function(el) {
+            el.innerHTML = '';
+        });
+
+        var data = new FormData(this);
+        data.append('action', 'login');
+        if (!this.querySelector('#remember').checked) {
+            data.append('remember', '');
         }
 
         $.ajax({
             type: 'POST',
             url: 'assets/db/db.php',
-            data: $data,
+            data: data,
             dataType: 'json',
-            error: function(data) {
-                console.log(data);
-            }
+            processData: false,
+            contentType: false
         })
         .done(function(data) {
             // console.log(data); // Debugging Purpose
@@ -75,221 +94,257 @@ function loginForm($formID) {
                     sessionStorage.setItem('accType', data.accType);
                 }
 
-                var $modal = $('#loginSuccessModal');
-                $modal.find('.name').html(data.name);
+                var modal = doc.getElementById('loginSuccessModal');
+                modal.getElementsByClassName('name')[0].innerHTML = data.name;
 
-                $modal.on('shown.bs.modal', function() {
-                    $modal.find('button[data-dismiss=modal]').focus();
+                $(modal).on('shown.bs.modal', function() {
+                    modal.querySelector('button[data-dismiss=modal]').focus();
                     setTimeout(function () {
-                        $modal.modal('hide');
+                        $(modal).modal('hide');
                     }, 2000);
                 });
 
-                $modal.on('hide.bs.modal', function() {
+                $(modal).on('hide.bs.modal', function() {
                     location.href = './';
                 });
 
-                $modal.modal("show");
+                $(modal).modal("show");
             }
             else if (data.errors) {
-                var $focus = $('#' + $formID + ' #password');
+                focus = doc.querySelector('#' + formID + ' #password');
                 if (data.errors.password) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.password);
+                    focus.classList.add('invalid');
+                    focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
                 }
                 else {
-                    $focus.addClass('valid');
+                    focus.classList.remove('valid');
                 }
 
-                $focus = $('#' + $formID + ' #email');
+                focus = doc.querySelector('#' + formID + ' #email');
                 if (data.errors.email) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.email);
+                    focus.classList.add('invalid');
+                    focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
                 }
                 else {
-                    $focus.addClass('valid');
+                    focus.classList.add('valid');
                 }
             }
         });
-    });
+    };
 }
 
 /* sign up */
-function signupForm($formID) {
-    $('form#' + $formID).submit(function(e) {
-        e.preventDefault();
+function signupForm(formID) {
+    if (doc.querySelector('form#' + formID) != null) {
+        doc.querySelector('form#' + formID).onsubmit = function(e) {
+            e.preventDefault();
 
-        $(this).find('.form-label-group .feedback').empty();
-        $(this).find('.form-label-group').removeClass("invalid");
-        $(this).find('.form-label-group').removeClass("valid");
-        $(this).find('button[type=submit] .signup-text').addClass('d-none');
-        $(this).find('button[type=submit] .load-text').removeClass('d-none');
+            focus = this.querySelectorAll('.form-label-group');
+            focus.forEach(function(el) {
+                el.classList.remove('invalid');
+                el.classList.remove('valid');
+            });
 
-        $.ajax({
-            type: 'POST',
-            url: 'assets/db/db.php',
-            data: $(this).serialize() + '&action=' + $formID,
-            dataType: 'json'
-        })
-        .done(function(data) {
-            // console.log(data); // Debugging Purpose
-            $('form#' + $formID).find('button[type=submit] .signup-text').removeClass('d-none');
-            $('form#' + $formID).find('button[type=submit] .load-text').addClass('d-none');
+            focus = this.querySelectorAll('.form-label-group .feedback');
+            focus.forEach(function(el) {
+                el.innerHTML = '';
+            });
 
-            if (data.success) {
-                var $modal = $('#signupModal');
+            this.querySelector('button[type=submit] .signup-text').classList.add('d-none');
+            this.querySelector('button[type=submit] .load-text').classList.remove('d-none');
 
-                $modal.on('shown.bs.modal', function() {
-                    $modal.find('button[data-dimiss=modal]').focus();
+            var data = new FormData(this);
+            data.append('action', formID);
 
-                    setTimeout(function () {
-                        $modal.modal('hide');
-                    }, 2000);
-                });
+            $.ajax({
+                type: 'POST',
+                url: 'assets/db/db.php',
+                data: data,
+                dataType: 'json',
+                processData: false,
+                contentType: false
+            })
+            .done(function(data) {
+                // console.log(data); // Debugging Purpose
+                focus = doc.querySelector('form#' + formID);
+                focus.querySelector('button[type=submit] .signup-text').classList.remove('d-none');
+                focus.querySelector('button[type=submit] .load-text').classList.add('d-none');
 
-                $modal.on('hide.bs.modal', function() {
-                    location.href = "./";
-                });
+                if (data.success) {
+                    var modal = doc.getElementById('signupModal');
 
-                $modal.modal("show");
-            }
-            else if (data.errors) {
-                var $focus = $('#' + $formID + ' #password');
-                if (data.errors.password) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.password);
-                }
-                else {
-                    $focus.addClass('valid');
-                }
-
-                $focus = $('#' + $formID + ' #email');
-                if (data.errors.email) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.email);
-                }
-                else {
-                    $focus.addClass('valid');
-                }
-
-                $focus = $('#' + $formID + ' #name');
-                if (data.errors.name) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.name);
-                }
-                else {
-                    $focus.addClass('valid');
-                }
-            }
-        });
-    });
-}
-
-/* forgot password */
-function forgotPasswordForm($formID) {
-    $('#' + $formID).submit(function(e) {
-        e.preventDefault();
-
-        $(this).find('.form-label-group .feedback').empty();
-        $(this).find('.form-label-group').removeClass("invalid");
-        $(this).find('.form-label-group').removeClass("valid");
-        $(this).find('button[type=submit] .next-text').addClass('d-none');
-        $(this).find('button[type=submit] .change-pass-text').addClass('d-none');
-        $(this).find('button[type=submit] .load-text').removeClass('d-none');
-
-        var $data = $(this).serialize() + '&action=' + $formID;
-        if ($formID == 'fpass_2') {
-            $data = $(this).serialize() + '&email=' + $('#fpass_1 input[name=email]').val() + '&action=' + $formID;
-        }
-        else if ($formID == 'fpass_3') {
-            $data = $(this).serialize() + '&email=' + $('#fpass_1 input[name=email]').val() + '&fcode=' + $('#fpass_2 input[name=fcode]').val() + '&action=' + $formID;
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: 'assets/db/db.php',
-            data: $data,
-            dataType: 'json'
-        })
-        .done(function(data) {
-            // console.log(data); // Debugging Purpose
-            $('form#fpass_1').find('button[type=submit] .next-text').removeClass('d-none');
-            $('form#fpass_3').find('button[type=submit] .change-pass-text').removeClass('d-none');
-            $('form#' + $formID).find('button[type=submit] .load-text').addClass('d-none');
-
-            if (data.success) {
-                if ($formID == 'fpass_1') {
-                    $('#' + $formID).addClass('fadeOutLeft').one($animationEnd, function() {
-                        $('#' + $formID).addClass('d-none');
-                        $('#' + $formID).removeClass('fadeOutLeft');
-
-                        $('#fpass_2').addClass('fadeInRight d-block').one($animationEnd, function() {
-                            $('#fpass_2').removeClass('fadeInRight');
-                        });
-                    });
-                }
-                else if ($formID == 'fpass_2') {
-                    $('#' + $formID).addClass('fadeOutLeft').one($animationEnd, function() {
-                        $('#' + $formID).addClass('d-none');
-                        $('#' + $formID).removeClass('fadeOutLeft d-block');
-
-                        $('#fpass_3').addClass('fadeInRight d-block').one($animationEnd, function() {
-                            $('#fpass_3').removeClass('fadeInRight');
-                        });
-                    });
-                }
-                else if ($formID == 'fpass_3') {
-                    var $modal = $('#fpassModal');
-
-                    $modal.on('shown.bs.modal', function() {
-                        $modal.find('button[data-dimiss=modal]').focus();
+                    $(modal).on('shown.bs.modal', function() {
+                        modal.querySelector('button[data-dismiss=modal]').focus();
 
                         setTimeout(function () {
-                            $modal.modal('hide');
+                            $(modal).modal('hide');
                         }, 2000);
                     });
 
-                    $modal.on('hide.bs.modal', function() {
+                    $(modal).on('hide.bs.modal', function() {
                         location.href = "./";
                     });
 
-                    $modal.modal("show");
+                    $(modal).modal("show");
                 }
+                else if (data.errors) {
+                    var focus = doc.querySelector('form#' + formID + ' #password');
+                    if (data.errors.password) {
+                        focus.classList.add('invalid');
+                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
+                    }
+                    else {
+                        focus.classList.add('valid');
+                    }
+
+                    focus = doc.querySelector('#' + formID + ' #email');
+                    if (data.errors.email) {
+                        focus.classList.add('invalid');
+                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
+                    }
+                    else {
+                        focus.classList.add('valid');
+                    }
+
+                    focus = doc.querySelector('#' + formID + ' #name');
+                    if (data.errors.name) {
+                        focus.classList.add('invalid');
+                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.name;
+                    }
+                    else {
+                        focus.classList.add('valid');
+                    }
+                }
+            });
+        };
+    }
+}
+
+/* forgot password */
+function forgotPasswordForm(formID) {
+    if (doc.querySelector('#' + formID) != null) {
+        doc.querySelector('#' + formID).onsubmit = function(e) {
+            e.preventDefault();
+
+            focus = this.querySelectorAll('.form-label-group');
+            focus.forEach(function(el) {
+                el.classList.remove('invalid');
+                el.classList.remove('valid');
+            });
+
+            focus = this.querySelectorAll('.form-label-group .feedback');
+            focus.forEach(function(el) {
+                el.innerHTML = '';
+            });
+
+            if (formID == 'fpass_1') {
+                this.querySelector('button[type=submit] .next-text').classList.add('d-none');
+                this.querySelector('button[type=submit] .load-text').classList.remove('d-none');
             }
-            else if (data.errors) {
-                var $focus = $('#' + $formID + ' #email')
-                if (data.errors.email) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.email);
-                }
-                else {
-                    $focus.addClass('valid');
-                }
 
-                $focus = $('#' + $formID + ' #fcode')
-                if (data.errors.fcode) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.fcode);
-                }
-                else {
-                    $focus.addClass('valid');
-                }
-
-                $focus = $('#' + $formID + ' #password')
-                if (data.errors.password) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.password);
-                }
-                else {
-                    $focus.addClass('valid');
-                }
-
-                $focus = $('#' + $formID + ' #cfmPassword')
-                if (data.errors.cfmPassword) {
-                    $focus.addClass('invalid');
-                    $focus.find('.feedback').html(data.errors.cfmPassword);
-                }
+            if (formID == 'fpass_3') {
+                this.querySelector('button[type=submit] .change-pass-text').classList.add('d-none');
+                this.querySelector('button[type=submit] .load-text').classList.remove('d-none');
             }
-        });
-    });
+
+            var data = new FormData(this);
+            data.append('action', formID);
+
+            if (formID == 'fpass_2') {
+                data.append('email', doc.querySelector('#fpass_1 input[name=email]').value);
+            }
+            else if (formID == 'fpass_3') {
+                data.append('email', doc.querySelector('#fpass_1 input[name=email]').value);
+                data.append('fcode', doc.querySelector('#fpass_2 input[name=fcode]').value);
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: 'assets/db/db.php',
+                data: data,
+                dataType: 'json',
+                processData: false,
+                contentType: false
+            })
+            .done(function(data) {
+                console.log(data);  // Debugging Purpose
+                doc.querySelector('form#fpass_1 button[type=submit] .next-text').classList.remove('d-none');
+                doc.querySelector('form#fpass_3 button[type=submit] .change-pass-text').classList.remove('d-none');
+
+                if (formID == 'fpass_1' || formID == 'fpass_3') {
+                    doc.querySelector('form#' + formID + ' button[type=submit] .load-text').classList.add('d-none');
+                }
+
+                if (data.success) {
+                    if (formID == 'fpass_1') {
+                        $('#' + formID).addClass('fadeOutLeft').one($animationEnd, function() {
+                            doc.querySelector('#' + formID).classList.add('d-none');
+                            doc.querySelector('#' + formID).classList.remove('fadeOutLeft');
+
+                            $('#fpass_2').addClass('fadeInRight d-block').one($animationEnd, function() {
+                                doc.getElementById('fpass_2').classList.add('fadeInRight');
+                            });
+                        });
+                    }
+                    else if (formID == 'fpass_2') {
+                        $('#' + formID).addClass('fadeOutLeft').one($animationEnd, function() {
+                            doc.querySelector('#' + formID).classList.add('d-none');
+                            doc.querySelector('#' + formID).classList.remove('fadeOutLeft', 'd-block');
+
+                            $('#fpass_3').addClass('fadeInRight d-block').one($animationEnd, function() {
+                                doc.getElementById('fpass_3').classList.remove('fadeInRight');
+                            });
+                        });
+                    }
+                    else if (formID == 'fpass_3') {
+                        var modal = doc.getElementById('fpassModal');
+
+                        setTimeout(function () {
+                            $(modal).modal('hide');
+                        }, 2000);
+
+                        $(modal).on('hide.bs.modal', function() {
+                            location.href = "./";
+                        });
+
+                        $(modal).modal('show');
+                    }
+                }
+                else if (data.errors) {
+                    focus = doc.querySelector('#fpass_1 #email');
+                    if (data.errors.email) {
+                        focus.classList.add('invalid');
+                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
+                    }
+                    else {
+                        focus.classList.add('valid');
+                    }
+
+                    focus = doc.querySelector('#fpass_2 #fcode');
+                    if (data.errors.fcode) {
+                        focus.classList.add('invalid');
+                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.fcode;
+                    }
+                    else {
+                        focus.classList.remove('valid');
+                    }
+
+                    focus = doc.querySelector('#fpass_3 #password');
+                    if (data.errors.password) {
+                        focus.classList.add('invalid');
+                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
+                    }
+                    else {
+                        focus.classList.add('valid');
+                    }
+
+                    focus = doc.querySelector('#fpass_3 #cfmPassword');
+                    if (data.errors.cfmPassword) {
+                        focus.classList.add('invalid');
+                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.cfmPassword;
+                    }
+                }
+            });
+        };
+    }
 }
