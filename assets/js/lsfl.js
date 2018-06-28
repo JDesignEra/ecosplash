@@ -1,6 +1,7 @@
 'use strict';
 var focus;
 
+/* invoke forms onsubmit */
 loginForm('loginForm');
 loginForm('mLoginForm')
 signupForm('uSignupForm');
@@ -23,34 +24,39 @@ $('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function
 });
 
 /* logout on click */
-window.onload = function() {
-    if (doc.getElementById('logout') != null) {
-        doc.getElementById('logout').onclick = function(e) {
-            e.preventDefault();
-            if (localStorage.getItem('accType')) {
-                localStorage.clear();
+addOnload(function() {
+    if (doc.querySelector('.logout') != null) {
+        var focus = doc.querySelectorAll('.logout');
+
+        focus.forEach(function(el) {
+            el.onclick = function(e) {
+                e.preventDefault();
+
+                if (localStorage.getItem('accType')) {
+                    localStorage.clear();
+                }
+                else {
+                    sessionStorage.clear();
+                }
+
+                $('#logoutModal').on('shown.bs.modal', function() {
+                    doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
+                    setTimeout(function () {
+                        $('#logoutModal').modal('hide');
+                    }, 2000);
+                });
+
+                $('#logoutModal').on('hide.bs.modal', function() {
+                    location.href = './';
+                });
+
+                $('#logoutModal').modal("show");
             }
-            else {
-                sessionStorage.clear();
-            }
-
-            $('#logoutModal').on('shown.bs.modal', function() {
-                doc.querySelector('#logoutModal button.btn-outline-danger[data-dismiss=modal]').focus();
-                setTimeout(function () {
-                    $('#logoutModal').modal('hide');
-                }, 2000);
-            });
-
-            $('#logoutModal').on('hide.bs.modal', function() {
-                location.href = './';
-            });
-
-            $('#logoutModal').modal("show");
-        };
+        });
     }
-}
+});
 
-/* login */
+/* login function */
 function loginForm(formID) {
     doc.querySelector('form#' + formID).onsubmit = function(e) {
         e.preventDefault();
@@ -68,19 +74,16 @@ function loginForm(formID) {
 
         var data = new FormData(this);
         data.append('action', 'login');
-        if (!this.querySelector('#remember').checked) {
+
+        if (this.querySelector('#m-remember') != null && !this.querySelector('#m-remember').checked) {
             data.append('remember', '');
         }
 
-        $.ajax({
-            type: 'POST',
-            url: 'assets/db/db.php',
-            data: data,
-            dataType: 'json',
-            processData: false,
-            contentType: false
-        })
-        .done(function(data) {
+        if (this.querySelector('#remember') != null && !this.querySelector('#remember').checked) {
+            data.append('remember', '');
+        }
+
+        httpPost('assets/db/db.php', data, function(data) {
             // console.log(data); // Debugging Purpose
             if (data.success) {
                 if (data.remember) {
@@ -98,7 +101,7 @@ function loginForm(formID) {
                 modal.getElementsByClassName('name')[0].innerHTML = data.name;
 
                 $(modal).on('shown.bs.modal', function() {
-                    modal.querySelector('button[data-dismiss=modal]').focus();
+                    modal.querySelector('button.btn[data-dismiss=modal]').focus();
                     setTimeout(function () {
                         $(modal).modal('hide');
                     }, 2000);
@@ -130,10 +133,10 @@ function loginForm(formID) {
                 }
             }
         });
-    };
+    }
 }
 
-/* sign up */
+/* sign up function */
 function signupForm(formID) {
     if (doc.querySelector('form#' + formID) != null) {
         doc.querySelector('form#' + formID).onsubmit = function(e) {
@@ -156,15 +159,7 @@ function signupForm(formID) {
             var data = new FormData(this);
             data.append('action', formID);
 
-            $.ajax({
-                type: 'POST',
-                url: 'assets/db/db.php',
-                data: data,
-                dataType: 'json',
-                processData: false,
-                contentType: false
-            })
-            .done(function(data) {
+            httpPost('assets/db/db.php', data, function(data) {
                 // console.log(data); // Debugging Purpose
                 focus = doc.querySelector('form#' + formID);
                 focus.querySelector('button[type=submit] .signup-text').classList.remove('d-none');
@@ -174,7 +169,7 @@ function signupForm(formID) {
                     var modal = doc.getElementById('signupModal');
 
                     $(modal).on('shown.bs.modal', function() {
-                        modal.querySelector('button[data-dismiss=modal]').focus();
+                        modal.querySelector('button.btn[data-dismiss=modal]').focus();
 
                         setTimeout(function () {
                             $(modal).modal('hide');
@@ -216,11 +211,11 @@ function signupForm(formID) {
                     }
                 }
             });
-        };
+        }
     }
 }
 
-/* forgot password */
+/* forgot password function */
 function forgotPasswordForm(formID) {
     if (doc.querySelector('#' + formID) != null) {
         doc.querySelector('#' + formID).onsubmit = function(e) {
@@ -258,16 +253,8 @@ function forgotPasswordForm(formID) {
                 data.append('fcode', doc.querySelector('#fpass_2 input[name=fcode]').value);
             }
 
-            $.ajax({
-                type: 'POST',
-                url: 'assets/db/db.php',
-                data: data,
-                dataType: 'json',
-                processData: false,
-                contentType: false
-            })
-            .done(function(data) {
-                console.log(data);  // Debugging Purpose
+            httpPost('assets/db/db.php', data, function(data) {
+                // console.log(data);  // Debugging Purpose
                 doc.querySelector('form#fpass_1 button[type=submit] .next-text').classList.remove('d-none');
                 doc.querySelector('form#fpass_3 button[type=submit] .change-pass-text').classList.remove('d-none');
 
@@ -277,37 +264,52 @@ function forgotPasswordForm(formID) {
 
                 if (data.success) {
                     if (formID == 'fpass_1') {
-                        $('#' + formID).addClass('fadeOutLeft').one($animationEnd, function() {
-                            doc.querySelector('#' + formID).classList.add('d-none');
-                            doc.querySelector('#' + formID).classList.remove('fadeOutLeft');
+                        doc.getElementById('fpass_1').classList.add('fadeOutLeft');
+                        doc.getElementById('fpass_1').addEventListener(animationEnd, function() {
+                            doc.getElementById('fpass_1').classList.add('d-none');
+                            doc.getElementById('fpass_1').classList.remove('fadeOutLeft');
 
-                            $('#fpass_2').addClass('fadeInRight d-block').one($animationEnd, function() {
+                            doc.getElementById('fpass_2').classList.add('fadeInRight', 'd-block');
+                            doc.getElementById('fpass_2').addEventListener(animationEnd, function() {
                                 doc.getElementById('fpass_2').classList.add('fadeInRight');
+
+                                doc.getElementById('fpass_2').removeEventListener(animationEnd, function() {});
                             });
+
+                            doc.getElementById('fpass_1').removeEventListener(animationEnd, function() {});
                         });
                     }
                     else if (formID == 'fpass_2') {
-                        $('#' + formID).addClass('fadeOutLeft').one($animationEnd, function() {
-                            doc.querySelector('#' + formID).classList.add('d-none');
-                            doc.querySelector('#' + formID).classList.remove('fadeOutLeft', 'd-block');
+                        doc.getElementById('fpass_2').classList.add('fadeOutLeft');
+                        doc.getElementById('fpass_2').addEventListener(animationEnd, function() {
+                            doc.getElementById('fpass_2').classList.add('d-none');
+                            doc.getElementById('fpass_2').classList.remove('fadeOutLeft', 'd-block');
 
-                            $('#fpass_3').addClass('fadeInRight d-block').one($animationEnd, function() {
+                            doc.getElementById('fpass_3').classList.add('fadeInRight', 'd-block');
+                            doc.getElementById('fpass_3').addEventListener(animationEnd, function() {
                                 doc.getElementById('fpass_3').classList.remove('fadeInRight');
+
+                                doc.getElementById('fpass_3').removeEventListener(animationEnd, function() {});
                             });
+
+                            doc.getElementById('fpass_2').removeEventListener(animationEnd, function() {});
                         });
                     }
                     else if (formID == 'fpass_3') {
                         var modal = doc.getElementById('fpassModal');
 
-                        setTimeout(function () {
-                            $(modal).modal('hide');
-                        }, 2000);
-
-                        $(modal).on('hide.bs.modal', function() {
-                            location.href = "./";
+                        $(modal).on('shown.bs.modal', function() {
+                            doc.querySelector('#fpassModal button.btn[data-dismiss=modal]').focus();
+                            setTimeout(function () {
+                                $(modal).modal('hide');
+                            }, 2000);
                         });
 
-                        $(modal).modal('show');
+                        $(modal).on('hide.bs.modal', function() {
+                            location.href = './';
+                        });
+
+                        $(modal).modal("show");
                     }
                 }
                 else if (data.errors) {
@@ -345,6 +347,6 @@ function forgotPasswordForm(formID) {
                     }
                 }
             });
-        };
+        }
     }
 }

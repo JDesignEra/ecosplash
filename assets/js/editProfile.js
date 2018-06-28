@@ -280,7 +280,7 @@ function profilePicMouseEnter() {
 function profilePicMouseLeave() {
     $sectionFocus.on('mouseleave', '#basicProfile .pic', function() {
         var $focus = $(this).find('.small');
-        $focus.addClass('flipOutX short').one($animationEnd, function() {
+        $focus.addClass('flipOutX short').one(animationEnd, function() {
             $focus.addClass('d-md-none d-xl-none d-lg-none');
             $focus.removeClass('flipInX short');
             $focus.addClass('flipOutX short');

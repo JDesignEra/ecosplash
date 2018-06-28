@@ -16,12 +16,12 @@ window.onscroll = function(e) {
 }
 
 /* animation end fix */
-var $animationEnd = (function(el) {
+var animationEnd = (function(el) {
     var animations = {
-        "animation": "animationend",
-        "OAnimation": "oAnimationEnd",
-        "MozAnimation": "mozAnimationEnd",
-        "WebkitAnimation": "webkitAnimationEnd"
+        'animation': 'animationend',
+        'OAnimation': 'oAnimationEnd',
+        'MozAnimation': 'mozAnimationEnd',
+        'WebkitAnimation': 'webkitAnimationEnd'
     };
 
     for(var t in animations) {
@@ -29,7 +29,7 @@ var $animationEnd = (function(el) {
             return animations[t];
         }
     }
-})(document.createElement('e'));
+})(doc.createElement('el'));
 
 /* nav link active state */
 var activeURL = location.href.split('/'),
@@ -67,7 +67,7 @@ else if (localStorage.getItem('accType') == 1 || sessionStorage.getItem('accType
     });
 }
 
-$('#fixed-action').on('shown.bs.dropdown', '#mProfileDropdown', function() {
+$('#fixed-action').on('shown.bs.dropdown', '#mProfileDropdown', function(e) {
     doc.querySelector('#fixed-action #profileAction.btn .fa-user-circle').classList.add('d-none');
     doc.querySelector('#fixed-action #profileAction.btn .fa-times').classList.remove('d-none');
     $('#mProfileDropdown > button[tooltip-toggle=fab-tooltip]').tooltip('show');
@@ -76,9 +76,10 @@ $('#fixed-action').on('shown.bs.dropdown', '#mProfileDropdown', function() {
     focus.forEach(function(el) {
         el.classList.add('slideInUp', 'short');
 
-        $(el).one($animationEnd, function() {
+        el.addEventListener(animationEnd, function() {
             $(el).tooltip('show');
             el.classList.remove('slideInUp', 'short');
+            el.removeEventListener(animationEnd, function() {});
         });
     });
 });
@@ -96,41 +97,39 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 
 /* periodic worker every 30 mins */
 (function worker() {
-    $.ajax({
-        type: 'POST',
-        url: 'assets/db/db.php',
-        data: 'uid=' + (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid') ? sessionStorage.getItem('uid') : '') + '&action=getUser',
-        dataType: 'json',
-        success: function(data) {
-            // console.log(data); // Debugging Purpose
-            if (data.success) {
-                setTimeout(function () {
-                    doc.querySelector('nav .nav-right #name').innerHTML = data.name;
-                    doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
-                    doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
+    var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
+    data = new FormData();
 
-                    doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints').setAttribute('data-original-title', data.ecoPoints + ' EcoPoints');
+    data.append('uid', uid);
+    data.append('action', 'getUser');
 
-                    doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications').setAttribute('data-original-title', 'Notifications (' + data.newNotifications + ')');
-                }, 500);
+    httpPost('assets/db/db.php', data, function(data) {
+        addOnload(function() {
+            if (uid) {
+                doc.querySelector('nav .nav-right #name').innerHTML = data.name;
+                doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
+                doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
 
-                if (doc.querySelector('section#redeem h5#ecopoints') != null) {
-                    doc.querySelector('section#redeem h5#ecopoints').innerHTML = data.ecoPoints;
-                }
+                doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints').setAttribute('data-original-title', data.ecoPoints + ' EcoPoints');
+
+                doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications').setAttribute('data-original-title', 'Notifications (' + data.newNotifications + ')');
             }
-        },
-        complete: function() {
-            setTimeout(function () {
-                worker();
-            }, 1800000);    // 30 Mins
+        });
+
+        if (doc.querySelector('section#redeem h5#ecopoints') != null) {
+            doc.querySelector('section#redeem h5#ecopoints').innerHTML = data.ecoPoints;
         }
+
+        setTimeout(function () {
+            worker();
+        }, 1800000);    // 30 Mins
     });
 })();
 
 /* footer year */
 doc.querySelector('footer .year').innerHTML = new Date().getFullYear();
 
-/* enable or re-enable tooltips */
+/* invoke tooltips */
 enableTooltip();
 enableNavToolTip()
 enableFabToolTip();
@@ -165,14 +164,14 @@ else {
     enableFormToolTip();
 }
 
-window.onresize = function() {
+addOnResize(function() {
     if (window.outerWidth < 767) {
         enableMobile_FormToolTip();
     }
     else {
         enableFormToolTip();
     }
-};
+});
 
 /* mobile lanscape / portrait fab tooltip fix */
 if (window.outerHeight < 565) {
@@ -182,7 +181,7 @@ else {
     fabTooltip_mobilePortrait();
 }
 
-window.onresize = function() {
+addOnResize(function() {
     if (window.outerHeight < 565) {
         fabTooltip_mobileLandscape();
         $('[toggle-tooltip=fab-tooltip]').tooltip('hide');
@@ -201,8 +200,9 @@ window.onresize = function() {
             $('#mProfileDropdown #profileAction').dropdown('toggle');
         }
     }
-};
+});
 
+/* tooltips function */
 function enableTooltip() {
     $(function () {
         $('[tooltip-toggle="tooltip"]').tooltip({
@@ -328,11 +328,64 @@ function httpGet(url, callback) {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var data = httpRequest.responseText;
+
             if (callback) {
                 callback(data);
             }
         }
     };
-
     httpRequest.send(null);
+}
+
+/* javascript ajax post function */
+function httpPost (url, params, callback) {
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.open('POST', url, true);
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var data = JSON.parse(httpRequest.responseText);
+
+            if (callback) {
+                callback(data);
+            }
+        }
+    };
+    httpRequest.send(params);
+}
+
+/* multiple window.onload function */
+function addOnload(func) {
+    var oldOnload = window.onload;
+
+    if (typeof window.onload != 'function') {
+        window.onload = func;
+    }
+    else {
+        window.onload = function() {
+            if (oldOnload) {
+                oldOnload();
+            }
+
+            func();
+        }
+    }
+}
+
+/* multiple window.onload function */
+function addOnResize(func) {
+    var oldOnResize = window.onresize;
+
+    if (typeof window.onresize != 'function') {
+        window.onresize = func;
+    }
+    else {
+        window.onresize = function() {
+            if (oldOnResize) {
+                oldOnResize();
+            }
+
+            func();
+        }
+    }
 }

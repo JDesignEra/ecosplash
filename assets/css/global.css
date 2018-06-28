@@ -123,11 +123,11 @@ main.home {
 }
 
 /* dropdown menu */
-#logout.dropdown-item {
+.logout.dropdown-item {
     color: #dc3545;
 }
 
-#logout.dropdown-item:hover {
+.logout.dropdown-item:hover {
     color: #dc3545;
     background-color: #fae3e5;
 }
