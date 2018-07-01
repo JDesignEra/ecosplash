@@ -4,7 +4,7 @@ Frameworks / Libraries / APIs
 ------
 * [Bootstrap v4.1](https://getbootstrap.com/)
 * [Chart.js v2.7.1] (https://www.chartjs.org/)
-* [Composer v1.6.5](https://getcomposer.org/)
+* [Composer v1.6.5] (https://getcomposer.org/)
 * [FontAwesome Pro v5.0.13](https://fontawesome.com/)
 * [jQuery v3.3.1](https://jquery.com/)
 * [League OAuth2 v2.3.0](https://github.com/thephpleague/oauth2-client)
