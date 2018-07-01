@@ -1,20 +1,15 @@
-// TODO Organization Event List & Quiz List
 'use strict';
-
-if (!(localStorage.getItem('accType') || sessionStorage.getItem('accType'))) {
-    location.href = './'
-}
+securePage();
 
 document.title = 'EcoSplash \u00B7 ' + (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
-var $uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
-    $sectionFocus = $('section#profile'),
-    $accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType')),
 
-    uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
+var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     sectionFocus = doc.querySelector('section#profile'),
     accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType'));
 
+// checks account type
 if (accType) {
+    // case 0 = user, case 1 = organization
     switch (accType) {
         case '0':
             sectionFocus.querySelector('#quiz-list.card').remove();
@@ -24,10 +19,11 @@ if (accType) {
             var data = new FormData();
             data.append('action', 'getTodayTask');
 
-            httpPost('assets/db/db.php', data, function(data) {
+            httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
                 if (data.success) {
-                    focus = sectionFocus.querySelectorAll('form#dailyTask label.form-check-label');
+                    var focus = sectionFocus.querySelectorAll('form#dailyTask label.form-check-label');
+
                     focus.forEach(function(el, i) {
                         el.innerHTML = data.tasks[i];
                     });
@@ -39,7 +35,7 @@ if (accType) {
             data.append('uid', uid)
             data.append('action', 'getEventHistories');
 
-            httpPost('assets/db/db.php', data, function(data) {
+            httpPost('./assets/db/db.php', data, function(data) {
                 if (data.success) {
                     // console.log(data); // Debugging Purpose
                     httpGet('./assets/templates/profile/event_histories.html', function(content) {
@@ -69,8 +65,8 @@ if (accType) {
             });
 
             /* event history view more button */
-            addOnload(function() {
-                focus = sectionFocus.querySelectorAll('#event-history-table button#view-more');
+            addWindowOnload(function() {
+                var focus = sectionFocus.querySelectorAll('#event-history-table button#view-more');
 
                 focus.forEach(function(el) {
                     el.addEventListener('click', function() {
@@ -81,7 +77,7 @@ if (accType) {
                         data.append('eid', eid);
                         data.append('action', 'getEventHistory');
 
-                        httpPost('assets/db/db.php', data, function(data) {
+                        httpPost('./assets/db/db.php', data, function(data) {
                             // console.log(data);  // Debugging Purpose
                             if (data.success) {
                                 $.get('./assets/templates/profile/event_history.html', function(content) {
@@ -139,28 +135,33 @@ if (accType) {
                 });
             });
 
-            /* get user recent redeemed history */
-            $.ajax({
-                type: 'POST',
-                url: 'assets/db/db.php',
-                data: 'uid=' + $uid + '&action=getRedeemHistories',
-                dataType: 'json'
-            })
-            .done(function(data) {
+            /* get user redeemed history (max 10) */
+            var data = new FormData();
+            data.append('uid', uid);
+            data.append('action', 'getRedeemHistories');
+
+            httpPost('./assets/db/db.php', data, function(data) {
                 if (data.success) {
                     // console.log(data); // Debugging Purpose
-                    $.get('./assets/templates/profile/redeem_histories.html', function(content) {
-                        $sectionFocus.find('#redeem-history-table').html(content);
-                        $sectionFocus.find('#redeem-history-table tbody').empty();
+                    httpGet('./assets/templates/profile/redeem_histories.html', function(content) {
+                        sectionFocus.querySelector('#redeem-history-table').innerHTML = content;
+                        sectionFocus.querySelector('#redeem-history-table tbody').innerHTML = '';
 
                         for (var i = 0; i < data.redeem_histories.length && i < 10; i++) {
-                            var $row = $(content).find('tbody tr').clone().attr('id', data.redeem_histories[i]['oid']);
-                            $('td', $row).eq(0).html(data.redeem_histories[i]['oid']);
-                            $('td', $row).eq(1).html(data.redeem_histories[i]['date']);
-                            $('td', $row).eq(2).html(data.redeem_histories[i]['totalQty']);
-                            $('td', $row).eq(3).html(data.redeem_histories[i]['totalEcoPoints']);
+                            var temp = doc.createElement('div');
+                            temp.innerHTML = content;
 
-                            $sectionFocus.find('#redeem-history-table tbody').append($row);
+                            var row = doc.createElement('tr');
+                            row.id = data.redeem_histories[i]['oid'];
+                            row.innerHTML = temp.querySelector('tbody tr').innerHTML;
+
+                            var td = row.querySelectorAll('td');
+                            td[0].innerHTML = data.redeem_histories[i]['oid'];
+                            td[1].innerHTML = data.redeem_histories[i]['date'];
+                            td[2].innerHTML = data.redeem_histories[i]['totalQty'];
+                            td[3].innerHTML = data.redeem_histories[i]['totalEcoPoints'];
+
+                            sectionFocus.querySelector('#redeem-history-table tbody').appendChild(row);
                         }
 
                         enableTooltip();
@@ -169,89 +170,128 @@ if (accType) {
             });
 
             /* redeem history view more button */
-            $($sectionFocus).on('click', '#redeem-history-table button#view-more', function() {
-                var $oid = $(this).parent().parent().attr('id');
+            addWindowOnload(function() {
+                var focus = sectionFocus.querySelectorAll('#redeem-history-table button#view-more');
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'assets/db/db.php',
-                    data: 'uid=' + $uid + '&oid=' + $oid + '&action=getRedeemHistory',
-                    dataType: 'json'
-                })
-                .done(function(data) {
-                    // console.log(data);  // Debugging Purpose
-                    if (data.success) {
-                        $.get('./assets/templates/profile/redeem_history.html', function(content) {
-                            var $focus = $('#view-more-modal');
-                            $focus.find('.modal-body').html(content);
-                            $focus.find('.modal-header .modal-title').html('# ' + data.oid + ' On ' + data.date);
-                            $focus.find('.modal-body table tbody').empty();
-                            $focus.find('.modal-body h6 #total').html(data.totalEcoPoints);
+                focus.forEach(function(el) {
+                    el.addEventListener('click', function() {
+                        var oid = this.parentElement.parentElement.id;
 
-                            $.each(data.items, function(i, v) {
-                                var $row = $(content).find('tbody tr').clone();
-                                $('td', $row).eq(0).html(v);
-                                $('td', $row).eq(1).html(data.itemsQty[i]);
-                                $('td', $row).eq(2).html(data.itemsEcoPoints[i]);
+                        var data = new FormData();
+                        data.append('uid', uid);
+                        data.append('oid', oid);
+                        data.append('action', 'getRedeemHistory');
 
-                                $focus.find('table tbody').append($row);
-                            });
+                        httpPost('./assets/db/db.php', data, function(data) {
+                            // console.log(data);  // Debugging Purpose
+                            if (data.success) {
+                                httpGet('./assets/templates/profile/redeem_history.html', function(content) {
+                                    focus = doc.getElementById('view-more-modal');
+
+                                    focus.getElementsByClassName('modal-body')[0].innerHTML = content;
+                                    focus.querySelector('.modal-header .modal-title').innerHTML = '#' + data.oid + ' on ' + data.date;
+                                    focus.querySelector('.modal-body table tbody').innerHTML = '';
+                                    focus.querySelector('.modal-body h6 #total').innerHTML = data.totalEcoPoints;
+
+                                    data.items.forEach(function(k, i) {
+                                        var temp = doc.createElement('div');
+                                        temp.innerHTML = content;
+
+                                        var row = doc.createElement('tr');
+                                        row.innerHTML = temp.querySelector('tbody tr').innerHTML;
+
+                                        var td = row.querySelectorAll('td');
+                                        td[0].innerHTML = k;
+                                        td[1].innerHTML = data.itemsQty[i];
+                                        td[2].innerHTML = data.itemsEcoPoints[i];
+
+                                        focus.querySelector('table tbody').appendChild(row);
+                                    });
+                                });
+
+                                $('[tooltip-toggle=tooltip]').tooltip('hide');
+                                $('#view-more-modal').modal('show');
+                            }
                         });
-
-                        $('[tooltip-toggle=tooltip]').tooltip('hide');
-                        $('#view-more-modal').modal('show');
-                    }
+                    });
                 });
             });
 
             /* daily task form */
-            $('form#dailyTask').submit(function(e) {
+            doc.querySelector('form#dailyTask').onsubmit = function(e) {
                 e.preventDefault();
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'assets/db/db.php',
-                    data: $(this).serialize() + '&uid=' + $uid + '&action=updateUserTask',
-                    dataType: 'json'
-                })
-                .done(function(data) {
+                var checkbox = doc.querySelectorAll('form#dailyTask input[type=checkbox]:not([disabled])'),
+                data = new FormData();
+
+                checkbox.forEach(function(el) {
+                    if (el.checked) {
+                        data.append(el.getAttribute('name'), el.checked);
+                    }
+                });
+
+                data.append('uid', uid);
+                data.append('action', 'updateUserTask');
+
+                httpPost('./assets/db/db.php', data, function(data) {
                     // console.log(data); // Debugging Purpose
                     if (data.success) {
-                        var $modal = $('#dailyTaskModal');
-                        $modal.find('.award-ecopoints').html(data.addEcoPoints);
+                        var modal = doc.getElementById('dailyTaskModal');
+                        modal.getElementsByClassName('award-ecopoints')[0].innerHTML = data.addEcoPoints;
 
-                        $modal.on('shown.bs.modal', function() {
-                            $modal.find('button[data-dismiss=modal]').focus();
+                        $(modal).on('shown.bs.modal', function() {
+                            modal.querySelector('.modal-footer button[data-dismiss=modal]').focus();
+
                             setTimeout(function () {
-                                $modal.modal('hide');
-                            }, 2000);
+                                $(modal).modal('hide');
+                            }, 2500);
                         });
 
-                        $modal.on('hide.bs.modal', function() {
+                        $(modal).on('hide.bs.modal', function() {
                             location.href = './profile';
                         });
 
-                        $modal.modal("show");
+                        $(modal).modal("show");
                     }
                 });
-            });
+            }
             break;
 
         case '1':
-            $sectionFocus.find('#daily-task.card').remove();
-            $sectionFocus.find('#redeem-history.card').remove();
-            $sectionFocus.find('#event-history.card').remove();
+            sectionFocus.querySelector('#daily-task.card').remove();
+            sectionFocus.querySelector('#redeem-history.card').remove();
+            sectionFocus.querySelector('#event-history.card').remove();
 
             /* get events list (max 10) */
-            $.ajax({
-                type: 'POST',
-                url: 'assets/db/db.php',
-                data: '&uid=' + $uid + '&action=getEventsList',
-                dataType: 'json'
-            })
-            .done(function(data) {
+            var data = new FormData();
+            data.append('uid', uid);
+            data.append('action', 'getEventsList');
+
+            httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
                 if (data.success) {
+                    httpGet('./assets/templates/profile/events_list.html', function(content) {
+                        sectionFocus.querySelector('#event-list-table').innerHTML = content;
+                        sectionFocus.querySelector('#event-list-table tbody').innerHTML = '';
+
+                        for (var i = 0; i < data.events_list.length && i < 10; i++) {
+                            var temp = doc.createElement('div');
+                            temp.innerHTML = content;
+
+                            var row = doc.createElement('tr');
+                            row.id = data.events_list[i]['eid'];
+                            row.innerHTML = temp.querySelector('tbody tr').innerHTML;
+
+                            var td = row.querySelectorAll('td');
+                            td[0].innerHTML = data.events_list[i]['eid'];
+                            td[1].innerHTML = data.events_list[i]['date'];
+                            td[2].innerHTML = data.events_list[i]['time'];
+                            td[3].innerHTML = data.events_list[i]['location'];
+                            td[4].innerHTML = data.events_list[i]['ecoPoints'];
+
+                            sectionFocus.querySelector('#event-list-table tbody').appendChild(row);
+                        }
+                    });
                     $.get('./assets/templates/profile/events_list.html', function(content) {
                         $sectionFocus.find('#event-list-table').html(content);
                         $sectionFocus.find('#event-list-table tbody').empty();
@@ -271,26 +311,32 @@ if (accType) {
             });
 
             /* get quizzes list (max 10) */
-            $.ajax({
-                type: 'POST',
-                url: 'assets/db/db.php',
-                data: '&uid=' + $uid + '&action=getQuizzesList',
-                dataType: 'json'
-            })
-            .done(function(data) {
+            var data = new FormData();
+            data.append('uid', uid);
+            data.append('action', 'getQuizzesList');
+
+            httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
-                $.get('./assets/templates/profile/quizzes_list.html', function(content) {
-                    $sectionFocus.find('#quiz-list-table').html(content);
-                    $sectionFocus.find('#quiz-list-table tbody').empty();
+
+                httpGet('./assets/templates/profile/quizzes_list.html', function(content) {
+                    sectionFocus.querySelector('#quiz-list-table').innerHTML = content;
+                    sectionFocus.querySelector('#quiz-list-table tbody').innerHTML = '';
 
                     for (var i = 0; i < data.quizzes_list.length && i < 10; i++) {
-                        var $row = $(content).find('tbody tr').clone().attr('id', data.quizzes_list[i]['qid']);
-                        $('td', $row).eq(0).html(data.quizzes_list[i]['qid']);
-                        $('td', $row).eq(1).html(data.quizzes_list[i]['date']);
-                        $('td', $row).eq(2).html(data.quizzes_list[i]['name']);
-                        $('td', $row).eq(3).html(data.quizzes_list[i]['ecoPoints']);
+                        var temp = doc.createElement('div');
+                        temp.innerHTML = content;
 
-                        $sectionFocus.find('#quiz-list-table tbody').append($row);
+                        var row = doc.createElement('tr');
+                        row.id = data.quizzes_list[i]['qid'];
+                        row.innerHTML = temp.querySelector('tbody tr').innerHTML;
+
+                        var td = row.querySelectorAll('td');
+                        td[0].innerHTML = data.quizzes_list[i]['qid'];
+                        td[1].innerHTML = data.quizzes_list[i]['date'];
+                        td[2].innerHTML = data.quizzes_list[i]['name'];
+                        td[3].innerHTML = data.quizzes_list[i]['ecoPoints'];
+
+                        sectionFocus.querySelector('#quiz-list-table tbody').appendChild(row);
                     }
                 });
 
@@ -298,52 +344,68 @@ if (accType) {
             });
 
             /* quizzes list view more button */
-            $($sectionFocus).on('click', '#quiz-list-table button#view-more', function() {
-                var $qid = $(this).parent().parent().attr('id');
+            addWindowOnload(function() {
+                var focus = sectionFocus.querySelectorAll('#quiz-list-table button#view-more');
 
-                $.ajax({
-                    type: 'POST',
-                    url: 'assets/db/db.php',
-                    data: 'uid=' + $uid + '&qid=' + $qid + '&action=getQuizList',
-                    dataType: 'json'
-                })
-                .done(function(data) {
-                    // console.log(data);  // Debugging Purpose
-                    if (data.success) {
-                        $.get('./assets/templates/profile/quiz_list.html', function(content) {
-                            var $focus = $('#view-more-modal');
-                            $focus.find('.modal-body').html(content);
-                            $focus.find('.modal-header .modal-title').html('# ' + data.qid + ': ' + data.name + ' (' + data.date + ')');
-                            $focus.find('.modal-body table tbody').empty();
+                focus.forEach(function(el) {
+                    el.addEventListener('click', function() {
+                        var qid = this.parentElement.parentElement.id;
 
-                            $.each(data.questions, function(i, v) {
-                                var $questionRow = $(content).find('tr.questionRow').clone(),
-                                    $optionRow;
+                        var data = new FormData();
+                        data.append('uid', uid);
+                        data.append('qid', qid);
+                        data.append('action', 'getQuizList');
 
-                                $('th', $questionRow).html(v);
-                                $focus.find('table tbody').append($questionRow);
+                        httpPost('./assets/db/db.php', data, function(data) {
+                            // console.log(data);  // Debugging Purpose
+                            if (data.success) {
+                                httpGet('./assets/templates/profile/quiz_list.html', function(content) {
+                                    focus = doc.getElementById('view-more-modal');
+                                    focus.getElementsByClassName('modal-body')[0].innerHTML = content;
+                                    focus.querySelector('.modal-body table tbody').innerHTML = '';
+                                    focus.querySelector('.modal-header .modal-title').innerHTML = '# ' + data.qid + ': ' + data.name + ' (' + data.date + ')';
 
-                                $.each(data.options.splice(0, 4), function(j, jv) {
-                                    if (j % 2 == 0) {
-                                        $optionRow = $(content).find('tr.optionRow').clone();
-                                        $('td.option', $optionRow).eq(0).html(jv);
-                                    }
-                                    else {
-                                        $('td.option', $optionRow).eq(1).html(jv);
-                                        $focus.find('table tbody').append($optionRow);
-                                    }
+                                    data.questions.forEach(function(qv, qi) {
+                                        var temp = doc.createElement('div');
+                                        temp.innerHTML = content;
+
+                                        var questionRow = doc.createElement('tr');
+                                        questionRow.className = 'questionRow';
+                                        questionRow.style.backgroundColor = '#ecf6fc';
+                                        questionRow.innerHTML = temp.querySelector('tr.questionRow').innerHTML;
+                                        questionRow.querySelector('th').innerHTML = qv;
+
+                                        focus.querySelector('table tbody').appendChild(questionRow);
+
+                                        var optionRow;
+                                        data.options.splice(0, 4).forEach(function(ov, oi) {
+                                            if (oi % 2 == 0) {  // create new row
+                                                optionRow = doc.createElement('tr');
+                                                optionRow.className = 'optionRow';
+                                                optionRow.innerHTML = temp.querySelector('tr.optionRow').innerHTML;
+                                                optionRow.querySelectorAll('td.option')[0].innerHTML = ov;
+                                            }
+                                            else {  // add created row
+                                                optionRow.querySelectorAll('td.option')[1].innerHTML = ov;
+                                                focus.querySelector('table tbody').appendChild(optionRow);
+                                            }
+                                        });
+
+                                        var focusAns = focus.querySelectorAll('.modal-body table tbody td.answer'),
+                                            minusAns = (data.answers[qi] != 0 ? 3 - data.answers[qi] : 3),
+                                            correctIcon = doc.createElement('i');
+
+                                            correctIcon.classList.add('fas', 'fa-check', 'fa-lg', 'text-success');
+
+                                        focusAns[(focusAns.length - 1) - minusAns].appendChild(correctIcon);
+                                    });
                                 });
 
-                                var $focusAns = $focus.find('.modal-body table tbody td.answer'),
-                                    $minusAns = (data.answers[i] != 0 ? 3 - data.answers[i] : 3);
-
-                                $focusAns.eq(($focusAns.length - 1) - $minusAns).append('<i class="fas fa-check fa-lg text-success"></i>');
-                            });
+                                $('[tooltip-toggle=tooltip]').tooltip('hide');
+                                $('#view-more-modal').modal('show');
+                            }
                         });
-
-                        $('[tooltip-toggle=tooltip]').tooltip('hide');
-                        $('#view-more-modal').modal('show');
-                    }
+                    });
                 });
             });
             break;
@@ -351,45 +413,40 @@ if (accType) {
 }
 
 /* get user profile details */
-$.ajax({
-    type: 'POST',
-    url: 'assets/db/db.php',
-    data: 'uid=' + $uid + '&action=getUser',
-    dataType: 'json'
-})
-.done(function(data) {
-    // console.log(data); // Debugging Purpose
+var data = new FormData();
+data.append('uid', uid);
+data.append('action', 'getUser');
+
+httpPost('./assets/db/db.php', data, function(data) {
+    // console.log(data);  // Debugging Purpose
     if (data.success) {
-        var $inputFocus = $sectionFocus.find('form#dailyTask input[type=checkbox]'),
-        $labelFocus = $sectionFocus.find('form#dailyTask label.form-check-label');
+        var inputFocus = sectionFocus.querySelectorAll('form#dailyTask input[type=checkbox]'),
+            labelfocus = sectionFocus.querySelectorAll('form#dailyTask label.form-check-label');
+
         for (var i = 0; i < data.dailyTask.length; i++) {
             if (data.dailyTask.charAt(i) == '1') {
-                $($inputFocus[i]).attr('checked', 'checked');
-                $($inputFocus[i]).attr('disabled', 'disabled');
-                $($labelFocus[i]).css('text-decoration', 'line-through');
+                inputFocus[i].checked = true;
+                inputFocus[i].disabled = true;
+                labelfocus[i].style.textDecoration = 'line-through';
             }
         }
 
-        $sectionFocus.find('#name').html(data.name);
-        $sectionFocus.find('#email').html(data.email);
+        sectionFocus.querySelector('#name').innerHTML = data.name;
+        sectionFocus.querySelector('#email').innerHTML = data.email;
 
-        if ($accType == '1') {
-            $sectionFocus.find('#ecopointsContent').remove();
+        if (accType == '1') {
+            sectionFocus.querySelector('#ecopointsContent').remove();
         }
         else {
-            $sectionFocus.find('#ecopoints').html(data.ecoPoints);
+            sectionFocus.querySelector('#ecopoints').innerHTML = data.ecoPoints;
         }
 
-        if (data.bio != '' && data.bio != null) {
-            $sectionFocus.find('#bio').html(data.bio);
+        if (data.bio) {
+            sectionFocus.querySelector('#bio').innerHTML = data.bio;
         }
 
-        $.get('./assets/img/uploads/' + data.uid + '.png')
-            .done(function() {
-                $sectionFocus.find('#basicProfile.card .pic').css('background-image', 'url(./assets/img/uploads/' + data.uid + '.png)');
-            })
-            .fail(function() {
-                // console.clear();
-            });
+        httpGet('./assets/img/uploads/' + data.uid + '.png', function() {
+            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("./assets/img/uploads/' + data.uid + '.png")';
+        });
     }
 });

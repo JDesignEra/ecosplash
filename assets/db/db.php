@@ -29,13 +29,14 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $result -> fetch_array();
+            $result = $result -> fetch_array(MYSQLI_ASSOC);
             if (password_verify($password, $result['password'])) {
                 $data['uid'] = $result['uid'];
                 $data['name'] = $result['name'];
                 $data['ecoPoints'] = $result['ecoPoints'];
                 $data['newNotifications'] = $result['newNotifications'];
                 $data['accType'] = $result['type'];
+                $data['pass'] = $result['password'];
 
                 if (!empty($remember)) {
                     $data['remember'] = true;
@@ -117,7 +118,7 @@ switch ($action) {
         if (empty($errors)) {
             $result = $mysqli -> query("SELECT * FROM users WHERE uid = '$uid'");
             if ($result -> num_rows == 1) {
-                $result = $result -> fetch_array();
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
                 $data['uid'] = $result['uid'];
                 $data['name'] = $result['name'];
                 $data['email'] = $result['email'];
@@ -133,6 +134,32 @@ switch ($action) {
             }
             else {
                 $errors['uid'] = 'Multiple UID!';
+            }
+        }
+        break;
+
+    case 'checkUser':
+        $uid = checkInput($_POST['uid']);
+        $password = checkInput($_POST['pass']);
+
+        if (empty($password)) {
+            $errors['pass'] = 'Pass is missing!';
+        }
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+        else {
+            $result = $mysqli -> query("SELECT uid, password FROM users WHERE uid = '$uid'");
+            if ($result -> num_rows < 1 && $result -> num_rows > 1) {
+                $errors['uid'] = 'User ID does not exist!';
+            }
+        }
+
+        if (empty($errors)) {
+            $result = $result -> fetch_array(MYSQLI_ASSOC);
+            if ($password !== $result['password']) {
+                $errors['check'] = false;
             }
         }
         break;
@@ -196,7 +223,7 @@ switch ($action) {
                 $errors['email'] = $email.' is not a registered user with us.';
             }
             else {
-                $result = $result -> fetch_array();
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
                 if ($fcode != $result['fpCode']) {
                     $errors['fcode'] = 'Generated code is invalid!';
                 }
@@ -237,7 +264,7 @@ switch ($action) {
                     $errors['email'] = $email.' is not a registered user with us.';
                 }
                 else {
-                    $result = $result -> fetch_array();
+                    $result = $result -> fetch_array(MYSQLI_ASSOC);
                     if ($fcode != $result['fpCode']) {
                         $errors['fcode'] = 'Generated code is invalid!';
                     }
@@ -281,7 +308,7 @@ switch ($action) {
         if (!empty($email)) {
             $result = $mysqli -> query("SELECT email FROM users WHERE email ='$email'");
             if ($result -> num_rows != 0) {
-                $result = $result -> fetch_array();
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
                 $errors['email'] = $result['email'].' already has an account with us!';
             }
             elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -306,7 +333,7 @@ switch ($action) {
                 $errors['uid'] = "User not found!";
             }
             else {
-                $result = $result -> fetch_array();
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
                 $oEmail = $result['email'];
 
                 $name = ucwords($name);
@@ -353,6 +380,10 @@ switch ($action) {
                 }
 
                 $mysqli -> query("UPDATE users set name = '$name', bio = '$bio', email = '$email', password = '$password' WHERE uid = '$uid'");
+
+                $result = $mysqli -> query("SELECT password FROM users WHERE uid = $uid");
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
+                $data['pass'] = $result['password'];
             }
         }
         break;
@@ -376,7 +407,7 @@ switch ($action) {
             if (empty($errors)) {
                 $result = $mysqli -> query("SELECT dailyTask, ecoPoints FROM users WHERE uid = '$uid'");
                 if ($result -> num_rows == 1) {
-                    $result = $result -> fetch_array();
+                    $result = $result -> fetch_array(MYSQLI_ASSOC);
                     $arrTask = str_split($result['dailyTask']);
                     $addPoints = 0;
                     $todayTask = '';
@@ -408,7 +439,7 @@ switch ($action) {
             $result = $mysqli -> query("SELECT oid, date, itemsQty, totalEcoPoints FROM redeemed_history WHERE uid = '$uid' ORDER BY date DESC");
             if ($result -> num_rows > 0) {
                 $redeemHistories = [];
-                while ($row = $result -> fetch_array()) {
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
                     $i = $i = count($redeemHistories);
 
                     $quantities = explode(',', $row['itemsQty']);
@@ -446,7 +477,7 @@ switch ($action) {
         if (empty($errors)) {
             $result = $mysqli -> query("SELECT * FROM redeemed_history WHERE uid = '$uid' AND oid = '$oid'");
             if ($result -> num_rows == 1) {
-                $result = $result -> fetch_array();
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
 
                 $items = explode(',', $result['items']);
                 $itemsQty = explode(',', $result['itemsQty']);
@@ -477,7 +508,7 @@ switch ($action) {
 
             if ($result -> num_rows > 0) {
                 $eventHistories = [];
-                while ($row = $result -> fetch_array()) {
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
                     $i = $i = count($eventHistories);
 
                     $eventHistories[$i]['eid'] = $row['eid'];
@@ -509,7 +540,7 @@ switch ($action) {
         if (empty($errors)) {
             $result = $mysqli -> query("SELECT * FROM event_history WHERE uid = '$uid' AND eid = '$eid'");
             if ($result -> num_rows == 1) {
-                $result = $result -> fetch_array();
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
                 $data['eid'] = $result['eid'];
                 $data['joinDate'] = date_format(date_create($result['joinDate']), 'd/m/Y');
                 $data['event'] = $result['event'];
@@ -597,7 +628,7 @@ switch ($action) {
         if (empty($errors)) {
             $result = $mysqli -> query("SELECT * FROM quizzes WHERE uid = '$uid' AND qid = '$qid'");
             if ($result -> num_rows == 1) {
-                $result = $result -> fetch_array();
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
                 $questions = explode('|', $result['questions']);
                 $options = explode('|', $result['options']);
                 $answers = explode(',', $result['answers']);
@@ -711,7 +742,6 @@ switch ($action) {
                 $rid = $row['rid'];
                 $qty = 0;
 
-
                 $dupRidIndex = array_filter($items['rid'], function($i) use($rid) { return $i == $rid; });
                 foreach ($dupRidIndex as $key => $value) {
                     if (empty($items['qty'][$key])) {
@@ -737,7 +767,7 @@ switch ($action) {
             }
 
             $result = $mysqli -> query("SELECT ecoPoints, email FROM users WHERE uid = '$uid'");
-            $result = $result -> fetch_array();
+            $result = $result -> fetch_array(MYSQLI_ASSOC);
             $email = $result['email'];
             if (empty($errors) && $totalPoints > $result['ecoPoints']) {
                 $errors['ecoPoints'] = $totalPoints - $result['ecoPoints'].' EcoPoints short!';
@@ -774,71 +804,270 @@ switch ($action) {
         }
         break;
 
-        case 'getTopEcoPoints':
-            $result = $mysqli -> query("SELECT name, ecoPointsMonth FROM users ORDER BY ecoPointsMonth DESC LIMIT 5");
+    case 'getTopEcoPoints':
+        $result = $mysqli -> query("SELECT name, ecoPointsMonth FROM users ORDER BY ecoPointsMonth DESC LIMIT 5");
 
-            $top = [];
-            while($row = $result -> fetch_array(MYSQLI_ASSOC)) {
-                $top['name'][] = $row['name'];
-                $top['ecoPoints'][] = $row['ecoPointsMonth'];
+        $top = [];
+        while($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+            $top['name'][] = $row['name'];
+            $top['ecoPoints'][] = $row['ecoPointsMonth'];
+        }
+
+        $data['top'] = $top;
+        break;
+
+    case 'getTodayQuiz':
+        $result = $mysqli -> query("SELECT * FROM quizzes WHERE todayQuiz = 1");
+        $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+        $quiz = [];
+        $quiz['name'] = $row['name'];
+        $quiz['questions'] = explode('|', $row['questions']);
+        $quiz['ecoPoints'] = $row['ecoPoints'];
+
+        $options = explode('|', $row['options']);
+        foreach ($quiz['questions'] as $key => $value) {
+            $quiz['options'][$key][] = array_splice($options, 0, 4);
+        }
+
+        $uid = $row['uid'];
+        $result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'");
+        $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+        $quiz['uName'] = $row['name'];
+
+        $data['quiz'] = $quiz;
+        break;
+
+    case 'getRecentEvents':
+        $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
+
+        if ($result -> num_rows > 0) {
+            $events = [];
+            $i = 0;
+            while (($row = $result -> fetch_array(MYSQLI_ASSOC)) && $i < 10) {
+                $date = date_format(date_create($row['dateTime']), 'd/m/Y');
+                if (array_key_exists($date, $events)) {
+                    $newIndex = count($events[$date]);
+                    $events[$date][$newIndex]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                    $events[$date][$newIndex]['event'] = $row['event'];
+                    $events[$date][$newIndex]['location'] = $row['location'];
+                    $events[$date][$newIndex]['ecoPoints'] = $row['ecoPoints'];
+                }
+                else {
+                    $events[$date][0]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                    $events[$date][0]['event'] = $row['event'];
+                    $events[$date][0]['location'] = $row['location'];
+                    $events[$date][0]['ecoPoints'] = $row['ecoPoints'];
+                    $i++;
+                }
             }
 
-            $data['top'] = $top;
-            break;
+            $data['events'] = $events;
+        }
+        else {
+            $errors['events'] = 'No events to list!';
+        }
+        break;
 
-        case 'getTodayQuiz':
-            $result = $mysqli -> query("SELECT * FROM quizzes WHERE todayQuiz = 1");
-            $row = $result -> fetch_array(MYSQLI_ASSOC);
+    case 'getUtilities':
+        $uid = $_POST['uid'];
 
-            $quiz = [];
-            $quiz['name'] = $row['name'];
-            $quiz['questions'] = explode('|', $row['questions']);
-            $quiz['ecoPoints'] = $row['ecoPoints'];
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
 
-            $options = explode('|', $row['options']);
-            foreach ($quiz['questions'] as $key => $value) {
-                $quiz['options'][$key][] = array_splice($options, 0, 4);
-            }
-
-            $uid = $row['uid'];
-            $result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'");
-            $row = $result -> fetch_array(MYSQLI_ASSOC);
-
-            $quiz['uName'] = $row['name'];
-
-            $data['quiz'] = $quiz;
-            break;
-
-        case 'getRecentEvents':
-            $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT * FROM utilities WHERE uid = '$uid'");
 
             if ($result -> num_rows > 0) {
-                $events = [];
-                $i = 0;
-                while (($row = $result -> fetch_array(MYSQLI_ASSOC)) && $i < 10) {
-                    $date = date_format(date_create($row['dateTime']), 'd/m/Y');
-                    if (array_key_exists($date, $events)) {
-                        $newIndex = count($events[$date]);
-                        $events[$date][$newIndex]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
-                        $events[$date][$newIndex]['event'] = $row['event'];
-                        $events[$date][$newIndex]['location'] = $row['location'];
-                        $events[$date][$newIndex]['ecoPoints'] = $row['ecoPoints'];
-                    }
-                    else {
-                        $events[$date][0]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
-                        $events[$date][0]['event'] = $row['event'];
-                        $events[$date][0]['location'] = $row['location'];
-                        $events[$date][0]['ecoPoints'] = $row['ecoPoints'];
-                        $i++;
-                    }
-                }
+                $utilities = [];
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $useAmounts = explode(',', $row['useAmounts']);
+                    $data[$row['type']]['useAmounts'] = $useAmounts;
 
-                $data['events'] = $events;
+                    $prices = explode(',', $row['prices']);
+                    $data[$row['type']]['prices'] = $prices;
+                }
             }
             else {
-                $errors['events'] = 'No events to list!';
+                $errors['utilities'] = 'No bills to list';
             }
-            break;
+        }
+        break;
+
+    case 'updateAddElectric':
+    case 'updateAddGas':
+    case 'updateAddWater':
+        $uid = checkInput($_POST['uid']);
+        $month = (isset($_POST['month']) ? checkInput($_POST['month']) : '');
+        $usage = round(checkInput($_POST['usage']), 2);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($usage)) {
+            $errors['usage'] = 'Usage is required!';
+        }
+
+        if (empty($month) && $month != '0') {
+            $errors['month'] = 'Month is required!';
+        }
+
+        if (empty($errors)) {
+            if ($action == 'updateAddElectric') {
+                $result = $mysqli -> query("SELECT * FROM utilities WHERE uid = '$uid' AND type = 'electric'");
+
+                if ($result -> num_rows < 1) {
+                    $useAmounts = '';
+                    $prices = '';
+                    for ($i = 0; $i < 12; $i++) {
+                        if ($i == $month && $i == 11) {
+                            $useAmounts .= $usage;
+                            $prices .= '$'.round(($usage * 23.65) * 0.01, 2);
+                        }
+                        elseif ($i == $month) {
+                            $useAmounts .= $usage.',';
+                            $prices .= '$'.round(($usage * 23.65) * 0.01, 2).',';
+                        }
+                        elseif ($i != 11) {
+                            $useAmounts .= '0,';
+                            $prices .= '$0,';
+                        }
+                        else {
+                            $useAmounts .= '0';
+                            $prices .= '$0';
+                        }
+                    }
+
+                    $mysqli -> query("INSERT INTO utilities (uid, useAmounts, prices, type) VALUES ('$uid', '$useAmounts', '$prices', 'electric')");
+                }
+                else {
+                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                    $useAmounts = explode(',', $row['useAmounts']);
+                    $prices = explode(',', $row['prices']);
+
+                    $useAmounts[$month] = $usage;
+                    $prices[$month] = '$'.round(($usage * 23.65) * 0.01, 2);
+
+                    $useAmounts = implode(',', $useAmounts);
+                    $prices = implode(',', $prices);
+
+                    $mysqli -> query("UPDATE utilities set useAmounts = '$useAmounts', prices = '$prices' WHERE uid = '$uid' AND type = 'electric'");
+                }
+            }
+            elseif ($action == 'updateAddWater') {
+                $result = $mysqli -> query("SELECT * FROM utilities WHERE uid = '$uid' AND type = 'water'");
+
+                if ($result -> num_rows < 1) {
+                    $useAmounts = '';
+                    $prices = '';
+                    for ($i = 0; $i < 12; $i++) {
+                        if ($i == $month && $i == 11) {
+                            $useAmounts .= $usage;
+
+                            if ($usage > 40) {
+                                $calPrices = round((40 * 1.19) * 0.01, 2);
+                                $calPrices += round((($usage - 40) * 1.46) * 0.01, 2);
+                                $prices .= '$'.$calPrices;
+                            }
+                            else {
+                                $prices .= '$'.round(($usage * 1.19) * 1.19, 2);
+                            }
+                        }
+                        elseif ($i == $month) {
+                            $useAmounts .= $usage.',';
+
+                            if ($usage > 40) {
+                                $calPrices = round((40 * 1.19) * 0.01, 2);
+                                $calPrices += round((($usage - 40) * 1.46) * 0.01, 2);
+                                $prices .= '$'.$calPrices.',';
+                            }
+                            else {
+                                $prices .= '$'.round(($usage * 1.19) * 1.19, 2).',';
+                            }
+                        }
+                        elseif ($i != 11) {
+                            $useAmounts .= '0,';
+                            $prices .= '$0,';
+                        }
+                        else {
+                            $useAmounts .= '0';
+                            $prices .= '$0';
+                        }
+                    }
+
+                    $mysqli -> query("INSERT INTO utilities (uid, useAmounts, prices, type) VALUES ('$uid', '$useAmounts', '$prices', 'water')");
+                }
+                else {
+                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                    $useAmounts = explode(',', $row['useAmounts']);
+                    $prices = explode(',', $row['prices']);
+
+                    $useAmounts[$month] = $usage;
+
+                    if ($usage > 40) {
+                        $calPrices = round((40 * 1.19) * 0.01, 2);
+                        $calPrices += round((($usage - 40) * 1.46) * 0.01, 2);
+                        $prices = '$'.$calPrices;
+                    }
+                    else {
+                        $prices = '$'.round(($usage * 1.19) * 1.19, 2);
+                    }
+
+                    $useAmounts = implode(',', $useAmounts);
+                    $prices = implode(',', $prices);
+
+                    $mysqli -> query("UPDATE utilities set useAmounts = '$useAmounts', prices = '$prices' WHERE uid = '$uid' AND type = 'electric'");
+                }
+            }
+            elseif ($action == 'updateAddGas') {
+                $result = $mysqli -> query("SELECT * FROM utilities WHERE uid = '$uid' AND type = 'gas'");
+
+                if ($result -> num_rows < 1) {
+                    $useAmounts = '';
+                    $prices = '';
+                    for ($i = 0; $i < 12; $i++) {
+                        if ($i == $month && $i == 11) {
+                            $useAmounts .= $usage;
+                            $prices .= '$'.round(($usage * 18.53) * 0.01, 2);
+                        }
+                        elseif ($i == $month) {
+                            $useAmounts .= $usage.',';
+                            $prices .= '$'.round(($usage * 18.53) * 0.01, 2).',';
+                        }
+                        elseif ($i != 11) {
+                            $useAmounts .= '0,';
+                            $prices .= '$0,';
+                        }
+                        else {
+                            $useAmounts .= '0';
+                            $prices .= '$0';
+                        }
+                    }
+
+                    $mysqli -> query("INSERT INTO utilities (uid, useAmounts, prices, type) VALUES ('$uid', '$useAmounts', '$prices', 'gas')");
+                }
+                else {
+                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                    $useAmounts = explode(',', $row['useAmounts']);
+                    $prices = explode(',', $row['prices']);
+
+                    $useAmounts[$month] = $usage;
+                    $prices[$month] = '$'.round(($usage * 18.53) * 0.01, 2);
+
+                    $useAmounts = implode(',', $useAmounts);
+                    $prices = implode(',', $prices);
+
+                    $mysqli -> query("UPDATE utilities set useAmounts = '$useAmounts', prices = '$prices' WHERE uid = '$uid' AND type = 'gas'");
+                }
+            }
+        }
+        break;
 }
 
 if (empty($errors)) {

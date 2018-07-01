@@ -134,7 +134,7 @@
                                             </tr>
                                             <tr>
                                                 <td align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:14px; line-height: 28px;">
-                                                    It seems that you have forgotten your password recently. And your password has been changed successfully. If you did not changed your account's password, please contact us immediately to prevent security risk. Your new account details are show below.
+                                                    It seems that you have forgotten your password recently. And your password has been changed successfully. If you did not changed your account's password, please contact us immediately to prevent security risk. Your new account details are shown below.
                                                 </td>
                                             </tr>
                                             <tr>

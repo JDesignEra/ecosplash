@@ -135,9 +135,7 @@
                                             <tr>
                                                 <td align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:14px; line-height: 28px;">
                                                     It seems that you have forgotten your password. Please enter&nbsp;
-                                                    <u style="font-weight: bold;">
-                                                        <?php echo (isset($_GET['fcode']) ? $_GET['fcode'] : ''); ?>
-                                                    </u>
+                                                    <u style="font-weight: bold;"><?php echo (isset($_GET['fcode']) ? $_GET['fcode'] : ''); ?></u>
                                                     &nbsp;as your generated code, to change your account's password.
                                                 </td>
                                             </tr>

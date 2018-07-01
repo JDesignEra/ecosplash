@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.0.1
+-- version 4.8.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2018 at 08:17 PM
--- Server version: 10.1.32-MariaDB
--- PHP Version: 7.2.5
+-- Generation Time: Jul 01, 2018 at 07:27 PM
+-- Server version: 10.1.33-MariaDB
+-- PHP Version: 7.2.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -147,9 +147,9 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`rid`, `item`, `ecoPoints`, `weight`, `quantity`) VALUES
 (1, 'Giant $100 Voucher', 1000, '10', 0),
-(2, 'Giant $50 Voucher', 500, '50', 339),
-(3, 'Giant $30 Voucher', 300, '70', 300),
-(4, 'Giant $25 Voucher', 250, '75', 543);
+(2, 'Giant $50 Voucher', 500, '50', 332),
+(3, 'Giant $30 Voucher', 300, '70', 295),
+(4, 'Giant $25 Voucher', 250, '75', 535);
 
 -- --------------------------------------------------------
 
@@ -214,7 +214,19 @@ INSERT INTO `redeemed_history` (`oid`, `uid`, `date`, `items`, `itemsQty`, `item
 (11, 1, '2018-06-22 17:41:39', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
 (12, 1, '2018-06-22 17:43:10', 'Giant $50 Voucher', '2', '500', 1000),
 (13, 1, '2018-06-22 17:43:42', 'Giant $25 Voucher', '1', '250', 250),
-(14, 1, '2018-06-22 17:44:05', 'Giant $25 Voucher', '1', '250', 250);
+(14, 1, '2018-06-22 17:44:05', 'Giant $25 Voucher', '1', '250', 250),
+(15, 1, '2018-06-30 11:31:32', 'Giant $30 Voucher,Giant $50 Voucher', '2,1', '300,500', 1100),
+(16, 1, '2018-06-30 12:07:25', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(17, 1, '2018-07-01 05:09:49', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(18, 1, '2018-07-01 05:10:57', 'Giant $25 Voucher,Giant $50 Voucher', '1,1', '250,500', 750),
+(19, 1, '2018-07-01 05:11:33', 'Giant $25 Voucher,Giant $50 Voucher', '1,1', '250,500', 750),
+(20, 1, '2018-07-01 05:11:55', 'Giant $25 Voucher,Giant $50 Voucher', '1,1', '250,500', 750),
+(21, 1, '2018-07-01 05:12:39', 'Giant $30 Voucher,Giant $50 Voucher', '1,1', '300,500', 800),
+(22, 1, '2018-07-01 05:13:15', 'Giant $25 Voucher', '1', '250', 250),
+(23, 1, '2018-07-01 05:16:02', 'Giant $25 Voucher', '1', '250', 250),
+(24, 1, '2018-07-01 05:16:20', 'Giant $25 Voucher', '1', '250', 250),
+(25, 1, '2018-07-01 05:18:12', 'Giant $25 Voucher', '1', '250', 250),
+(26, 1, '2018-07-01 05:18:35', 'Giant $25 Voucher', '1', '250', 250);
 
 -- --------------------------------------------------------
 
@@ -247,7 +259,7 @@ INSERT INTO `today_task` (`uid`, `task`) VALUES
 CREATE TABLE `users` (
   `uid` int(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `password` longtext NOT NULL,
   `name` varchar(255) NOT NULL,
   `bio` varchar(350) DEFAULT '',
   `type` tinyint(1) NOT NULL DEFAULT '0',
@@ -264,8 +276,31 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoints`, `newNotifications`, `dailyQuiz`, `dailyTask`, `ecoPointsMonth`, `fpCode`) VALUES
-(1, 'tgm.joel@gmail.com', '$2y$10$afw55Nbtd43DF8IrbLZ6euDusysvUPPnGB8ei.yu5Vb1PfHDTCt..', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 23606, 0, 0, '00000', 30105, NULL),
-(2, 'joel.jdesignera@gmail.com', '$2y$10$WXI2CtA7WaWeUufQwdWoWeFrtdfnfqxCHswd6czE5tCE4s4bDRcAy', 'JDesign', '', 1, 0, 0, 0, '00000', 0, NULL);
+(1, 'tgm.joel@gmail.com', '$2y$10$bGvbfe2Z3ifXjr5Sqzxxxu6B3Q1/mOCcpab1qWdN28/ajGufz7ioK', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 16623, 0, 0, '10101', 30105, NULL),
+(2, 'joel.jdesignera@gmail.com', '$2y$10$WXI2CtA7WaWeUufQwdWoWeFrtdfnfqxCHswd6czE5tCE4s4bDRcAy\0\0\0\0', 'JDesign', '', 1, 0, 0, 0, '00000', 0, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `utilities`
+--
+
+CREATE TABLE `utilities` (
+  `euid` int(255) NOT NULL,
+  `uid` int(255) NOT NULL,
+  `useAmounts` text NOT NULL,
+  `prices` text NOT NULL,
+  `type` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32;
+
+--
+-- Dumping data for table `utilities`
+--
+
+INSERT INTO `utilities` (`euid`, `uid`, `useAmounts`, `prices`, `type`) VALUES
+(1, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'electric'),
+(2, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'water'),
+(5, 1, '300,500.56,0,0,0,305.37,0,0,0,0,208.65,0', '$55.59,$92.75,$0,$0,$0,$56.59,$0,$0,$0,$0,$38.66,$0', 'gas');
 
 --
 -- Indexes for dumped tables
@@ -321,6 +356,12 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `utilities`
+--
+ALTER TABLE `utilities`
+  ADD PRIMARY KEY (`euid`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -358,13 +399,19 @@ ALTER TABLE `quizzes`
 -- AUTO_INCREMENT for table `redeemed_history`
 --
 ALTER TABLE `redeemed_history`
-  MODIFY `oid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `oid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `uid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `utilities`
+--
+ALTER TABLE `utilities`
+  MODIFY `euid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 DELIMITER $$
 --
@@ -375,6 +422,8 @@ CREATE DEFINER=`root`@`localhost` EVENT `daily_task_reset` ON SCHEDULE EVERY 1 D
 CREATE DEFINER=`root`@`localhost` EVENT `fpCode_reset` ON SCHEDULE EVERY 12 HOUR STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set fpCode = NULL$$
 
 CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_daily_quiz()$$
+
+CREATE DEFINER=`root`@`localhost` EVENT `yearly_bill_resets` ON SCHEDULE EVERY 1 YEAR STARTS '2018-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO TRUNCATE TABLE utilities$$
 
 DELIMITER ;
 COMMIT;

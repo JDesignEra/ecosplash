@@ -1,289 +1,272 @@
 'user strict';
+securePage();
 
-if (!(localStorage.getItem('accType') || sessionStorage.getItem('accType'))) {
-    location.href = './'
-}
-
-var $uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
-    $sectionFocus = $('section#editProfile');
+var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
+    sectionFocus = doc.querySelector('section#editProfile');
 
 /* get user profile details */
-$.ajax({
-    type: 'POST',
-    url: 'assets/db/db.php',
-    data: 'uid=' + $uid + '&action=getUser',
-    dataType: 'json'
-})
-.done(function(data) {
-    // console.log(data); // Debugging Purpose
+var data = new FormData();
+data.append('uid', uid);
+data.append('action', 'getUser');
+
+httpPost('./assets/db/db.php', data, function(data) {
+    // console.log(data);  // Debugging Purpose
     if (data.success) {
-        var $formFocus = $sectionFocus.find('form#editProfileForm');
+        var formFocus = doc.querySelector('form#editProfileForm');
+        formFocus.querySelector('#name.form-group input').placeholder = data.name;
+        formFocus.querySelector('#email.form-group input').placeholder = data.email;
 
-        $formFocus.find('#name.form-group input').attr('placeholder', data.name);
-        $formFocus.find('#email.form-group input').attr('placeholder', data.email);
-
-        if (data.bio != '') {
-            $formFocus.find('#bio.form-group textarea').attr('placeholder', data.bio);
+        if (data.bio) {
+            formFocus.querySelector('#bio.form-group textarea').placeholder = data.bio;
         }
 
-        $.get('./assets/img/uploads/' + data.uid + '.png')
-            .done(function() {
-                $sectionFocus.find('#basicProfile.card .pic').css('background-image', 'url(./assets/img/uploads/' + data.uid + '.png)');
-            })
-            .fail(function() {
-                console.clear();
-            });
+        httpGet('./assets/img/uploads/' + data.uid + '.png', function(content) {
+            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("./assets/img/uploads/' + data.uid + '.png")';
+        });
     }
 });
 
 /* edit user details */
-$('form#editProfileForm').submit(function(e) {
+doc.querySelector('form#editProfileForm').onsubmit = function(e) {
     e.preventDefault();
-    $(this).find('#action-btn button[type=submit]').removeClass('btn-success');
-    $(this).find('#action-btn button[type=submit]').addClass('btn-secondary');
-    $(this).find('#action-btn button[type=submit]').addClass('fadeIn');
-    $(this).find('#action-btn #loading-text').removeClass('d-none');
 
-    var $data;
-    if (!$(this).find('#bio input[name=emptyBio]').is(':checked')) {
-        $data = $(this).serialize() + '&uid=' + $uid + '&emptyBio=&action=updateUser';
-    }
-    else {
-        $data = $(this).serialize() + '&uid=' + $uid + '&action=updateUser';
+    this.querySelector('#action-btn button[type=submit]').classList.remove('btn-success');
+    this.querySelector('#action-btn button[type=submit]').classList.add('btn-secondary');
+    this.querySelector('#action-btn button[type=submit]').classList.add('fadeIn');
+    this.querySelector('#action-btn #loading-text').classList.remove('d-none');
+
+    var data = new FormData(this);
+    data.append('uid', uid);
+    data.append('action', 'updateUser');
+
+    if (!this.querySelector('#bio input[name=emptyBio]').checked) {
+        data.append('emptyBio', '');
     }
 
-    $.ajax({
-        type: 'POST',
-        url: 'assets/db/db.php',
-        data: $data,
-        dataType: 'json',
-        error: function(data) {
-            console.log(data);
-        }
-    })
-    .done(function(data) {
-        // console.log(data);  //Debugging Purpose
-        $('form#editProfileForm').find('#action-btn button[type=submit]').removeClass('btn-secondary');
-        $('form#editProfileForm').find('#action-btn button[type=submit]').addClass('btn-success');
-        $('form#editProfileForm').find('#action-btn button[type=submit]').removeClass('fadeIn');
-        $('form#editProfileForm').find('#action-btn #loading-text').addClass('d-none');
+    var formFocus = doc.querySelector('form#editProfileForm');
+    httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);   // Debugging Purpose
+        formFocus.querySelector('#action-btn button[type=submit]').classList.remove('btn-secondary', 'fadeIn');
+        formFocus.querySelector('#action-btn button[type=submit]').classList.add('btn-success');
+        formFocus.querySelector('#action-btn #loading-text').classList.add('d-none');
 
         if (data.success) {
-            var $modal = $('#formFeedbackModal');
-            $modal.find('.modal-header h5.modal-title').html('Profile Changes Successful');
-            $modal.find('.modal-body').html('You have updated your profile details successfuly.')
+            if (localStorage.getItem('pass')) {
+                localStorage.setItem('pass', data.pass);
+            }
+            else if (sessionStorage.getItem('pass')) {
+                sessionStorage.setItem('pass', data.pass);
+            }
 
-            $modal.on('shown.bs.modal', function() {
-                $modal.find('button[data-dismiss=modal]').focus();
+            var modal = doc.getElementById('formFeedbackModal');
+            modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Profile Changed Successful';
+            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have updated your proffifle details successfully.';
+
+            $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
-                    $modal.modal('hide');
-                }, 2000);
-            });
-
-            $modal.on('hide.bs.modal', function() {
-                location.href = './profile';
-            });
-
-            $modal.modal("show");
-        }
-        else if (data.errors) {
-            var $focus = $('#editProfileForm #bio')
-            if (data.errors.bio) {
-                $focus.addClass('invalid');
-                $focus.find('.feedback').html(data.errors.bio);
-            }
-
-            $focus = $('#editProfileForm #email')
-            if (data.errors.email) {
-                $focus.addClass('invalid');
-                $focus.find('.feedback').html(data.errors.email);
-            }
-
-            $focus = $('#editProfileForm #password')
-            if (data.errors.password) {
-                $focus.addClass('invalid');
-                $focus.find('.feedback').html(data.errors.password);
-            }
-
-            $focus = $('#editProfileForm #cfmPassword')
-            if (data.errors.cfmPassword) {
-                $focus.addClass('invalid');
-                $focus.find('.feedback').html(data.errors.cfmPassword);
-            }
-        }
-    });
-});
-
-/* upload picture drag & drop */
-var $focus = $('#uploadPhoto #pictureDrop');
-
-$('html').on('dragover', function(e) {
-    e.preventDefault();
-    $('#uploadPhoto').find('h5#action-text .action').html("Drop");
-});
-
-$focus.on('dragenter', function(e) {
-    e.preventDefault();
-    $('#uploadPhoto').find('h5#action-text .action').html('Drop');
-});
-
-$focus.on('dragover', function(e) {
-    e.preventDefault();
-    $('#uploadPhoto').find('h5#action-text .action').html('Drop');
-});
-
-$focus.on('drop', function(e) {
-    e.preventDefault();
-    $('#uploadPhotoModal #uploadPhoto').find('.feedback').addClass('d-none');
-    $('#uploadPhoto').find('h5#action-text').addClass('d-none');
-    $('#uploadPhoto').find('h5#loading-text').removeClass('d-none');
-
-    var $file = e.originalEvent.dataTransfer.files[0];
-    if (e.originalEvent.dataTransfer.files.length > 1) {
-        $('#uploadPhotoModal #uploadPhoto').find('.feedback').html('Only 1 image upload is allowed!');
-        $('#uploadPhotoModal #uploadPhoto').find('.feedback').removeClass('d-none');
-        $('#uploadPhoto').find('h5#action-text').removeClass('d-none');
-        $('#uploadPhoto').find('h5#loading-text').addClass('d-none');
-    }
-    else if ($file.size > 2097152) {
-        $('#uploadPhotoModal #uploadPhoto').find('.feedback').html('Image size cannot exceed 2mb!');
-        $('#uploadPhotoModal #uploadPhoto').find('.feedback').removeClass('d-none');
-        $('#uploadPhoto').find('h5#action-text').removeClass('d-none');
-        $('#uploadPhoto').find('h5#loading-text').addClass('d-none');
-    }
-    else {
-        var $form = new FormData();
-        $form.append('action', 'uploadPhoto');
-        $form.append('uid', (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')));
-        $form.append('file', $file);
-
-        $.ajax({
-            type: 'POST',
-            url: 'assets/db/db.php',
-            data: $form,
-            dataType: 'json',
-            contentType: false,
-            processData: false,
-            error: function(data) {
-                console.log(data);
-            }
-        })
-        .done(function(data) {
-            // console.log(data); // Debugging Purpose
-            $('#uploadPhoto').find('h5#action-text').removeClass('d-none');
-            $('#uploadPhoto').find('h5#loading-text').addClass('d-none');
-
-            if (data.success) {
-                var $modal = $('#formFeedbackModal');
-
-                $modal.find('h5.modal-title').html('Upload Successful');
-                $modal.find('.modal-body').html('Your profile picture have been uploaded successfuly.');
-
-                $modal.on('shown.bs.modal', function() {
-                    $modal.find('button[data-dismiss=modal]').focus();
-                    setTimeout(function () {
-                        $modal.modal('hide');
-                    }, 2000);
-                });
-
-                $modal.on('hide.bs.modal', function() {
-                    location.href = './edit_profile';
-                });
-
-                $modal.modal("show");
-            }
-            else if (data.errors) {
-                $('#uploadPhoto').find('.feedback').html(data.errors.file);
-                $('#uploadPhoto').find('.feedback').removeClass('d-none');
-            }
-        });
-    }
-});
-
-/* upload picture on click */
-$focus.click(function() {
-    $('#uploadPhotoModal #uploadPhoto').find('input[name=upload]').trigger('click');
-});
-
-$('#uploadPhotoModal #uploadPhoto').on('change', 'input[name=upload]', function() {
-    $('#uploadPhotoModal #uploadPhoto').find('.feedback').addClass('d-none');
-    $('#uploadPhoto').find('h5#action-text').addClass('d-none');
-    $('#uploadPhoto').find('h5#loading-text').removeClass('d-none');
-
-    var $form = new FormData();
-    $form.append('action', 'uploadPhoto');
-    $form.append('uid', (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')));
-    $form.append('file', $(this)[0].files[0]);
-
-    $.ajax({
-        type: 'POST',
-        url: 'assets/db/db.php',
-        data: $form,
-        dataType: 'json',
-        contentType: false,
-        processData: false,
-        error: function(data) {
-            console.log(data);
-        }
-    })
-    .done(function(data) {
-        // console.log(data);  // Debugging Purpose
-        $('#uploadPhoto').find('h5#action-text').removeClass('d-none');
-        $('#uploadPhoto').find('h5#loading-text').addClass('d-none');
-
-        if (data.success) {
-            var $modal = $('#formFeedbackModal');
-
-            $modal.find('h5.modal-title').html('Upload Successful');
-            $modal.find('.modal-body').html('Your profile picture have been uploaded successfuly.');
-
-            $modal.on('shown.bs.modal', function() {
-                $modal.find('button[data-dismiss=modal]').focus();
-                setTimeout(function () {
-                    $modal.modal('hide');
+                    $(modal).modal('hide');
                 }, 2500);
             });
 
-            $modal.on('hide.bs.modal', function() {
-                location.href = './edit_profile';
+            $(modal).on('hide.bs.modal', function() {
+                location.href = './profile';
             });
 
-            $modal.modal("show");
+            $(modal).modal('show');
         }
         else if (data.errors) {
-            $('#uploadPhoto').find('.feedback').html(data.errors.file);
-            $('#uploadPhoto').find('.feedback').removeClass('d-none');
+            var focus = formFocus.querySelector('#bio');
+            if (data.errors.bio) {
+                focus.addClass('invalid');
+                focus.getElementsByClassName('.feedback')[0].innerHTML(data.errors.bio);
+            }
+
+            focus = formFocus.querySelector('#email');
+            if (data.errors.email) {
+                focus.classList.add('invalid');
+                focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
+            }
+
+            focus = formFocus.querySelector('#password');
+            if (data.errors.password) {
+                focus.classList.add('invalid');
+                focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
+            }
+
+            focus = formFocus.querySelector('#cfmPassword');
+            if (data.errors.cfmPassword) {
+                focus.classList.add('invalid');
+                focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.cfmPassword;
+            }
+
         }
     });
-});
+}
+
+/* upload picture drag & drop */
+var focus = doc.querySelector('#uploadPhoto #pictureDrop');
+doc.querySelector('html').ondragover = function(e) {
+    e.preventDefault();
+    doc.querySelector('#uploadPhoto h5#action-text .action').innerHTML = 'Drop';
+}
+
+focus.ondragenter = function(e) {
+    e.preventDefault();
+    doc.querySelector('#uploadPhoto h5#action-text .action').innerHTML = 'Drop';
+}
+
+focus.ondragover = function(e) {
+    e.preventDefault();
+    doc.querySelector('#uploadPhoto h5#action-text .action').innerHTML = 'Drop';
+}
+
+focus.ondrop = function(e) {
+    e.preventDefault();
+
+    doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.add('d-none');
+    doc.querySelector('#uploadPhoto h5#action-text').classList.add('d-none');
+    doc.querySelector('#uploadPhoto h5#loading-text').classList.remove('d-none');
+
+    console.log(e);
+    var file = e.dataTransfer.files[0];
+    if (e.dataTransfer.files.length > 1) {
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').innerHTML = 'Only 1 image upload is allowed!';
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.remove('d-none');
+        doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
+        doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
+    }
+    else if (file.size > 2097152) {
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').innerHTML = 'Image size cannot exceed 2MB!';
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.remove('d-none');
+        doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
+        doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
+    }
+    else {
+        var data = new FormData();
+        data.append('action', 'uploadPhoto');
+        data.append('uid', (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')));
+        data.append('file', file);
+
+        httpPost('./assets/db/db.php', data, function(data) {
+            console.log(data);  // Debugging Purpose
+            doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
+            doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
+
+            if (data.success) {
+                var modal = doc.getElementById('formFeedbackModal');
+
+                modal.querySelector('h5.modal-title').innerHTML = 'Upload Successful';
+                modal.getElementsByClassName('modal-body')[0].innerHTML = 'Your profile picture have been uploaded successfuly.';
+
+                $(modal).on('shown.bs.modal', function(e) {
+                    console.log(e);
+                    modal.querySelector('.modal-footer button[data-dismiss=modal]').focus();
+                    setTimeout(function () {
+                        $(modal).modal('hide');
+                    }, 2500);
+                });
+
+                $(modal).on('hide.bs.modal', function() {
+                    location.href = './edit_profile';
+                });
+
+                $(modal).modal('show');
+            }
+            else if (data.errors) {
+                doc.querySelector('#uploadPhoto .feedback').innerHTML = data.errors.file;
+                doc.querySelector('#uploadPhoto .feedback').classList.remove('d-none');
+            }
+        });
+    }
+}
+
+/* upload picture on click */
+focus.onclick = function() {
+    doc.querySelector('#uploadPhotoModal #uploadPhoto input[name=upload]').click();
+}
+
+doc.querySelector('#uploadPhotoModal #uploadPhoto input[name=upload]').onchange = function() {
+    doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.add('d-none');
+    doc.querySelector('#uploadPhoto h5#action-text').classList.add('d-none');
+    doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
+
+    if (this.files[0].size > 2097152) {
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').innerHTML = 'Image size cannot exceed 2MB!';
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.remove('d-none');
+        doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
+        doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
+    }
+    else {
+        var data = new FormData();
+
+        if (uid) {
+            data.append('uid', uid);
+        }
+
+        data.append('file', this.files[0]);
+        data.append('action', 'uploadPhoto');
+
+        httpPost('./assets/db/db.php', data, function(data) {
+            // console.log(data);  // Debugging Purpose
+            doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
+            doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
+
+            if (data.success) {
+                var modal = doc.getElementById('formFeedbackModal');
+
+                modal.querySelector('h5.modal-title').innerHTML = 'Upload Successful';
+                modal.getElementsByClassName('modal-body')[0].innerHTML = 'Your profile picture have been uploaded successfuly';
+
+                $(modal).on('shown.bs.modal', function() {
+                    modal.querySelector('.modal-footer button[data-dismiss=modal]').focus();
+                    setTimeout(function () {
+                        $(modal).modal('hide');
+                    }, 2500);
+                });
+
+                $(modal).on('hide.bs.modal', function() {
+                    location.href = './edit_profile';
+                });
+
+                $(modal).modal('show');
+            }
+            else if (data.errors) {
+                doc.querySelector('#uploadPhoto .feedback').innerHTML = data.errors.file;
+                doc.querySelector('#uploadPhoto .feedback').classList.remove('d-none');
+            }
+        });
+    }
+}
 
 /* profile picture hover */
-if ($(window).width() > 767.98) {
+if (window.outerWidth > 767.98) {
     profilePicMouseEnter();
     profilePicMouseLeave();
 }
 
-$(window).resize(function() {
-    profilePicMouseEnter();
-    profilePicMouseLeave();
+addWindowOnResize(function() {
+    if (window.outerWidth > 767.98) {
+        profilePicMouseEnter();
+        profilePicMouseLeave();
+    }
 });
 
 function profilePicMouseEnter() {
-    $sectionFocus.on('mouseenter', '#basicProfile .pic', function() {
-        var $focus = $(this).find('.small');
-        $focus.removeClass('d-md-none d-xl-none d-lg-none');
-        $focus.removeClass('flipOutX short');
-        $focus.addClass('flipInX short');
-    });
+    sectionFocus.querySelector('#basicProfile .pic').onmouseenter = function() {
+        var focus = this.getElementsByClassName('small')[0];
+        focus.classList.remove('d-md-none', 'd-xl-none', 'd-lg-none', 'flipOutX', 'short');
+        focus.classList.add('flipInX', 'short');
+    }
 }
 
 function profilePicMouseLeave() {
-    $sectionFocus.on('mouseleave', '#basicProfile .pic', function() {
-        var $focus = $(this).find('.small');
-        $focus.addClass('flipOutX short').one(animationEnd, function() {
-            $focus.addClass('d-md-none d-xl-none d-lg-none');
-            $focus.removeClass('flipInX short');
-            $focus.addClass('flipOutX short');
-        });
+    sectionFocus.querySelector('#basicProfile .pic').onmouseleave = function() {
+        var focus = this.getElementsByClassName('small')[0];
+        focus.classList.remove('flipInX', 'short');
+        focus.classList.add('flipOutX', 'short');
+    }
+
+    focus.addEventListener(animationEnd, function() {
+        focus.classList.add('d-md-none', 'd-xl-none', 'd-lg-none');
     });
 }

@@ -24,8 +24,8 @@ $('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function
 });
 
 /* logout on click */
-addOnload(function() {
-    if (doc.querySelector('.logout') != null) {
+addWindowOnload(function() {
+    if (doc.querySelector('.logout')) {
         var focus = doc.querySelectorAll('.logout');
 
         focus.forEach(function(el) {
@@ -43,7 +43,7 @@ addOnload(function() {
                     doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
                     setTimeout(function () {
                         $('#logoutModal').modal('hide');
-                    }, 2000);
+                    }, 2500);
                 });
 
                 $('#logoutModal').on('hide.bs.modal', function() {
@@ -75,26 +75,26 @@ function loginForm(formID) {
         var data = new FormData(this);
         data.append('action', 'login');
 
-        if (this.querySelector('#m-remember') != null && !this.querySelector('#m-remember').checked) {
+        if (this.querySelector('#m-remember') && !this.querySelector('#m-remember').checked) {
             data.append('remember', '');
         }
 
-        if (this.querySelector('#remember') != null && !this.querySelector('#remember').checked) {
+        if (this.querySelector('#remember') && !this.querySelector('#remember').checked) {
             data.append('remember', '');
         }
 
-        httpPost('assets/db/db.php', data, function(data) {
+        httpPost('./assets/db/db.php', data, function(data) {
             // console.log(data); // Debugging Purpose
             if (data.success) {
                 if (data.remember) {
                     localStorage.setItem('uid', data.uid);
-                    localStorage.setItem('name', data.name);
                     localStorage.setItem('accType', data.accType);
+                    localStorage.setItem('pass', data.pass);
                 }
                 else {
                     sessionStorage.setItem('uid', data.uid);
-                    sessionStorage.setItem('name', data.name);
                     sessionStorage.setItem('accType', data.accType);
+                    sessionStorage.setItem('pass', data.pass);
                 }
 
                 var modal = doc.getElementById('loginSuccessModal');
@@ -104,7 +104,7 @@ function loginForm(formID) {
                     modal.querySelector('button.btn[data-dismiss=modal]').focus();
                     setTimeout(function () {
                         $(modal).modal('hide');
-                    }, 2000);
+                    }, 2500);
                 });
 
                 $(modal).on('hide.bs.modal', function() {
@@ -138,7 +138,7 @@ function loginForm(formID) {
 
 /* sign up function */
 function signupForm(formID) {
-    if (doc.querySelector('form#' + formID) != null) {
+    if (doc.querySelector('form#' + formID)) {
         doc.querySelector('form#' + formID).onsubmit = function(e) {
             e.preventDefault();
 
@@ -159,7 +159,7 @@ function signupForm(formID) {
             var data = new FormData(this);
             data.append('action', formID);
 
-            httpPost('assets/db/db.php', data, function(data) {
+            httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data); // Debugging Purpose
                 focus = doc.querySelector('form#' + formID);
                 focus.querySelector('button[type=submit] .signup-text').classList.remove('d-none');
@@ -173,7 +173,7 @@ function signupForm(formID) {
 
                         setTimeout(function () {
                             $(modal).modal('hide');
-                        }, 2000);
+                        }, 2500);
                     });
 
                     $(modal).on('hide.bs.modal', function() {
@@ -217,7 +217,7 @@ function signupForm(formID) {
 
 /* forgot password function */
 function forgotPasswordForm(formID) {
-    if (doc.querySelector('#' + formID) != null) {
+    if (doc.querySelector('#' + formID)) {
         doc.querySelector('#' + formID).onsubmit = function(e) {
             e.preventDefault();
 
@@ -253,7 +253,7 @@ function forgotPasswordForm(formID) {
                 data.append('fcode', doc.querySelector('#fpass_2 input[name=fcode]').value);
             }
 
-            httpPost('assets/db/db.php', data, function(data) {
+            httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
                 doc.querySelector('form#fpass_1 button[type=submit] .next-text').classList.remove('d-none');
                 doc.querySelector('form#fpass_3 button[type=submit] .change-pass-text').classList.remove('d-none');
@@ -302,7 +302,7 @@ function forgotPasswordForm(formID) {
                             doc.querySelector('#fpassModal button.btn[data-dismiss=modal]').focus();
                             setTimeout(function () {
                                 $(modal).modal('hide');
-                            }, 2000);
+                            }, 2500);
                         });
 
                         $(modal).on('hide.bs.modal', function() {

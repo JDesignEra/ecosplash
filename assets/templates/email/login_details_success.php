@@ -134,7 +134,7 @@
                                             </tr>
                                             <tr>
                                                 <td align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:14px; line-height: 28px;">
-                                                    You have recently updated your account's login details. If you did not changed your account's login details, please contact us immediately to prevent security risk. Your new account details are show below.
+                                                    You have recently updated your account's login details. If you did not changed your account's login details, please contact us immediately to prevent security risk. Your new account details are shown below.
                                                 </td>
                                             </tr>
                                             <tr>

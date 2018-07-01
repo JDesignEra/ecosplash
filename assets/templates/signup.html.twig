@@ -4,82 +4,84 @@
 {% set mainType = 'vCenter' %}
 
 {% block main %}
-<div class="col-12 col-md-6 mx-auto">
-    <div id="signUpCard" class="card text-center shadow-lg">
-        <div class="card-header">
-            <ul class="nav nav-pills card-header-pills">
-                <li class="nav-item flex-fill">
-                    <a class="nav-link active" href="#user" data-toggle="tab">Sign Up As User</a>
-                </li>
-                <li class="nav-item flex-fill">
-                    <a class="nav-link" href="#organization" data-toggle="tab">Sign Up As Organization</a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="card-body tab-content">
-            <div id="user" class="tab-pane show active" role="tabpanel">
-                <h5 class="card-title">Sign Up As User</h5>
-                <p class="card-text">
-                    Sign up an account as an individual user with EcoSplash, and gain benefits while being environmental friendly today.
-                </p>
-
-                <form id="uSignupForm" class="text-left" method="post" novalidate>
-                    <div id="name" class="form-label-group">
-                        <input id="u-name" class="form-control" type="text" maxlength="100" placeholder="Name" name="name" autofocus />
-                        <label for="u-name">Name</label>
-                        <div class="feedback fadeIn"></div>
-                    </div>
-                    <div id="email" class="form-label-group">
-                        <input id="u-email" class="form-control" type="email" maxlength="255" placeholder="Email" name="email" />
-                        <label for="u-email">Email</label>
-                        <div class="feedback fadeIn"></div>
-                    </div>
-                    <div id="password" class="form-label-group">
-                        <input id="u-password" class="form-control" type="password" maxlength="255" placeholder="Password" tooltip-toggle="form-tooltip" data-placement="right" title="More then 5 characters" name="password" />
-                        <label for="u-password">Password</label>
-                        <div class="feedback fadeIn"></div>
-                    </div>
-
-                    <button type="submit" class="btn btn-success btn-block">
-                        <span class="signup-text fadeIn">Sign Up</span>
-                        <span class="load-text fadeIn d-none">Loading <i class="fas fa-cog fa-spin"></i></span>
-                    </button>
-                </form>
+<section id="signup">
+    <div class="col-12 col-md-6 mx-auto">
+        <div id="signUpCard" class="card text-center shadow-lg">
+            <div class="card-header">
+                <ul class="nav nav-pills card-header-pills">
+                    <li class="nav-item flex-fill">
+                        <a class="nav-link active" href="#user" data-toggle="tab">Sign Up As User</a>
+                    </li>
+                    <li class="nav-item flex-fill">
+                        <a class="nav-link" href="#organization" data-toggle="tab">Sign Up As Organization</a>
+                    </li>
+                </ul>
             </div>
 
-            <div id="organization" class="tab-pane" role="tabpanel">
-                <h5 class="card-title">Sign Up As Organization</h5>
-                <p class="card-text">
-                    Sign up an account as an organization with EcoSplash, and promote your environmental friendly events and organization brand today.
-                </p>
+            <div class="card-body tab-content">
+                <div id="user" class="tab-pane show active" role="tabpanel">
+                    <h5 class="card-title">Sign Up As User</h5>
+                    <p class="card-text">
+                        Sign up an account as an individual user with EcoSplash, and gain benefits while being environmental friendly today.
+                    </p>
 
-                <form id="oSignupForm" class="text-left" method="post" novalidate>
-                    <div id="name" class="form-label-group">
-                        <input id="o-name" class="form-control" type="text" maxlength="100" placeholder="Organization Name" name="name" autofocus />
-                        <label for="o-name">Organization Name</label>
-                        <div class="feedback fadeIn"></div>
-                    </div>
-                    <div id="email" class="form-label-group">
-                        <input id="o-email" class="form-control" type="email" maxlength="255" placeholder="Email" name="email" />
-                        <label for="o-email">Email</label>
-                        <div class="feedback fadeIn"></div>
-                    </div>
-                    <div id="password" class="form-label-group">
-                        <input id="o-password" class="form-control" type="password" maxlength="255" placeholder="Password" tooltip-toggle="form-tooltip" data-placement="right" title="More then 5 characters" name="password" />
-                        <label for="o-password">Password</label>
-                        <div class="feedback fadeIn"></div>
-                    </div>
+                    <form id="uSignupForm" class="text-left" method="post" novalidate>
+                        <div id="name" class="form-label-group">
+                            <input id="u-name" class="form-control" type="text" maxlength="100" placeholder="Name" name="name" autofocus />
+                            <label for="u-name">Name</label>
+                            <div class="feedback fadeIn"></div>
+                        </div>
+                        <div id="email" class="form-label-group">
+                            <input id="u-email" class="form-control" type="email" maxlength="255" placeholder="Email" name="email" />
+                            <label for="u-email">Email</label>
+                            <div class="feedback fadeIn"></div>
+                        </div>
+                        <div id="password" class="form-label-group">
+                            <input id="u-password" class="form-control" type="password" maxlength="255" placeholder="Password" tooltip-toggle="form-tooltip" data-placement="right" title="More then 5 characters" name="password" />
+                            <label for="u-password">Password</label>
+                            <div class="feedback fadeIn"></div>
+                        </div>
 
-                    <button type="submit" class="btn btn-success btn-block">
-                        <span class="signup-text fadeIn">Sign Up</span>
-                        <span class="load-text fadeIn d-none">Loading <i class="fas fa-cog fa-spin"></i></span>
-                    </button>
-                </form>
+                        <button type="submit" class="btn btn-success btn-block">
+                            <span class="signup-text fadeIn">Sign Up</span>
+                            <span class="load-text fadeIn d-none">Loading <i class="fas fa-cog fa-spin"></i></span>
+                        </button>
+                    </form>
+                </div>
+
+                <div id="organization" class="tab-pane" role="tabpanel">
+                    <h5 class="card-title">Sign Up As Organization</h5>
+                    <p class="card-text">
+                        Sign up an account as an organization with EcoSplash, and promote your environmental friendly events and organization brand today.
+                    </p>
+
+                    <form id="oSignupForm" class="text-left" method="post" novalidate>
+                        <div id="name" class="form-label-group">
+                            <input id="o-name" class="form-control" type="text" maxlength="100" placeholder="Organization Name" name="name" autofocus />
+                            <label for="o-name">Organization Name</label>
+                            <div class="feedback fadeIn"></div>
+                        </div>
+                        <div id="email" class="form-label-group">
+                            <input id="o-email" class="form-control" type="email" maxlength="255" placeholder="Email" name="email" />
+                            <label for="o-email">Email</label>
+                            <div class="feedback fadeIn"></div>
+                        </div>
+                        <div id="password" class="form-label-group">
+                            <input id="o-password" class="form-control" type="password" maxlength="255" placeholder="Password" tooltip-toggle="form-tooltip" data-placement="right" title="More then 5 characters" name="password" />
+                            <label for="o-password">Password</label>
+                            <div class="feedback fadeIn"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">
+                            <span class="signup-text fadeIn">Sign Up</span>
+                            <span class="load-text fadeIn d-none">Loading <i class="fas fa-cog fa-spin"></i></span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}
 
 {% block afterMain %}

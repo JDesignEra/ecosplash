@@ -1,0 +1,204 @@
+{% extends "base.html.twig" %}
+{% set title = 'Edit Profile' %}
+
+{% block main %}
+<section id="utilities">
+    <div id="utilities" class="card text-center shadow-lg">
+        <div class="card-header">
+            <ul class="nav nav-pills card-header-pills">
+                <li class="nav-item flex-fill">
+                    <a class="nav-link active" href="#electric" data-toggle="tab">Electric</a>
+                </li>
+                <li class="nav-item flex-fill">
+                    <a class="nav-link" href="#water" data-toggle="tab">Water</a>
+                </li>
+                <li class="nav-item flex-fill">
+                    <a class="nav-link" href="#gas" data-toggle="tab">Gas</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body tab-content">
+            <div id="electric" class="tab-pane show active fadeIn" role="tabpanel">
+                <h4 class="pb-4">Electric Bills for <span class="year"></span></h4>
+
+                <canvas id="electricChart"></canvas>
+
+                <form id="electricForm" class="text-left d-none" method="post" novalidate>
+                    <hr />
+                    <h6 class="card-subtitle mt-0 mb-4">Add / Update</h6>
+
+                    <div id="electricUsage" class="form-label-group">
+                        <input id="electricKWH" class="form-control" type="text" maxlength="100" placeholder="Electric Usage In KW/H" name="usage" autofocus />
+                        <label for="electricKWH">Water Usage In KW/H</label>
+                        <div class="feedback fadeIn"></div>
+                    </div>
+
+                    <div class="form-group item">
+                        <select id="electricDate" class="custom-select" name="month">
+                            <option class="default" value="none" selected disabled>
+                                Select Month
+                            </option>
+                        </select>
+                        <div class="feedback fadeIn d-none"></div>
+                    </div>
+                    <button class="btn btn-success btn-block" type="submit">Submit</button>
+                </form>
+
+                <hr class="mb-5" />
+
+                <div class="row mb-4">
+                    <div class="col-6 text-left">
+                        <h6 class="card-subtitle mt-0 mb-2">Detailed Usage</h6>
+                    </div>
+
+                    <div class="col-6 text-right">
+                        <button id="addUpdate" class="btn btn-success mb-2" type="button">
+                            Add / Update
+                        </button>
+                        <button class="btn btn-outline-danger ml-2 mb-2" type="button">
+                            Delete All
+                        </button>
+                    </div>
+                </div>
+
+                <div id="electric-table">
+                    <h6 class="text-muted">
+                        It seems that you have not add anything yet.
+                    </h6>
+                </div>
+            </div>
+
+            <div id="water" class="tab-pane fadeIn" role="tabpanel">
+                <h4 class="pb-4">Water Bills for <span class="year"></span></h4>
+
+                <canvas id="waterChart"></canvas>
+
+                <form id="waterForm" class="text-left fadeIn d-none" method="post" novalidate>
+                    <hr />
+
+                    <h6 class="card-subtitle mt-0 mb-4">Add / Update</h6>
+
+                    <div id="waterUsage" class="form-label-group">
+                        <input id="waterMC" class="form-control" type="text" maxlength="100" placeholder="Water Usage In M&sup3;" name="usage" autofocus />
+                        <label for="waterMC">Water Usage In M&sup3;</label>
+                        <div class="feedback fadeIn"></div>
+                    </div>
+
+                    <div class="form-group item">
+                        <select id="waterDate" class="custom-select" name="month">
+                            <option class="default" value="none" selected disabled>
+                                Select Month
+                            </option>
+                        </select>
+                        <div class="feedback fadeIn d-none"></div>
+                    </div>
+                    <button class="btn btn-success btn-block" type="submit">Submit</button>
+                </form>
+
+                <hr class="mb-5" />
+
+                <div class="row mb-4">
+                    <div class="col-6 text-left">
+                        <h6 class="card-subtitle mt-0">Detailed Usage</h6>
+                    </div>
+
+                    <div class="col-6 text-right">
+                        <button id="addUpdate" class="btn btn-success mb-2" type="button">
+                            Add / Update
+                        </button>
+                        <button class="btn btn-outline-danger ml-2 mb-2" type="button">
+                            Delete All
+                        </button>
+                    </div>
+                </div>
+
+                <div id="water-table">
+                    <h6 class="text-muted">
+                        It seems that you have not add anything yet.
+                    </h6>
+                </div>
+            </div>
+
+            <div id="gas" class="tab-pane fadeIn" role="tabpanel">
+                <h4 class="pb-4">Gas Bills for <span class="year"></span></h4>
+
+                <canvas id="gasChart"></canvas>
+
+                <form id="gasForm" class="text-left fadeIn d-none" method="post" novalidate>
+                    <hr />
+
+                    <h6 class="card-subtitle mt-0 mb-4">Add / Update</h6>
+
+                    <div id="gasUsage" class="form-label-group">
+                        <input id="gasKWH" class="form-control" type="number" min="0" step="0.01" placeholder="Gas Usage In KW/H" name="usage" autofocus />
+                        <label for="gasKWH">Gas In KW/H</label>
+                        <div class="feedback fadeIn"></div>
+                    </div>
+
+                    <div class="form-group month">
+                        <select id="gasMonth" class="custom-select" name="month">
+                            <option class="default" value="none" selected disabled>
+                                Select Month
+                            </option>
+                        </select>
+                        <div class="feedback fadeIn"></div>
+                    </div>
+                    <button class="btn btn-success btn-block" type="submit">Submit</button>
+                </form>
+
+                <hr class="mb-5" />
+
+                <div class="row mb-4">
+                    <div class="col-6 text-left">
+                        <h6 class="card-subtitle mt-0">Detailed Usage</h6>
+                    </div>
+
+                    <div class="col-6 text-right">
+                        <button id="addUpdate" class="btn btn-success mb-2" type="button">
+                            Add / Update
+                        </button>
+                        <button class="btn btn-outline-danger ml-2 mb-2" type="button">
+                            Delete All
+                        </button>
+                    </div>
+                </div>
+
+                <div id="gas-table">
+                    <h6 class="text-muted">
+                        It seems that you have not add anything yet.
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block afterMain %}
+<div id="successModal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/utilities.js"></script>
+{% endblock %}
