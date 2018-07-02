@@ -11,6 +11,8 @@ var sectionFocus = doc.querySelector('section#utilities'),
     eData = [],
     wData = [],
     gData = [],
+    delType = '',
+    delId = '',
     months = ['Janauary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     h4Years = sectionFocus.querySelectorAll('.card-body h4 .year');
 
@@ -163,6 +165,112 @@ sectionFocus.querySelector('#gas button#addUpdate').onclick = function() {
 }
 
 /* form submits */
+sectionFocus.querySelector('form#electricForm').onsubmit = function(e) {
+    e.preventDefault();
+    var formFocus = this;
+
+    var feedbacks = formFocus.querySelectorAll('.feedback');
+    feedbacks.forEach(function(el) {
+        el.parentElement.classList.remove('invalid', 'valid');
+        el.innerHTML = '';
+    });
+
+    var data = new FormData(formFocus);
+    data.append('uid', uid);
+    data.append('action', 'updateAddElectric');
+
+    httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);  // Debugging Purpose
+        if (data.success) {
+            var modal = doc.getElementById('successModal');
+            modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Electric Bill Updated';
+            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have successfuly updated your electric bill.';
+
+            $(modal).on('shown.bs.modal', function() {
+                setTimeout(function () {
+                    $(modal).modal('hide');
+                }, 2500);
+            });
+
+            $(modal).on('hide.bs.modal', function() {
+                location.href = './utilities';
+            });
+
+            $(modal).modal('show');
+        }
+        else if (data.errors) {
+            if (data.errors.usage) {
+                formFocus.querySelector('#electricUsage').classList.add('invalid');
+                formFocus.querySelector('#electricUsage .feedback').innerHTML = data.errors.usage;
+            }
+            else {
+                formFocus.querySelector('#electricUsage').classList.add('valid');
+            }
+
+            if (data.errors.month) {
+                formFocus.querySelector('#electricMonth').parentElement.classList.add('invalid');
+                formFocus.querySelector('.form-group.month .feedback').innerHTML = data.errors.month;
+            }
+            else {
+                formFocus.querySelector('#electricMonth').parentElement.classList.add('valid');
+            }
+        }
+    });
+}
+
+sectionFocus.querySelector('form#waterForm').onsubmit = function(e) {
+    e.preventDefault();
+    var formFocus = this;
+
+    var feedbacks = formFocus.querySelectorAll('.feedback');
+    feedbacks.forEach(function(el) {
+        el.parentElement.classList.remove('invalid', 'valid');
+        el.innerHTML = '';
+    });
+
+    var data = new FormData(formFocus);
+    data.append('uid', uid);
+    data.append('action', 'updateAddWater');
+
+    httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);  // Debugging Purpose
+        if (data.success) {
+            var modal = doc.getElementById('successModal');
+            modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Water Bill Updated';
+            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have successfuly updated your water bill.';
+
+            $(modal).on('shown.bs.modal', function() {
+                setTimeout(function () {
+                    $(modal).modal('hide');
+                }, 2500);
+            });
+
+            $(modal).on('hide.bs.modal', function() {
+                location.href = './utilities';
+            });
+
+            $(modal).modal('show');
+        }
+        else if (data.errors) {
+            if (data.errors.usage) {
+                formFocus.querySelector('#waterUsage').classList.add('invalid');
+                formFocus.querySelector('#waterUsage .feedback').innerHTML = data.errors.usage;
+            }
+            else {
+                formFocus.querySelector('#waterUsage').classList.add('valid');
+            }
+
+            if (data.errors.month) {
+                formFocus.querySelector('#waterMonth').parentElement.classList.add('invalid');
+                formFocus.querySelector('.form-group.month .feedback').innerHTML = data.errors.month;
+            }
+            else {
+                formFocus.querySelector('#waterMonth').parentElement.classList.add('valid');
+            }
+        }
+    });
+}
+
 sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
     e.preventDefault();
     var formFocus = this;
@@ -178,7 +286,7 @@ sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
     data.append('action', 'updateAddGas');
 
     httpPost('./assets/db/db.php', data, function(data) {
-        console.log(data);  // Debugging Purpose
+        // console.log(data);  // Debugging Purpose
         if (data.success) {
             var modal = doc.getElementById('successModal');
             modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Gas Bill Updated';
@@ -215,6 +323,166 @@ sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
         }
     });
 }
+
+/* delete button */
+addWindowOnload(function() {
+    var focus = sectionFocus.querySelectorAll('#electric-table button#delete');
+    focus.forEach(function(el) {
+        el.addEventListener('click', function() {
+            delId = el.parentElement.parentElement.id;
+            delType = 'electric';
+
+            var modal = doc.getElementById('deleteModal'),
+                monthFocus = modal.querySelectorAll('.month'),
+                bTypeFocus = modal.querySelectorAll('.bType');
+
+            monthFocus.forEach(function(el) {
+                el.innerHTML = months[delId];
+            });
+
+            bTypeFocus.forEach(function(el) {
+                el.innerHTML = delType;
+            });
+
+            $(modal).modal('show');
+        });
+    });
+
+    var focus = sectionFocus.querySelectorAll('#water-table button#delete');
+    focus.forEach(function(el) {
+        el.addEventListener('click', function() {
+            delId = el.parentElement.parentElement.id;
+            delType = 'water';
+
+            var modal = doc.getElementById('deleteModal'),
+                monthFocus = modal.querySelectorAll('.month'),
+                bTypeFocus = modal.querySelectorAll('.bType');
+
+            monthFocus.forEach(function(el) {
+                el.innerHTML = months[delId];
+            });
+
+            bTypeFocus.forEach(function(el) {
+                el.innerHTML = delType;
+            });
+
+            $(modal).modal('show');
+        });
+    });
+
+    var focus = sectionFocus.querySelectorAll('#gas-table button#delete');
+    focus.forEach(function(el) {
+        el.addEventListener('click', function() {
+            delId = el.parentElement.parentElement.id;
+            delType = 'gas';
+
+            var modal = doc.getElementById('deleteModal'),
+                monthFocus = modal.querySelectorAll('.month'),
+                bTypeFocus = modal.querySelectorAll('.bType');
+
+            monthFocus.forEach(function(el) {
+                el.innerHTML = months[delId];
+            });
+
+            bTypeFocus.forEach(function(el) {
+                el.innerHTML = delType;
+            });
+
+            $(modal).modal('show');
+        });
+    });
+});
+
+/* deleteModal confirm button */
+doc.querySelector('#deleteModal button#confirmDel').onclick = function() {
+    var data = new FormData();
+    data.append('uid', uid);
+    data.append('uuid', delId);
+
+    if (delType == 'electric') {
+        data.append('action', 'deleteElectric');
+    }
+    else if (delType == 'water') {
+        data.append('action', 'deleteWater');
+    }
+    else if (delType == 'gas') {
+        data.append('action', 'deleteGas');
+    }
+
+    httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);  // Debugging Purpose
+
+        if (data.success) {
+            location.href = './utilities';
+        }
+    });
+}
+
+/* delete all button */
+sectionFocus.querySelector('#electric #electricDelAll ').onclick = function() {
+    delType = 'electric';
+
+    var modal = doc.getElementById('deleteAllModal'),
+        bTypeFocus = modal.querySelectorAll('#deleteAllModal .bType');
+
+    bTypeFocus.forEach(function(el) {
+        el.innerHTML = delType;
+    });
+
+    $('#deleteAllModal').modal('show');
+}
+
+sectionFocus.querySelector('#water #waterDelAll ').onclick = function() {
+    delType = 'water';
+
+    var modal = doc.getElementById('deleteAllModal'),
+        bTypeFocus = modal.querySelectorAll('#deleteAllModal .bType');
+
+    bTypeFocus.forEach(function(el) {
+        el.innerHTML = delType;
+    });
+
+    $('#deleteAllModal').modal('show');
+}
+
+sectionFocus.querySelector('#gas #gasDelAll ').onclick = function() {
+    delType = 'gas';
+
+    var modal = doc.getElementById('deleteAllModal'),
+        bTypeFocus = modal.querySelectorAll('#deleteAllModal .bType');
+
+    bTypeFocus.forEach(function(el) {
+        el.innerHTML = delType;
+    });
+
+    $('#deleteAllModal').modal('show');
+}
+
+/* deleteAllModal confirm button */
+doc.querySelector('#deleteAllModal button#confirmDel').onclick = function() {
+    var data = new FormData();
+    data.append('uid', uid);
+
+    if (delType == 'electric') {
+        data.append('action', 'deleteAllElectric');
+    }
+    else if (data == 'water') {
+        data.append('action', 'deleteAllWater');
+    }
+    else if (data == 'gas') {
+        data.append('action', 'deleteAllGas');
+    }
+
+    httpPost('./assets/db/db.php', data, function() {
+        console.log(data);  // Debugging Purpose
+    });
+}
+
+/* deleteModal on hide */
+$('#deleteModal').on('hide.bs.modal', function() {
+    delId = '';
+    delType = '';
+});
 
 /* new chart function */
 function newChart(target, dataSet, label) {

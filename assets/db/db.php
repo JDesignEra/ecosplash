@@ -1068,6 +1068,73 @@ switch ($action) {
             }
         }
         break;
+
+    case 'deleteElectric':
+    case 'deleteWater':
+    case 'deleteGas':
+        $uid = checkInput($_POST['uid']);
+        $uuid = checkInput($_POST['uuid']);
+        $type = '';
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($uuid) && $uuid != '0') {
+            $errors['uuid'] = 'utilities ID is missing!';
+        }
+
+        if (empty($errors)) {
+            if ($action == 'deleteElectric') {
+                $type = 'electric';
+            }
+            elseif ($action == 'deleteWater') {
+                $type = 'water';
+            }
+            elseif ($action == 'deleteGas') {
+                $type = 'gas';
+            }
+
+            $result = $mysqli -> query("SELECT * FROM utilities WHERE uid = '$uid' AND type = '$type'");
+
+            if ($result -> num_rows == 1) {
+                $result = $result -> fetch_array(MYSQLI_ASSOC);
+
+                $useAmounts = explode(',', $result['useAmounts']);
+                $prices = explode(',', $result['prices']);
+
+                $useAmounts[$uuid] = 0;
+                $prices[$uuid] = '$0';
+
+                $useAmounts = implode(',', $useAmounts);
+                $prices = implode(',', $prices);
+
+                $result = $mysqli -> query("UPDATE utilities SET useAmounts = '$useAmounts', prices = '$prices' WHERE uid = '$uid' AND type = '$type'");
+            }
+        }
+        break;
+
+    case 'deleteAllElectric':
+    case 'deleteAllWater':
+    case 'deleteAllGas':
+        $uid = checkInput($_POST['uid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($errors)) {
+            if ($action == 'deleteAllElectric') {
+                $mysqli -> query("DELETE utilities WHERE uid = '$uid' AND type = ");
+            }
+            elseif ($action == 'deleteAllWater') {
+                // code...
+            }
+            elseif ($action == 'deleteAllGas') {
+                // code...
+            }
+        }
+        break;
 }
 
 if (empty($errors)) {

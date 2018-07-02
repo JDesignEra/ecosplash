@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="form-group item">
-                        <select id="electricDate" class="custom-select" name="month">
+                        <select id="electricMonth" class="custom-select" name="month">
                             <option class="default" value="none" selected disabled>
                                 Select Month
                             </option>
@@ -56,7 +56,7 @@
                         <button id="addUpdate" class="btn btn-success mb-2" type="button">
                             Add / Update
                         </button>
-                        <button class="btn btn-outline-danger ml-2 mb-2" type="button">
+                        <button id="electricDelAll" class="btn btn-outline-danger ml-2 mb-2" type="button">
                             Delete All
                         </button>
                     </div>
@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="form-group item">
-                        <select id="waterDate" class="custom-select" name="month">
+                        <select id="waterMonth" class="custom-select" name="month">
                             <option class="default" value="none" selected disabled>
                                 Select Month
                             </option>
@@ -107,7 +107,7 @@
                         <button id="addUpdate" class="btn btn-success mb-2" type="button">
                             Add / Update
                         </button>
-                        <button class="btn btn-outline-danger ml-2 mb-2" type="button">
+                        <button id="waterDelAll" class="btn btn-outline-danger ml-2 mb-2" type="button">
                             Delete All
                         </button>
                     </div>
@@ -158,7 +158,7 @@
                         <button id="addUpdate" class="btn btn-success mb-2" type="button">
                             Add / Update
                         </button>
-                        <button class="btn btn-outline-danger ml-2 mb-2" type="button">
+                        <button id="gasDelAll" class="btn btn-outline-danger ml-2 mb-2" type="button">
                             Delete All
                         </button>
                     </div>
@@ -192,6 +192,62 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
                     Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete <span class="month"></span> <span class="bType"></span> Bill?</h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete your <span class="month"></span> <span class="bType"></span> bill? This action can't be reversed.
+            </div>
+
+            <div class="modal-footer">
+                <button id="confirmDel" type="button" class="btn btn-success w-50">
+                    Confirm
+                </button>
+
+                <button type="button" class="btn btn-outline-danger w-50" data-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deleteAllModal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete All <span class="bType"></span> Bill?</h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete all your <span class="bType"></span> bill? This action can't be reversed.
+            </div>
+
+            <div class="modal-footer">
+                <button id="confirmDel" type="button" class="btn btn-success w-50">
+                    Confirm
+                </button>
+
+                <button type="button" class="btn btn-outline-danger w-50" data-dismiss="modal">
+                    Cancel
                 </button>
             </div>
         </div>
