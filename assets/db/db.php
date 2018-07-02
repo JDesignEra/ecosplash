@@ -1125,13 +1125,13 @@ switch ($action) {
 
         if (empty($errors)) {
             if ($action == 'deleteAllElectric') {
-                $mysqli -> query("DELETE utilities WHERE uid = '$uid' AND type = ");
+                $mysqli -> query("DELETE FROM utilities WHERE uid = '$uid' AND type = 'electric'");
             }
             elseif ($action == 'deleteAllWater') {
-                // code...
+                $mysqli -> query("DELETE FROM utilities WHERE uid = '$uid' AND type = 'water'");
             }
             elseif ($action == 'deleteAllGas') {
-                // code...
+                $mysqli -> query("DELETE FROM utilities WHERE uid = '$uid' AND type = 'gas'");
             }
         }
         break;

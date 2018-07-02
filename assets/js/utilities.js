@@ -394,7 +394,7 @@ addWindowOnload(function() {
 });
 
 /* deleteModal confirm button */
-doc.querySelector('#deleteModal button#confirmDel').onclick = function() {
+doc.querySelector('#deleteModal button.confirmDel').onclick = function() {
     var data = new FormData();
     data.append('uid', uid);
     data.append('uuid', delId);
@@ -411,12 +411,17 @@ doc.querySelector('#deleteModal button#confirmDel').onclick = function() {
 
     httpPost('./assets/db/db.php', data, function(data) {
         // console.log(data);  // Debugging Purpose
-
         if (data.success) {
             location.href = './utilities';
         }
     });
 }
+
+/* deleteModal on hide */
+$('#deleteModal').on('hide.bs.modal', function() {
+    delId = '';
+    delType = '';
+});
 
 /* delete all button */
 sectionFocus.querySelector('#electric #electricDelAll ').onclick = function() {
@@ -459,27 +464,30 @@ sectionFocus.querySelector('#gas #gasDelAll ').onclick = function() {
 }
 
 /* deleteAllModal confirm button */
-doc.querySelector('#deleteAllModal button#confirmDel').onclick = function() {
+doc.querySelector('#deleteAllModal button.confirmDel').onclick = function() {
     var data = new FormData();
     data.append('uid', uid);
 
     if (delType == 'electric') {
         data.append('action', 'deleteAllElectric');
     }
-    else if (data == 'water') {
+    else if (delType == 'water') {
         data.append('action', 'deleteAllWater');
     }
-    else if (data == 'gas') {
+    else if (delType == 'gas') {
         data.append('action', 'deleteAllGas');
     }
 
-    httpPost('./assets/db/db.php', data, function() {
-        console.log(data);  // Debugging Purpose
+    httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);  // Debugging Purpose
+        if (data.success) {
+            location.href = './utilities';
+        }
     });
 }
 
-/* deleteModal on hide */
-$('#deleteModal').on('hide.bs.modal', function() {
+/* deleteAllModal on hide */
+$('#deleteAllModal').on('hide.bs.modal', function() {
     delId = '';
     delType = '';
 });

@@ -2,8 +2,8 @@
 -- version 4.8.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jul 01, 2018 at 07:27 PM
+-- Host: localhost
+-- Generation Time: Jul 02, 2018 at 07:27 AM
 -- Server version: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -286,7 +286,7 @@ INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoin
 --
 
 CREATE TABLE `utilities` (
-  `euid` int(255) NOT NULL,
+  `uuid` int(255) NOT NULL,
   `uid` int(255) NOT NULL,
   `useAmounts` text NOT NULL,
   `prices` text NOT NULL,
@@ -297,10 +297,10 @@ CREATE TABLE `utilities` (
 -- Dumping data for table `utilities`
 --
 
-INSERT INTO `utilities` (`euid`, `uid`, `useAmounts`, `prices`, `type`) VALUES
-(1, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'electric'),
-(2, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'water'),
-(5, 1, '300,500.56,0,0,0,305.37,0,0,0,0,208.65,0', '$55.59,$92.75,$0,$0,$0,$56.59,$0,$0,$0,$0,$38.66,$0', 'gas');
+INSERT INTO `utilities` (`uuid`, `uid`, `useAmounts`, `prices`, `type`) VALUES
+(1, 1, '0,500,0,150,200,350,250,350,200,327,255,300', '$0,$300,$0,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'electric'),
+(2, 1, '0,500,367,150,200,350,250,350,200,327,255,300', '$0,$300,$86.8,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'water'),
+(5, 1, '0,500,367,150,200,350,250,350,200,327,255,300', '$0,$300,$86.8,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'gas');
 
 --
 -- Indexes for dumped tables
@@ -359,7 +359,7 @@ ALTER TABLE `users`
 -- Indexes for table `utilities`
 --
 ALTER TABLE `utilities`
-  ADD PRIMARY KEY (`euid`);
+  ADD PRIMARY KEY (`uuid`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -411,17 +411,17 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `utilities`
 --
 ALTER TABLE `utilities`
-  MODIFY `euid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `uuid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 DELIMITER $$
 --
 -- Events
 --
-CREATE DEFINER=`root`@`localhost` EVENT `daily_task_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_task()$$
+CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_daily_quiz()$$
 
 CREATE DEFINER=`root`@`localhost` EVENT `fpCode_reset` ON SCHEDULE EVERY 12 HOUR STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set fpCode = NULL$$
 
-CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_daily_quiz()$$
+CREATE DEFINER=`root`@`localhost` EVENT `daily_task_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_task()$$
 
 CREATE DEFINER=`root`@`localhost` EVENT `yearly_bill_resets` ON SCHEDULE EVERY 1 YEAR STARTS '2018-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO TRUNCATE TABLE utilities$$
 
