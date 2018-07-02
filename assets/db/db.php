@@ -381,9 +381,11 @@ switch ($action) {
 
                 $mysqli -> query("UPDATE users set name = '$name', bio = '$bio', email = '$email', password = '$password' WHERE uid = '$uid'");
 
-                $result = $mysqli -> query("SELECT password FROM users WHERE uid = $uid");
+                $result = $mysqli -> query("SELECT name, password FROM users WHERE uid = $uid");
                 $result = $result -> fetch_array(MYSQLI_ASSOC);
+
                 $data['pass'] = $result['password'];
+                $data['name'] = $result['name'];
             }
         }
         break;

@@ -88,11 +88,13 @@ function loginForm(formID) {
             if (data.success) {
                 if (data.remember) {
                     localStorage.setItem('uid', data.uid);
+                    localStorage.setItem('name', data.name);
                     localStorage.setItem('accType', data.accType);
                     localStorage.setItem('pass', data.pass);
                 }
                 else {
                     sessionStorage.setItem('uid', data.uid);
+                    sessionStorage.setItem('name', data.name);
                     sessionStorage.setItem('accType', data.accType);
                     sessionStorage.setItem('pass', data.pass);
                 }

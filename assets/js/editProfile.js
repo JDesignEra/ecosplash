@@ -51,16 +51,18 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
         formFocus.querySelector('#action-btn #loading-text').classList.add('d-none');
 
         if (data.success) {
-            if (localStorage.getItem('pass')) {
+            if (localStorage.getItem('name')) {
+                localStorage.setItem('name', data.name);
                 localStorage.setItem('pass', data.pass);
             }
-            else if (sessionStorage.getItem('pass')) {
+            else if (sessionStorage.getItem('name')) {
+                localStorage.setItem('name', data.name);
                 sessionStorage.setItem('pass', data.pass);
             }
 
             var modal = doc.getElementById('formFeedbackModal');
             modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Profile Changed Successful';
-            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have updated your proffifle details successfully.';
+            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have updated your profile details successfully.';
 
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
@@ -148,7 +150,7 @@ focus.ondrop = function(e) {
         data.append('file', file);
 
         httpPost('./assets/db/db.php', data, function(data) {
-            console.log(data);  // Debugging Purpose
+            // console.log(data);  // Debugging Purpose
             doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
             doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
 
