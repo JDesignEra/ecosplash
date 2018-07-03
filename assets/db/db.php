@@ -1137,6 +1137,36 @@ switch ($action) {
             }
         }
         break;
+
+    case 'getFriends':
+        $uid = checkInput($_POST['uid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT * FROM friends WHERE uid_one = '$uid' OR uid_two = '$uid'");
+
+            if ($result -> num_rows > 0) {
+                $friends = [];
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $fid = ($row['uid_one'] == $uid ? $row['uid_two'] : $row['uid_one']);
+                    $friends['fid'][] = ($row['uid_one'] == $uid ? $row['uid_two'] : $row['uid_one']);
+                    $friends['rr_status'][] = ($row['uid_one'] == $uid ? 'request' : 'response');
+                    $friends['status'][] = $row['status'];
+
+                    $accResult = $mysqli -> query("SELECT name, ecoPoints FROM users WHERE uid = '$fid'");
+                    $accResult = $accResult -> fetch_array(MYSQLI_ASSOC);
+
+                    $friends['name'][] = $accResult['name'];
+                    $friends['ecoPoints'][] = $accResult['ecoPoints'];
+                }
+
+                $data['friends'] = $friends;
+            }
+        }
+        break;
 }
 
 if (empty($errors)) {

@@ -483,6 +483,13 @@ section#editProfile .pic .small {
     border-radius: 0 0 8px 8px;
 }
 
+/* Friends Section */
+section#friends .pic {
+    width: 100%;
+    background-color: #13547a;
+    border-radius: 0.25rem;
+}
+
 /* remove number input stepper arrow */
 .form-label-group input[type = 'number']::-webkit-inner-spin-button,
 .form-label-group input[type = 'number']::-webkit-outer-spin-button {

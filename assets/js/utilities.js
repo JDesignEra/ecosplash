@@ -1,5 +1,3 @@
-// TODO Electric, water
-// TODO Gas delete and delete all
 'use strict';
 securePage();
 

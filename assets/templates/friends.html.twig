@@ -1,0 +1,63 @@
+{% extends "base.html.twig" %}
+{% set title = 'Friends' %}
+
+{% block main %}
+<section id="friendsList">
+    <div class="card text-center shadow-lg">
+        <div class="card-header">
+            <ul class="nav nav-pills card-header-pills">
+                <li class="nav-item flex-fill">
+                    <a class="nav-link active" href="#friends" data-toggle="tab">Friends</a>
+                </li>
+                <li class="nav-item flex-fill">
+                    <a class="nav-link" href="#all" data-toggle="tab">All User</a>
+                </li>
+                <li class="nav-item flex-fill">
+                    <a class="nav-link" href="#request" data-toggle="tab">Friends Request</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body tab-content">
+            <div class="input-group mb-4">
+                <input type="text" class="form-control" placeholder="Find user by name">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="button">
+                        Find <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="friends" class="tab-pane show active fadeIn" role="tabpanel">
+                <h6 class="text-muted">
+                    It seems that you did not follow any account yet.
+                </h6>
+                <h6 class="text-muted">
+                    Why not trying following someone?
+                </h6>
+            </div>
+
+            <div id="all" class="tab-pane fadeIn" role="tabpanel">
+                <h6 class="text-muted">
+                    Whoops!
+                </h6>
+                <h6 class="text-muted">
+                    This is embarrassing, but it seems like we do not have any account to display.
+                </h6>
+            </div>
+
+            <div id="request" class="tab-pane fadeIn" role="tabpanel">
+                <h6 class="text-muted">
+                    You do not have any pending friend request
+                </h6>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block afterMain %}{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/friends.js"></script>
+{% endblock %}

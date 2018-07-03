@@ -277,7 +277,7 @@ function enableFormToolTip() {
             template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
             offset: '0, 20'
         });
-        console.clear();
+        // console.clear();
     });
 }
 
@@ -302,7 +302,7 @@ function enableMobile_FormToolTip() {
             offset: '0, 5',
             placement: 'bottom'
         });
-        console.clear();
+        // console.clear();
     });
 }
 
