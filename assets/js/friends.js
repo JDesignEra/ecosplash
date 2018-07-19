@@ -1,62 +1,170 @@
 'use strict';
+// Status, 0 = Pending Request, 1 = Friends
 
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid'));
 
-var data = new FormData();
+/* get friends */
+var friends = {},
+        friendsStatus,
+        data = new FormData();
+
 data.append('uid', uid);
 data.append('action', 'getFriends');
 
 httpPost('./assets/db/db.php', data, function(data) {
-    console.log(data);  // Debugging Purpose
+    // console.log(data);  // Debugging Purpose
     if (data.success) {
         if (data.friends) {
-            doc.getElementById('friends').innerHTML = '';
+            httpGet('./assets/templates/friends/friends_row.html', function(content) {
+                var friendsRow,
+                    friendsCount = 0,
+                    requestRow,
+                    requestCount = 0,
+                    temp = doc.createElement('div');
+                    temp.innerHTML = content;
+
+                    // Friends tab
+                    if (data.friends.status.indexOf('1') != -1) {
+                        doc.querySelector('#friends').innerHTML = '';
+                    }
+
+                    // Request tab
+                    if (data.friends.status.indexOf('0') != -1) {
+                        doc.querySelector('#requests').innerHTML = '';
+                    }
+
+                    data.friends.fid.forEach(function(fv, fi) {
+                        friends[fv] = data.friends.status[fi];
+
+                        /* Friends tab */
+                        if (friendsCount % 3 == 0 && data.friends.status[fi] == 1) {
+                            friendsRow = temp.getElementsByClassName('row')[0].cloneNode();
+                        }
+
+                        if ((friendsCount != 0 && friendsCount % 4 == 0) || fi == data.friends.fid.length - 1) {
+                            doc.getElementById('friends').appendChild(friendsRow);
+                        }
+
+                        if (data.friends.status[fi] == 1) {
+                            friendsCount++;
+
+                            var friendsCol = temp.getElementsByClassName('card')[0].cloneNode(true);
+                            friendsCol.id = data.friends.fid[fi];
+
+                            friendsCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
+                            friendsCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
+
+                            if (data.friends.bio[fi]) {
+                                friendsCol.querySelector('p.bio').innerHTML = data.friends.bio[fi];
+                            }
+
+                            var btnFocus = friendsCol.querySelector('button');
+                            btnFocus.classList.add('btn-outline-danger', 'unfollow');
+                            btnFocus.innerHTML = 'Unfollow';
+
+                            friendsRow.appendChild(friendsCol);
+                        }
+
+                        /* requests tab */
+                        if (requestCount % 3 == 0 && data.friends.status[fi] == 0) {
+                            requestRow = temp.getElementsByClassName('row')[0].cloneNode();
+                        }
+
+                        if ((requestCount != 0 && requestCount % 4 == 0) || fi == data.friends.fid.length - 1) {
+                            doc.getElementById('requests').appendChild(requestRow);
+                        }
+
+                        if (data.friends.status[fi] == 0) {
+                            requestCount++;
+
+                            var requestCol = temp.getElementsByClassName('card')[0].cloneNode(true);
+                            requestCol.id = data.friends.fid[fi];
+
+                            requestCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
+                            requestCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
+
+                            if (data.friends.rr_status[fi] == 'request') {
+                                var btnFocus = requestCol.querySelector('button');
+                                btnFocus.classList.add('btn-outline-danger', 'cancelRequest');
+                                btnFocus.innerHTML = 'Cancel Follow Request';
+                            }
+
+                            if (data.friends.rr_status[fi] == 'response') {
+                                var addBtn = requestCol.querySelector('button').cloneNode();
+                                addBtn.classList.add('btn-outline-danger', 'declineFollow');
+                                addBtn.innerHTML = 'Decline Friend Request';
+
+                                requestCol.getElementsByClassName('card-footer')[0].appendChild(addBtn);
+
+                                var btnFocus = requestCol.querySelector('button');
+                                btnFocus.classList.add('btn-success', 'acceptFollow');
+                                btnFocus.innerHTML = 'Accept Follow Request';
+                            }
+
+                            requestRow.appendChild(requestCol);
+                        }
+                    });
+            });
+        }
+    }
+});
+
+/* get all users */
+addWindowOnload(function() {
+    var data = new FormData();
+    data.append('action', 'getAllUsers');
+
+    httpPost('./assets/db/db.php', data, function(data) {
+        console.log(data);  // Debugging Purpose
+
+        if (data.success) {
+            doc.querySelector('#all').innerHTML = '';
 
             httpGet('./assets/templates/friends/friends_row.html', function(content) {
-                var row,
-                temp = doc.createElement('div');
+                var temp = doc.createElement('div'),
+                        row;
                 temp.innerHTML = content;
 
-                data.friends.fid.forEach(function(fv, fi) {
-                    if (fi % 3 == 0) {
-                        row = doc.createElement('div');
-                        row.className = 'row';
+                data.users.forEach(function(uv, ui) {
+                    var col = temp.getElementsByClassName('card')[0].cloneNode(true),
+                        btnFocus = col.querySelector('button');
+
+                    col.id = uv.uid;
+                    col.querySelector('h5.name').innerHTML = uv.name;
+                    col.querySelector('h5.ecopoints').innerHTML = uv.ecoPoints;
+
+                    if (friends.hasOwnProperty(uv.uid)) {
+                        console.log(friends[uv.uid]);
+                        if (friends[uv.uid] == 0) {
+                            var addBtn = col.querySelector('button').cloneNode();
+                            addBtn.classList.add('btn-success', 'cancelRequest');
+                            addBtn.innerHTML = 'Cancel Follow Request';
+                            col.getElementsByClassName('card-footer')[0].appendChild(addBtn);
+
+                            btnFocus.classList.add('btn-danger', 'declineFollow');
+                            btnFocus.innerHTML = 'Decline Friend Request';
+                        }
+                        else if (friends[uv.uid] == 1) {
+                            btnFocus.classList.add('btn-danger', 'unfollow');
+                            btnFocus.innerHTML = 'Unfollow';
+                        }
+                    }
+                    else {
+                        btnFocus.classList.add('btn-success', 'follow');
+                        btnFocus.innerHTML = 'Follow'
                     }
 
-                    if (fi != 0 && fi % 4 == 0 || fi == data.friends.fid.length - 1) {
-                        doc.getElementById('friends').appendChild(row);
+                    if (ui % 3 == 0) {
+                        row = temp.getElementsByClassName('row')[0].cloneNode();
                     }
 
-                    var col = doc.createElement('div');
-                    col.classList.add('col-12', 'col-md-3');
-                    col.innerHTML = temp.querySelector('div.col-12.col-md-3').innerHTML;
-
-                    col.querySelector('h5.name').innerHTML = data.friends.name[fi];
-                    col.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
-
-                    var buttonFocus = col.querySelector('button');
-
-                    if (data.friends.status[fi] == 0 && data.friends.rr_status[fi] == 'request') {
-                        buttonFocus.classList.add('btn-outline-danger');
-                        buttonFocus.innerHTML = 'Cancel Pending Follow Request';
-                        buttonFocus.id = 'cancelPending'
-                    }
-                    else if (data.friends.status[fi] == 0 && data.friends.rr_status[fi] == 'response') {
-                        buttonFocus.classList.add('btn-success');
-                        buttonFocus.innerHTML = 'Accept Follow Request';
-                        buttonFocus.id = 'acceptRequest';
-
-                        var addBtn = col.querySelector('button').cloneNode();
-                        addBtn.classList.add('btn-outline-danger');
-                        addBtn.innerHTML = 'Decline Follow Request';
-                        addBtn.id = 'declineRequest';
-
-                        col.getElementsByClassName('card-body')[0].appendChild(addBtn);
+                    if ((ui != 0 && ui % 4 == 0) || ui == data.users.length - 1) {
+                        doc.getElementById('all').appendChild(row);
                     }
 
                     row.appendChild(col);
                 });
             });
         }
-    }
+    });
 });

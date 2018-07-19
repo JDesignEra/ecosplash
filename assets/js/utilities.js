@@ -11,7 +11,7 @@ var sectionFocus = doc.querySelector('section#utilities'),
     gData = [],
     delType = '',
     delId = '',
-    months = ['Janauary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     h4Years = sectionFocus.querySelectorAll('.card-body h4 .year');
 
 /* bill year */
@@ -500,7 +500,7 @@ function newChart(target, dataSet, label) {
         type: 'bar',
         data: {
             defaultFontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-            labels: ['Janauary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            labels: months,
             datasets: [{
                 label: label,
                 data: dataSet,

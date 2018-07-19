@@ -2,10 +2,8 @@
 header('Content-Type: application/json');
 
 require_once "dbconfig.php";
-require_once 'mailconfig.php';
 
 $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
-$currURL = 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']);
 $action = checkInput($_POST['action']);
 
 switch ($action) {
@@ -18,7 +16,7 @@ switch ($action) {
             $errors['email'] = 'Email is required!';
         }
         else {
-            $result = $mysqli -> query("SELECT * FROM users WHERE email = '$email'");
+            $result = $mysqli -> query("SELECT uid, name, ecoPoints, newNotifications, type, password FROM users WHERE email = '$email'");
             if ($result -> num_rows == 0) {
                 $errors['email'] = $email.' does not exists!';
             }
@@ -31,12 +29,7 @@ switch ($action) {
         if (empty($errors)) {
             $result = $result -> fetch_array(MYSQLI_ASSOC);
             if (password_verify($password, $result['password'])) {
-                $data['uid'] = $result['uid'];
-                $data['name'] = $result['name'];
-                $data['ecoPoints'] = $result['ecoPoints'];
-                $data['newNotifications'] = $result['newNotifications'];
-                $data['accType'] = $result['type'];
-                $data['pass'] = $result['password'];
+                $data = $result;
 
                 if (!empty($remember)) {
                     $data['remember'] = true;
@@ -95,20 +88,11 @@ switch ($action) {
                 $mysqli -> query("INSERT INTO users (name, email, password, type) VALUES ('$name', '$email', '$password', 1)");
             }
 
-            $mail->addAddress($email);
-            $mail->Subject = '[EcoSplash] Sign Up Successful';
-            $mail->CharSet = 'utf-8';
-            $mail->AddEmbeddedImage('../img/logo/ecosplash_colored.png', 'logo');
-            $mail->AddEmbeddedImage('../img/email/facebook.png', 'fb');
-            $mail->AddEmbeddedImage('../img/email/twitter.png', 'tw');
-            $mail->AddEmbeddedImage('../img/email/instagram.png', 'in');
-            $mail->msgHTML(file_get_contents($currURL.'/../templates/email/signup.php?name='.$name.'&email='.$email.'&password='.$mailPass), __DIR__);
-            $mail -> send();
+            sendMail('[EcoSplash] Sign Up Successful', '../templates/email/signup.php?name='.$name.'&email='.$email.'&password='.$mailPass, $email);
         }
         break;
 
     case 'getUser':
-    case 'getUsers':
         $uid = checkInput($_POST['uid']);
 
         if (empty($uid)) {
@@ -116,25 +100,31 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT * FROM users WHERE uid = '$uid'");
+            $result = $mysqli -> query("SELECT uid, name, email, bio, ecoPoints, dailyQuiz, dailyTask, newNotifications FROM users WHERE uid = '$uid'");
             if ($result -> num_rows == 1) {
-                $result = $result -> fetch_array(MYSQLI_ASSOC);
-                $data['uid'] = $result['uid'];
-                $data['name'] = $result['name'];
-                $data['email'] = $result['email'];
-                $data['bio'] = $result['bio'];
-                $data['ecoPoints'] = $result['ecoPoints'];
-                $data['ecoPointsMonth'] = $result['ecoPointsMonth'];
-
-                if ($action == 'getUser') {
-                    $data['dailyQuiz'] = $result['dailyQuiz'];
-                    $data['dailyTask'] = $result['dailyTask'];
-                    $data['newNotifications'] = $result['newNotifications'];
-                }
+                $data = $result -> fetch_array(MYSQLI_ASSOC);
             }
             else {
                 $errors['uid'] = 'Multiple UID!';
             }
+        }
+        break;
+
+    case 'getAllUsers':
+        $result = $mysqli -> query("SELECT uid, name, bio, ecoPoints FROM users");
+
+        if ($result -> num_rows < 1) {
+            $errors['uid'] = 'No accounts to display!';
+        }
+
+        if (empty($errors)) {
+            $accs = [];
+            while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                $i = count($accs);
+                $accs[$i] = $row;
+            }
+
+            $data['users'] = $accs;
         }
         break;
 
@@ -189,15 +179,7 @@ switch ($action) {
                 $fcode = implode($fcode);
                 $mysqli -> query("UPDATE users SET fpCode = '$fcode' WHERE email = '$email'");
 
-                $mail->addAddress($email);
-                $mail->Subject = '[EcoSplash] Forgot Password Code';
-                $mail->CharSet = 'utf-8';
-                $mail->AddEmbeddedImage('../img/logo/ecosplash_colored.png', 'logo');
-                $mail->AddEmbeddedImage('../img/email/facebook.png', 'fb');
-                $mail->AddEmbeddedImage('../img/email/twitter.png', 'tw');
-                $mail->AddEmbeddedImage('../img/email/instagram.png', 'in');
-                $mail->msgHTML(file_get_contents($currURL.'/../templates/email/forgot_password.php?fcode='.$fcode), __DIR__);
-                $mail -> send();
+                sendMail('[EcoSplash] Forgot Password Code', '../templates/email/forgot_password.php?fcode='.$fcode, $email);
             }
             else {
                 $errors['email'] = $email.' is not a registered user with us.';
@@ -218,7 +200,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT * FROM users WHERE email = '$email'");
+            $result = $mysqli -> query("SELECT fpCode FROM users WHERE email = '$email'");
             if ($result -> num_rows == 0) {
                 $errors['email'] = $email.' is not a registered user with us.';
             }
@@ -259,7 +241,7 @@ switch ($action) {
                 $errors['cfmPassword'] = 'Confirm password doesn\'t match with new password!';
             }
             else {
-                $result = $mysqli -> query("SELECT * FROM users WHERE email = '$email'");
+                $result = $mysqli -> query("SELECT fpCode FROM users WHERE email = '$email'");
                 if ($result -> num_rows == 0) {
                     $errors['email'] = $email.' is not a registered user with us.';
                 }
@@ -273,15 +255,7 @@ switch ($action) {
                         $password = password_hash($password, PASSWORD_BCRYPT);
                         $mysqli -> query("UPDATE users SET password = '$password', fpCode = NULL WHERE email = '$email'");
 
-                        $mail->addAddress($email);
-                        $mail->Subject = '[EcoSplash] Password Changed Successful';
-                        $mail->CharSet = 'utf-8';
-                        $mail->AddEmbeddedImage('../img/logo/ecosplash_colored.png', 'logo');
-                        $mail->AddEmbeddedImage('../img/email/facebook.png', 'fb');
-                        $mail->AddEmbeddedImage('../img/email/twitter.png', 'tw');
-                        $mail->AddEmbeddedImage('../img/email/instagram.png', 'in');
-                        $mail->msgHTML(file_get_contents($currURL.'/../templates/email/forgot_password_success.php?email='.$email.'&password='.$mailPass), __DIR__);
-                        $mail -> send();
+                        sendMail('[EcoSplash] Password Changed Successful', '../templates/email/forgot_password_success.php?email='.$email.'&password='.$mailPass, $email);
                     }
                 }
             }
@@ -327,7 +301,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT * FROM users WHERE uid = '$uid'");
+            $result = $mysqli -> query("SELECT email, name, bio, password FROM users WHERE uid = '$uid'");
 
             if ($result -> num_rows == 0) {
                 $errors['uid'] = "User not found!";
@@ -363,20 +337,11 @@ switch ($action) {
 
                 if ($email != $oEmail || (!empty($mailPass) && !password_verify($mailPass, $result['password']))) {
                     if ($email == $oEmail) {
-                        $mail->addAddress($email);
+                        sendMail('[EcoSplash] Login Details Changed Successful', '../templates/email/login_details_success.php?email='.$email.'&password='.$mailPass, $email);
                     }
                     else {
-                        $mail->addBCC($email);
-                        $mail->addBCC($oEmail);
+                        sendMail('[EcoSplash] Login Details Changed Successful', '../templates/email/login_details_success.php?email='.$email.'&password='.$mailPass, $email, $oEmail);
                     }
-                    $mail->Subject = '[EcoSplash] Login Details Changed Successful';
-                    $mail->CharSet = 'utf-8';
-                    $mail->AddEmbeddedImage('../img/logo/ecosplash_colored.png', 'logo');
-                    $mail->AddEmbeddedImage('../img/email/facebook.png', 'fb');
-                    $mail->AddEmbeddedImage('../img/email/twitter.png', 'tw');
-                    $mail->AddEmbeddedImage('../img/email/instagram.png', 'in');
-                    $mail->msgHTML(file_get_contents($currURL.'/../templates/email/login_details_success.php?email='.$email.'&password='.$mailPass), __DIR__);
-                    $mail->send();
                 }
 
                 $mysqli -> query("UPDATE users set name = '$name', bio = '$bio', email = '$email', password = '$password' WHERE uid = '$uid'");
@@ -651,17 +616,12 @@ switch ($action) {
 
     case 'uploadPhoto':
         $uid = checkInput($_POST['uid']);
-        $file;
-
-        if (isset($_FILES['file'])) {
-            $file = $_FILES['file'];
-        }
 
         if (empty($uid)) {
             $errors['uid'] = 'User ID is missing!';
         }
 
-        if (empty($file)) {
+        if (empty($file = isset($_FILES['file']))) {
             $errors['file'] = 'No file uploaded!';
         }
 
@@ -793,15 +753,7 @@ switch ($action) {
                 $data['oid'] = $row['oid'];
                 $data['totalEcoPoints'] = $row['totalEcoPoints'];
 
-                $mail->addAddress($email);
-                $mail->Subject = '[EcoSplash] Redeem #'.$row['oid'];
-                $mail->CharSet = 'utf-8';
-                $mail->AddEmbeddedImage('../img/logo/ecosplash_colored.png', 'logo');
-                $mail->AddEmbeddedImage('../img/email/facebook.png', 'fb');
-                $mail->AddEmbeddedImage('../img/email/twitter.png', 'tw');
-                $mail->AddEmbeddedImage('../img/email/instagram.png', 'in');
-                $mail->msgHTML(file_get_contents($currURL.'/../templates/email/redeem_success.php?'.http_build_query(array('items' => $sql['items'])).'&'.http_build_query(array('itemsQty' => $sql['itemsQty'])).'&'.http_build_query(array('itemsEcoPoints' => $sql['itemsEcoPoints'])).'&oid='.$row['oid'].'&totalEcoPoints='.$row['totalEcoPoints']), __DIR__);
-                $mail->send();
+                sendMail('[EcoSplash] Redeem #'.$row['oid'], '../templates/email/redeem_success.php?'.http_build_query(array('items' => $sql['items'])).'&'.http_build_query(array('itemsQty' => $sql['itemsQty'])).'&'.http_build_query(array('itemsEcoPoints' => $sql['itemsEcoPoints'])).'&oid='.$row['oid'].'&totalEcoPoints='.$row['totalEcoPoints'], $email);
             }
         }
         break;
@@ -1156,10 +1108,11 @@ switch ($action) {
                     $friends['rr_status'][] = ($row['uid_one'] == $uid ? 'request' : 'response');
                     $friends['status'][] = $row['status'];
 
-                    $accResult = $mysqli -> query("SELECT name, ecoPoints FROM users WHERE uid = '$fid'");
+                    $accResult = $mysqli -> query("SELECT name, bio, ecoPoints FROM users WHERE uid = '$fid'");
                     $accResult = $accResult -> fetch_array(MYSQLI_ASSOC);
 
                     $friends['name'][] = $accResult['name'];
+                    $friends['bio'][] = $accResult['bio'];
                     $friends['ecoPoints'][] = $accResult['ecoPoints'];
                 }
 
@@ -1167,6 +1120,11 @@ switch ($action) {
             }
         }
         break;
+
+    case 'getUsers':
+        $result = $mysqli -> query("SELECT uid, name, bio, ecoPoints FROM users");
+
+        print_r($result);
 }
 
 if (empty($errors)) {
@@ -1185,5 +1143,28 @@ function checkInput($input) {
     $input = htmlspecialchars($input);
 
     return $input;
+}
+
+function sendMail($subject, $fileURL, ...$email) {
+    require_once 'mailconfig.php';
+    $currURL = 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']);
+
+    if (count($email) == 1) {
+        $mail->addAddress($email[0]);
+    }
+    else {
+        foreach ($email as $value) {
+            $mail->addBcc($value);
+        }
+    }
+
+    $mail->Subject = $subject;
+    $mail->CharSet = 'utf-8';
+    $mail->AddEmbeddedImage('../img/logo/ecosplash_colored.png', 'logo');
+    $mail->AddEmbeddedImage('../img/email/facebook.png', 'fb');
+    $mail->AddEmbeddedImage('../img/email/twitter.png', 'tw');
+    $mail->AddEmbeddedImage('../img/email/instagram.png', 'in');
+    $mail->msgHTML(file_get_contents($currURL.'/'.$fileURL), __DIR__);
+    $mail -> send();
 }
 ?>

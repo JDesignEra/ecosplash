@@ -53,11 +53,11 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
         if (data.success) {
             if (localStorage.getItem('name')) {
                 localStorage.setItem('name', data.name);
-                localStorage.setItem('pass', data.pass);
+                localStorage.setItem('pass', data.password);
             }
             else if (sessionStorage.getItem('name')) {
                 localStorage.setItem('name', data.name);
-                sessionStorage.setItem('pass', data.pass);
+                sessionStorage.setItem('pass', data.password);
             }
 
             var modal = doc.getElementById('formFeedbackModal');

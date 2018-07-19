@@ -109,10 +109,9 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
                 // Desktop Navs
                 if (doc.querySelector('nav .nav-right #ecopoints')) {
                     doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
+                    doc.querySelector('nav .nav-right #name').innerHTML = data.name;
+                    doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
                 }
-
-                doc.querySelector('nav .nav-right #name').innerHTML = data.name;
-                doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
 
                 // Mobile navs
                 if (doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints')) {

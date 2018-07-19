@@ -54,11 +54,11 @@ httpPost('./assets/db/db.php', data, function(data) {
 
 /* add more items btn */
 sectionFocus.querySelector('button#addItem').onclick = function() {
-    var temp = doc.createElement('hr');
-    temp.className = 'my-4';
+    var hr = doc.createElement('hr');
+    hr.className = 'my-4';
 
     var row = itemFormGrp.cloneNode(true);
-    row.appendChild(temp);
+    row.appendChild(hr);
     row.querySelector('#item').id = 'item-' + formGrpCount;
     row.querySelector('select#items').id = 'items-' + formGrpCount;
     row.querySelector('#qty').id = 'qty-' + formGrpCount;
@@ -98,7 +98,7 @@ sectionFocus.querySelector('form#redeemForm').onsubmit = function(e) {
     data.append('action', 'redeemRewardItems');
 
     httpPost('assets/db/db.php', data, function(data) {
-        console.log(data);  // Debugging Purpose
+        // console.log(data);  // Debugging Purpose
         formFocus.querySelector('button[type=submit]').classList.add('btn-success');
         formFocus.querySelector('button[type=submit]').classList.remove('btn-secondary');
 

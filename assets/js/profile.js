@@ -46,9 +46,8 @@ if (accType) {
                             var temp = doc.createElement('div');
                             temp.innerHTML = content;
 
-                            var row = doc.createElement('tr');
+                            var row = temp.querySelector('tbody tr').cloneNode(true);
                             row.id = data.event_histories[i]['eid'];
-                            row.innerHTML = temp.querySelector('tbody tr').innerHTML;
 
                             var td = row.querySelectorAll('td');
                             td[0].innerHTML = data.event_histories[i]['eid'];
@@ -80,51 +79,18 @@ if (accType) {
                         httpPost('./assets/db/db.php', data, function(data) {
                             // console.log(data);  // Debugging Purpose
                             if (data.success) {
-                                $.get('./assets/templates/profile/event_history.html', function(content) {
+                                httpGet('./assets/templates/profile/event_history.html', function(content) {
                                     focus = doc.getElementById('view-more-modal');
                                     focus.getElementsByClassName('modal-body')[0].innerHTML = content;
                                     focus.querySelector('.modal-header .modal-title').innerHTML = '# ' + data.eid + ' On ' + data.joinDate;
-                                    focus.querySelector('.modal-body table tbody').innerHTML = '';
 
-                                    var temp = doc.createElement('div');
-                                    temp.innerHTML = content;
-
-                                    var row = doc.createElement('tr');
-                                    row.innerHTML = temp.querySelector('tr').innerHTML;
-
-                                    row.querySelector('th').innerHTML = 'Joined Date';
-                                    row.querySelector('td').innerHTML = data.joinDate;
-                                    focus.querySelector('.modal-body table tbody').appendChild(row);
-
-                                    row = doc.createElement('tr');
-                                    row.innerHTML = temp.querySelector('tr').innerHTML;
-                                    row.querySelector('th').innerHTML = 'Event';
-                                    row.querySelector('td').innerHTML = data.event;
-                                    focus.querySelector('.modal-body table tbody').appendChild(row);
-
-                                    row = doc.createElement('tr');
-                                    row.innerHTML = temp.querySelector('tr').innerHTML;
-                                    row.querySelector('th').innerHTML = 'Event Date';
-                                    row.querySelector('td').innerHTML = data.date;
-                                    focus.querySelector('.modal-body table tbody').appendChild(row);
-
-                                    row = doc.createElement('tr');
-                                    row.innerHTML = temp.querySelector('tr').innerHTML;
-                                    row.querySelector('th').innerHTML = 'Event Time';
-                                    row.querySelector('td').innerHTML = data.time;
-                                    focus.querySelector('.modal-body table tbody').appendChild(row);
-
-                                    row = doc.createElement('tr');
-                                    row.innerHTML = temp.querySelector('tr').innerHTML;
-                                    row.querySelector('th').innerHTML = 'EcoPoints';
-                                    row.querySelector('td').innerHTML = data.ecoPoints;
-                                    focus.querySelector('.modal-body table tbody').appendChild(row);
-
-                                    row = doc.createElement('tr');
-                                    row.innerHTML = temp.querySelector('tr').innerHTML;
-                                    row.querySelector('th').innerHTML = 'Status';
-                                    row.querySelector('td').innerHTML = data.status;
-                                    focus.querySelector('.modal-body table tbody').appendChild(row);
+                                    var td = focus.querySelectorAll('tbody tr td');
+                                    td[0].innerHTML = data.joinDate;
+                                    td[1].innerHTML = data.event;
+                                    td[2].innerHTML = data.date;
+                                    td[3].innerHTML = data.time;
+                                    td[4].innerHTML = data.ecoPoints;
+                                    td[5].innerHTML = data.status;
                                 });
 
                                 $('[tooltip-toggle=tooltip]').tooltip('hide');
@@ -151,9 +117,8 @@ if (accType) {
                             var temp = doc.createElement('div');
                             temp.innerHTML = content;
 
-                            var row = doc.createElement('tr');
+                            var row = temp.querySelector('tbody tr').cloneNode(true);
                             row.id = data.redeem_histories[i]['oid'];
-                            row.innerHTML = temp.querySelector('tbody tr').innerHTML;
 
                             var td = row.querySelectorAll('td');
                             td[0].innerHTML = data.redeem_histories[i]['oid'];
@@ -197,8 +162,7 @@ if (accType) {
                                         var temp = doc.createElement('div');
                                         temp.innerHTML = content;
 
-                                        var row = doc.createElement('tr');
-                                        row.innerHTML = temp.querySelector('tbody tr').innerHTML;
+                                        var row = temp.querySelector('tbody tr').cloneNode(true);
 
                                         var td = row.querySelectorAll('td');
                                         td[0].innerHTML = k;
@@ -278,9 +242,8 @@ if (accType) {
                             var temp = doc.createElement('div');
                             temp.innerHTML = content;
 
-                            var row = doc.createElement('tr');
+                            var row = temp.querySelector('tbody tr').cloneNode(true);
                             row.id = data.events_list[i]['eid'];
-                            row.innerHTML = temp.querySelector('tbody tr').innerHTML;
 
                             var td = row.querySelectorAll('td');
                             td[0].innerHTML = data.events_list[i]['eid'];
@@ -290,21 +253,6 @@ if (accType) {
                             td[4].innerHTML = data.events_list[i]['ecoPoints'];
 
                             sectionFocus.querySelector('#event-list-table tbody').appendChild(row);
-                        }
-                    });
-                    $.get('./assets/templates/profile/events_list.html', function(content) {
-                        $sectionFocus.find('#event-list-table').html(content);
-                        $sectionFocus.find('#event-list-table tbody').empty();
-
-                        for (var i = 0; i < data.events_list.length && i < 10; i++) {
-                            var $row = $(content).find('tbody tr').clone().attr('id', data.events_list[i]['eid']);
-                            $('td', $row).eq(0).html(data.events_list[i]['eid']);
-                            $('td', $row).eq(1).html(data.events_list[i]['date']);
-                            $('td', $row).eq(2).html(data.events_list[i]['time']);
-                            $('td', $row).eq(3).html(data.events_list[i]['location']);
-                            $('td', $row).eq(4).html(data.events_list[i]['ecoPoints']);
-
-                            $sectionFocus.find('#event-list-table tbody').append($row);
                         }
                     });
                 }
@@ -326,9 +274,8 @@ if (accType) {
                         var temp = doc.createElement('div');
                         temp.innerHTML = content;
 
-                        var row = doc.createElement('tr');
+                        var row = temp.querySelector('tbody tr').cloneNode(true);
                         row.id = data.quizzes_list[i]['qid'];
-                        row.innerHTML = temp.querySelector('tbody tr').innerHTML;
 
                         var td = row.querySelectorAll('td');
                         td[0].innerHTML = data.quizzes_list[i]['qid'];
@@ -369,10 +316,7 @@ if (accType) {
                                         var temp = doc.createElement('div');
                                         temp.innerHTML = content;
 
-                                        var questionRow = doc.createElement('tr');
-                                        questionRow.className = 'questionRow';
-                                        questionRow.style.backgroundColor = '#ecf6fc';
-                                        questionRow.innerHTML = temp.querySelector('tr.questionRow').innerHTML;
+                                        var questionRow = temp.querySelector('tbody tr.questionRow').cloneNode(true);
                                         questionRow.querySelector('th').innerHTML = qv;
 
                                         focus.querySelector('table tbody').appendChild(questionRow);
@@ -380,9 +324,7 @@ if (accType) {
                                         var optionRow;
                                         data.options.splice(0, 4).forEach(function(ov, oi) {
                                             if (oi % 2 == 0) {  // create new row
-                                                optionRow = doc.createElement('tr');
-                                                optionRow.className = 'optionRow';
-                                                optionRow.innerHTML = temp.querySelector('tr.optionRow').innerHTML;
+                                                optionRow = temp.querySelector('tbody tr.optionRow').cloneNode(true);
                                                 optionRow.querySelectorAll('td.option')[0].innerHTML = ov;
                                             }
                                             else {  // add created row
