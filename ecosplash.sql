@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 02, 2018 at 07:27 AM
+-- Generation Time: Jul 19, 2018 at 12:37 PM
 -- Server version: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -130,6 +130,30 @@ INSERT INTO `event_history` (`eid`, `uid`, `joinDate`, `event`, `dateTime`, `eco
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `friends`
+--
+
+CREATE TABLE `friends` (
+  `fid` int(255) NOT NULL,
+  `uid_one` int(255) NOT NULL,
+  `uid_two` int(255) NOT NULL,
+  `status` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32;
+
+--
+-- Dumping data for table `friends`
+--
+
+INSERT INTO `friends` (`fid`, `uid_one`, `uid_two`, `status`) VALUES
+(1, 1, 2, 1),
+(2, 1, 3, 0),
+(3, 4, 1, 0),
+(4, 5, 6, 0),
+(5, 7, 1, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `items`
 --
 
@@ -147,7 +171,7 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`rid`, `item`, `ecoPoints`, `weight`, `quantity`) VALUES
 (1, 'Giant $100 Voucher', 1000, '10', 0),
-(2, 'Giant $50 Voucher', 500, '50', 332),
+(2, 'Giant $50 Voucher', 500, '50', 331),
 (3, 'Giant $30 Voucher', 300, '70', 295),
 (4, 'Giant $25 Voucher', 250, '75', 535);
 
@@ -226,7 +250,8 @@ INSERT INTO `redeemed_history` (`oid`, `uid`, `date`, `items`, `itemsQty`, `item
 (23, 1, '2018-07-01 05:16:02', 'Giant $25 Voucher', '1', '250', 250),
 (24, 1, '2018-07-01 05:16:20', 'Giant $25 Voucher', '1', '250', 250),
 (25, 1, '2018-07-01 05:18:12', 'Giant $25 Voucher', '1', '250', 250),
-(26, 1, '2018-07-01 05:18:35', 'Giant $25 Voucher', '1', '250', 250);
+(26, 1, '2018-07-01 05:18:35', 'Giant $25 Voucher', '1', '250', 250),
+(27, 1, '2018-07-12 02:48:01', 'Giant $50 Voucher', '1', '500', 500);
 
 -- --------------------------------------------------------
 
@@ -245,10 +270,10 @@ CREATE TABLE `today_task` (
 
 INSERT INTO `today_task` (`uid`, `task`) VALUES
 (1, 'Recycle plastics'),
+(2, 'Leave your lights off during the day'),
+(3, 'Do grocery with your own grocery bag'),
 (5, 'Recycle old newspaper'),
-(6, 'Participate in an environmental friendly event'),
-(7, 'Finish all your meals without leaving any leftovers'),
-(8, 'Do not litter in any public places');
+(7, 'Finish all your meals without leaving any leftovers');
 
 -- --------------------------------------------------------
 
@@ -276,8 +301,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoints`, `newNotifications`, `dailyQuiz`, `dailyTask`, `ecoPointsMonth`, `fpCode`) VALUES
-(1, 'tgm.joel@gmail.com', '$2y$10$bGvbfe2Z3ifXjr5Sqzxxxu6B3Q1/mOCcpab1qWdN28/ajGufz7ioK', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 16623, 0, 0, '10101', 30105, NULL),
-(2, 'joel.jdesignera@gmail.com', '$2y$10$WXI2CtA7WaWeUufQwdWoWeFrtdfnfqxCHswd6czE5tCE4s4bDRcAy\0\0\0\0', 'JDesign', '', 1, 0, 0, 0, '00000', 0, NULL);
+(1, 'tgm.joel@gmail.com', '$2y$10$DzZMJxOU5rXLvL3Q7ieclexpI0zc1HH5HV9gn7b5yDx6hSz0sYg.m', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 16123, 0, 0, '00000', 30105, NULL),
+(2, 'joel.jdesignera@gmail.com', '$2y$10$Y8e0dMksupBKm1R0cZf0Ku.lM/jD0Aul9t5hFk3AuQ/vafNgytmZ6', 'JDesign', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 1, 0, 0, 0, '00000', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -286,7 +311,7 @@ INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoin
 --
 
 CREATE TABLE `utilities` (
-  `uuid` int(255) NOT NULL,
+  `euid` int(255) NOT NULL,
   `uid` int(255) NOT NULL,
   `useAmounts` text NOT NULL,
   `prices` text NOT NULL,
@@ -297,10 +322,10 @@ CREATE TABLE `utilities` (
 -- Dumping data for table `utilities`
 --
 
-INSERT INTO `utilities` (`uuid`, `uid`, `useAmounts`, `prices`, `type`) VALUES
-(1, 1, '0,500,0,150,200,350,250,350,200,327,255,300', '$0,$300,$0,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'electric'),
-(2, 1, '0,500,367,150,200,350,250,350,200,327,255,300', '$0,$300,$86.8,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'water'),
-(5, 1, '0,500,367,150,200,350,250,350,200,327,255,300', '$0,$300,$86.8,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'gas');
+INSERT INTO `utilities` (`euid`, `uid`, `useAmounts`, `prices`, `type`) VALUES
+(1, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'electric'),
+(2, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'water'),
+(5, 1, '300,500.56,0,0,0,305.37,0,0,0,0,208.65,0', '$55.59,$92.75,$0,$0,$0,$56.59,$0,$0,$0,$0,$38.66,$0', 'gas');
 
 --
 -- Indexes for dumped tables
@@ -323,6 +348,12 @@ ALTER TABLE `events`
 --
 ALTER TABLE `event_history`
   ADD PRIMARY KEY (`eid`);
+
+--
+-- Indexes for table `friends`
+--
+ALTER TABLE `friends`
+  ADD PRIMARY KEY (`fid`);
 
 --
 -- Indexes for table `items`
@@ -359,7 +390,7 @@ ALTER TABLE `users`
 -- Indexes for table `utilities`
 --
 ALTER TABLE `utilities`
-  ADD PRIMARY KEY (`uuid`);
+  ADD PRIMARY KEY (`euid`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -384,6 +415,12 @@ ALTER TABLE `event_history`
   MODIFY `eid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `friends`
+--
+ALTER TABLE `friends`
+  MODIFY `fid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
@@ -399,7 +436,7 @@ ALTER TABLE `quizzes`
 -- AUTO_INCREMENT for table `redeemed_history`
 --
 ALTER TABLE `redeemed_history`
-  MODIFY `oid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `oid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -411,19 +448,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `utilities`
 --
 ALTER TABLE `utilities`
-  MODIFY `uuid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `euid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 DELIMITER $$
 --
 -- Events
 --
-CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_daily_quiz()$$
+CREATE DEFINER=`root`@`localhost` EVENT `yearly_bill_resets` ON SCHEDULE EVERY 1 YEAR STARTS '2018-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO TRUNCATE TABLE utilities$$
 
-CREATE DEFINER=`root`@`localhost` EVENT `fpCode_reset` ON SCHEDULE EVERY 12 HOUR STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set fpCode = NULL$$
+CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_daily_quiz()$$
 
 CREATE DEFINER=`root`@`localhost` EVENT `daily_task_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_task()$$
 
-CREATE DEFINER=`root`@`localhost` EVENT `yearly_bill_resets` ON SCHEDULE EVERY 1 YEAR STARTS '2018-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO TRUNCATE TABLE utilities$$
+CREATE DEFINER=`root`@`localhost` EVENT `fpCode_reset` ON SCHEDULE EVERY 12 HOUR STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set fpCode = NULL$$
 
 DELIMITER ;
 COMMIT;
