@@ -141,11 +141,11 @@ addWindowOnload(function() {
                             addBtn.innerHTML = 'Cancel Follow Request';
                             col.getElementsByClassName('card-footer')[0].appendChild(addBtn);
 
-                            btnFocus.classList.add('btn-danger', 'declineFollow');
+                            btnFocus.classList.add('btn-outline-danger', 'declineFollow');
                             btnFocus.innerHTML = 'Decline Friend Request';
                         }
                         else if (friends[uv.uid] == 1) {
-                            btnFocus.classList.add('btn-danger', 'unfollow');
+                            btnFocus.classList.add('btn-outline-danger', 'unfollow');
                             btnFocus.innerHTML = 'Unfollow';
                         }
                     }

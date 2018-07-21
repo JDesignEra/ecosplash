@@ -75,11 +75,7 @@ function loginForm(formID) {
         var data = new FormData(this);
         data.append('action', 'login');
 
-        if (this.querySelector('#m-remember') && !this.querySelector('#m-remember').checked) {
-            data.append('remember', '');
-        }
-
-        if (this.querySelector('#remember') && !this.querySelector('#remember').checked) {
+        if ((this.querySelector('input[name=remember]') && !this.querySelector('input[name=remember]').checked)) {
             data.append('remember', '');
         }
 

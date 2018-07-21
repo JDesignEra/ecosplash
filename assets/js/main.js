@@ -43,7 +43,7 @@ switch (activeURL) {
         break;
 }
 
-/* login state */
+/* login state nav */
 if (localStorage.getItem('accType') == 0 || sessionStorage.getItem('accType') == 0) {
     doc.querySelector('nav .m-nav-right').remove();
 
@@ -128,7 +128,7 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 
         setTimeout(function () {
             worker();
-        }, 1800000);    // 30 Mins
+        }, 1800000);
     });
 })();
 
