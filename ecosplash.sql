@@ -2,8 +2,8 @@
 -- version 4.8.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jul 23, 2018 at 05:03 AM
+-- Host: localhost
+-- Generation Time: Jul 23, 2018 at 02:26 PM
 -- Server version: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -90,7 +90,7 @@ CREATE TABLE `events` (
   `dateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `event` text NOT NULL,
   `location` text NOT NULL,
-  `ecoPoints` int(255) NOT NULL,
+  `ecoPoints` int(255) NOT NULL DEFAULT '100',
   `redeemCode` varchar(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -111,6 +111,7 @@ INSERT INTO `events` (`eid`, `uid`, `dateTime`, `event`, `location`, `ecoPoints`
 --
 
 CREATE TABLE `events_attendance` (
+  `eid` int(255) NOT NULL,
   `uid` text NOT NULL,
   `status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -355,6 +356,12 @@ ALTER TABLE `events`
   ADD PRIMARY KEY (`eid`);
 
 --
+-- Indexes for table `events_attendance`
+--
+ALTER TABLE `events_attendance`
+  ADD PRIMARY KEY (`eid`);
+
+--
 -- Indexes for table `event_history`
 --
 ALTER TABLE `event_history`
@@ -423,7 +430,7 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT for table `event_history`
 --
 ALTER TABLE `event_history`
-  MODIFY `eid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `eid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `friends`
@@ -465,13 +472,13 @@ DELIMITER $$
 --
 -- Events
 --
-CREATE DEFINER=`root`@`localhost` EVENT `fpCode_reset` ON SCHEDULE EVERY 12 HOUR STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set fpCode = NULL$$
-
-CREATE DEFINER=`root`@`localhost` EVENT `daily_task_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_task()$$
+CREATE DEFINER=`root`@`localhost` EVENT `yearly_bill_resets` ON SCHEDULE EVERY 1 YEAR STARTS '2018-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO TRUNCATE TABLE utilities$$
 
 CREATE DEFINER=`root`@`localhost` EVENT `daily_quiz_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_daily_quiz()$$
 
-CREATE DEFINER=`root`@`localhost` EVENT `yearly_bill_resets` ON SCHEDULE EVERY 1 YEAR STARTS '2018-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO TRUNCATE TABLE utilities$$
+CREATE DEFINER=`root`@`localhost` EVENT `fpCode_reset` ON SCHEDULE EVERY 12 HOUR STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO UPDATE users set fpCode = NULL$$
+
+CREATE DEFINER=`root`@`localhost` EVENT `daily_task_reset` ON SCHEDULE EVERY 1 DAY STARTS '2018-06-01 00:00:00' ON COMPLETION PRESERVE ENABLE DO CALL random_select_task()$$
 
 DELIMITER ;
 COMMIT;
