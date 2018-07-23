@@ -1,5 +1,5 @@
 'user strict';
-securePage();
+securePage(0, 1);
 
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     sectionFocus = doc.querySelector('section#editProfile');

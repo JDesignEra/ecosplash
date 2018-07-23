@@ -57,12 +57,12 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-block">
+                <a  class="btn btn-primary btn-block" href="./display_code">
                     Enter Event Code or Scan QR Code
-                </button>
-                <button type="button" class="btn btn-outline-secondary btn-block mt-0">
+                </a>
+                <a class="btn btn-outline-secondary btn-block mt-0" href="./manual_attendance">
                     Manual Attendance Check
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -71,4 +71,6 @@
 
 {% block scripts %}
 <script type="text/javascript" src="./assets/js/events_list.js"></script>
+<script type="text/javascript" src="./assets/js/moment.min.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-datetimepicker.min.js"></script>
 {% endblock %}

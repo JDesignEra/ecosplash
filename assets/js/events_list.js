@@ -40,10 +40,10 @@ httpPost('./assets/db/db.php', data, function(data) {
                     var eid = this.getAttribute('data-id');
 
                     $('#distributeModal').on('show.bs.modal', function() {
-                        var btnFocus = this.querySelectorAll('.modal-footer button');
+                        var btnFocus = this.querySelectorAll('.modal-footer a');
 
                         btnFocus.forEach(function(el) {
-                            el.setAttribute('data-id', eid);
+                            el.href = el.href + '?eid=' + eid;
                         });
                     });
                 }
@@ -64,4 +64,28 @@ sectionFocus.querySelector('button#addNew').onclick = function() {
         this.classList.add('d-none');
         sectionFocus.querySelector('form#addEvent').classList.remove('d-none');
     });
+
+    // addEVent form
+    sectionFocus.querySelector('form#addEvent').onsubmit = function(e) {
+        e.preventDefault();
+
+        var data = new FormData(this);
+        data.append('uid', uid);
+        data.append('action', 'addEvent');
+
+        httpPost('./assets/db/db.php', data, function(data) {
+            console.log(data);  // Debugging Purpose
+        });
+    }
 }
+
+// enable datepicker
+$(function() {
+    $('#e-date').datetimepicker({
+        format: 'L'
+    });
+
+    $('#e-time').datetimepicker({
+        format: 'LT'
+    });
+});

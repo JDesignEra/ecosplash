@@ -167,16 +167,7 @@ switch ($action) {
         if (empty($errors)) {
             $result = $mysqli -> query("SELECT email FROM users WHERE email  = '$email'");
             if ($result -> num_rows == 1) {
-                $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-                $fcode = array();
-                $alphaLength = strlen($alphabet) - 1;
-
-                for ($i = 0; $i < 8; $i++) {
-                    $n = rand(0, $alphaLength);
-                    $fcode[] = $alphabet[$n];
-                }
-
-                $fcode = implode($fcode);
+                $fcode = randAlphaNumeric(8);
                 $mysqli -> query("UPDATE users SET fpCode = '$fcode' WHERE email = '$email'");
 
                 sendMail('[EcoSplash] Forgot Password Code', '../templates/email/forgot_password.php?fcode='.$fcode, $email);
@@ -556,6 +547,25 @@ switch ($action) {
         }
         break;
 
+    case 'getEventCode':
+        $uid = checkInput($_POST['uid']);
+        $eid = checkInput($_POST['eid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!!';
+        }
+
+        if (empty($eid)) {
+            $errors['eid'] = 'Event ID is missing!';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT eid, redeemCode FROM events WHERE uid = '$uid' AND eid = '$eid'");
+
+            $data['eventCode'] = $result -> fetch_array(MYSQLI_ASSOC);
+        }
+        break;
+
     case 'getEventsList':
         $uid = checkInput($_POST['uid']);
 
@@ -645,6 +655,41 @@ switch ($action) {
             else {
                 $errors['quizzes_list'] = 'No quizzes to list!';
             }
+        }
+        break;
+
+    case 'addEvent':
+        $uid = checkInput($_POST['uid']);
+        $event = checkInput($_POST['event']);
+        $location = checkInput($_POST['location']);
+        $date = checkInput($_POST['date']);
+        $time = checkInput($_POST['time']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($event)) {
+            $errors['event'] = 'Event name is required!';
+        }
+
+        if (empty($location)) {
+            $errors['location'] = 'Lcoation is required!';
+        }
+
+        if (empty($date)) {
+            $errors['date'] = 'Date is required!';
+        }
+
+        if (empty($time)) {
+            $errors['time'] = 'Time is required!';
+        }
+
+        // TODO
+        if (empty($errors)) {
+            $redeemCode = randAlphaNumeric(4);
+            $dateTime = date_format(date_create($date.' '.$time), 'Y-m-d H:i:00');
+            $mysqli -> query('INSERT INTO events (uid, dateTime, event, location, redeemCode) VALUES ()');
         }
         break;
 
@@ -1175,6 +1220,19 @@ function checkInput($input) {
     $input = htmlspecialchars($input);
 
     return $input;
+}
+
+function randAlphaNumeric($length) {
+    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $code = array();
+    $alphaLength = strlen($alphabet) - 1;
+
+    for ($i = 0; $i < $length; $i++) {
+        $n = rand(0, $alphaLength);
+        $code[] = $alphabet[$n];
+    }
+
+    return implode($code);
 }
 
 function sendMail($subject, $fileURL, ...$email) {

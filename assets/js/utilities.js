@@ -1,5 +1,5 @@
 'use strict';
-securePage();
+securePage(0, 1);
 
 var sectionFocus = doc.querySelector('section#utilities'),
     uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),

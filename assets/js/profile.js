@@ -1,5 +1,5 @@
 'use strict';
-securePage();
+securePage(0, 1);
 
 document.title = 'EcoSplash \u00B7 ' + (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
 

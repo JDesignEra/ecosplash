@@ -383,7 +383,13 @@ function fabTooltip_mobilePortrait() {
 }
 
 /* secure pages */
-function securePage() {
+function securePage(...accTypes) {
+    var accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType'));
+
+    if (accTypes.indexOf(parseInt(accType)) == -1) {
+        location.href = './';
+    }
+
     var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
         pass = (localStorage.getItem('pass') ? localStorage.getItem('pass') : sessionStorage.getItem('pass')),
         data = new FormData();
