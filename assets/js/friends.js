@@ -41,7 +41,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                             friendsRow = temp.getElementsByClassName('row')[0].cloneNode();
                         }
 
-                        if ((friendsCount != 0 && friendsCount % 4 == 0) || fi == data.friends.fid.length - 1) {
+                        if ((friendsCount != 0 && friendsCount % 4 == 0) || (friendsRow && fi == data.friends.fid.length - 1)) {
                             doc.getElementById('friends').appendChild(friendsRow);
                         }
 
@@ -70,7 +70,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                             requestRow = temp.getElementsByClassName('row')[0].cloneNode();
                         }
 
-                        if ((requestCount != 0 && requestCount % 4 == 0) || fi == data.friends.fid.length - 1) {
+                        if ((requestCount != 0 && requestCount % 4 == 0) || (requestRow && fi == data.friends.fid.length - 1)) {
                             doc.getElementById('requests').appendChild(requestRow);
                         }
 
@@ -115,7 +115,7 @@ addWindowOnload(function() {
     data.append('action', 'getAllUsers');
 
     httpPost('./assets/db/db.php', data, function(data) {
-        console.log(data);  // Debugging Purpose
+        // console.log(data);  // Debugging Purpose
 
         if (data.success) {
             doc.querySelector('#all').innerHTML = '';
@@ -134,7 +134,6 @@ addWindowOnload(function() {
                     col.querySelector('h5.ecopoints').innerHTML = uv.ecoPoints;
 
                     if (friends.hasOwnProperty(uv.uid)) {
-                        console.log(friends[uv.uid]);
                         if (friends[uv.uid] == 0) {
                             var addBtn = col.querySelector('button').cloneNode();
                             addBtn.classList.add('btn-success', 'cancelRequest');

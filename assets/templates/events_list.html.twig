@@ -2,13 +2,73 @@
 {% set title = 'Events List' %}
 
 {% block main %}
-<div class="card shadow">
-    <div class="card-body text-center">
-        <h4 class="pb-4">Events List</h4>
-        <button class="btn btn-outline-success btn-block">Add New Event</button>
-        <hr />
+<section id="eventsList">
+    <div class="card shadow">
+        <div class="card-body">
+            <h4 class="pb-4">Events List</h4>
+            <button id="addNew" class="btn btn-outline-success btn-block">Add New Event</button>
+
+            <form id="addEvent" class="text-left fadeIn d-none" novalidate>
+                <div id="event" class="form-label-group">
+                    <input id="e-name" class="form-control" type="text" maxlength="100" placeholder="Event Name" name="event" autofocus />
+                    <label for="e-name">Event Name</label>
+                    <div class="feedback fadeIn"></div>
+                </div>
+
+                <div id="location" class="form-label-group">
+                    <input id="e-location" class="form-control" type="text" maxlength="100" placeholder="Location" name="location" />
+                    <label for="e-location">Location</label>
+                    <div class="feedback fadeIn"></div>
+                </div>
+
+                <div id="date" class="form-label-group">
+                    <input id="e-date" class="form-control" type="text" maxlength="100" placeholder="Date" name="date" />
+                    <label for="e-date">Date</label>
+                    <div class="feedback fadeIn"></div>
+                </div>
+
+                <div id="time" class="form-label-group">
+                    <input id="e-time" class="form-control" type="text" maxlength="100" placeholder="Time" name="time" />
+                    <label for="e-time">Time</label>
+                    <div class="feedback fadeIn"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block">
+                    Publish Event
+                </button>
+            </form>
+            <hr />
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block afterMain %}
+<div id="distributeModal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    How would you like to distribute EcoPoints to your participants?
+                </h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-block">
+                    Enter Event Code or Scan QR Code
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-block mt-0">
+                    Manual Attendance Check
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
-{% block afterMain %}{% endblock %}
-{% block sc %}{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/events_list.js"></script>
+{% endblock %}

@@ -1,103 +1,118 @@
 'use strict'
 
-if (!(localStorage.getItem('accType') || sessionStorage.getItem('accType'))) {
-    $('#challenges').find('a.btn[href="./profile"]').addClass('d-none');
+if (localStorage.getItem('accType') || sessionStorage.getItem('accType')) {
+    //<a class="btn btn-primary btn-block mt-3" href="./profile">Update Your Daily Challenges</a>
+    var btn = doc.createElement('a');
+    btn.classList.add('btn', 'btn-primary', 'btn-block', 'mt-3');
+    btn.href = './profile';
+    btn.innerHTML = 'Update Your Daily Challenges';
+
+    doc.querySelector('#challenges .card-body').appendChild(btn);
 }
 
 /* recent upcoming events (10 dates) */
-$.ajax({
-    type: 'POST',
-    url: 'assets/db/db.php',
-    data: '&action=getRecentEvents',
-    dataType: 'json'
-})
-.done(function(data) {
+var data = new FormData();
+data.append('action', 'getRecentEvents');
+
+httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
-    var $focus = $('#upcomingEvents').find('#upcomingEventsContent');
+    var focus = doc.querySelector('#upcomingEvents #upcomingEventsContent');
     if (data.success) {
-        $focus.empty();
+        focus.innerHTML = '';
 
-        var $i = 0;
-        $.each(data.events, function(date, value) {
-            if ($i != 0) {
-                $focus.append('<hr />');
+        var i = 0;
+        for (var date in data.events) {
+            if (i != 0) {
+                var hr = doc.createElement('hr');
+                focus.appendChild(hr);
             }
 
-            $focus.append('<h4 class="text-secondary pb-3">' + date + '</h4>');
+            var h4Date = doc.createElement('h4');
+            h4Date.classList.add('text-secondary', 'pb-3');
+            h4Date.innerHTML = date;
 
-            $(this).each(function() {
-                $focus.append('<p><span class="font-weight-bold text-primary">' + this.event + '</span> at <span class="font-weight-bold text-primary">' + this.time + '</span> located at <span class="font-weight-bold text-primary">' + this.location + '</span></p>');
-            });
+            focus.appendChild(h4Date);
 
-            if ($i == $(data.events).length) {
-                $focus.append('<a class="btn btn-primary btn-block" href="./events">View All Upcoming Events</a>')
+            for (var event in data.events[date]) {
+                var pEvent = doc.createElement('p');
+                pEvent.innerHTML = '<span class="font-weight-bold text-primary">' + data.events[date][event].event + '</span> at <span class="font-weight-bold text-primary">' + data.events[date][event].time + '</span> located at <span class="font-weight-bold text-primary">' + data.events[date][event].location + '</span></p>';
+
+                focus.appendChild(pEvent);
+                i++;
             }
+        }
 
-            $i++;
-        });
+        var btn = doc.createElement('a');
+        btn.classList.add('btn', 'btn-primary', 'btn-block');
+        btn.innerHTML = 'View All Upcoming Events';
+        btn.href = './events';
+
+        focus.appendChild(btn);
     }
 });
 
 /* today's quiz */
-$.ajax({
-    type: 'POST',
-    url: 'assets/db/db.php',
-    data: '&action=getTodayQuiz',
-    dataType: 'json'
-})
-.done(function(data) {
+var data = new FormData();
+data.append('action', 'getTodayQuiz');
+
+httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
-    var $focus = $('#todayQuiz');
+    var focus = doc.getElementById('todayQuiz');
     if (data.success) {
-        $focus.find('#quizName').html(data.quiz.name);
-        $focus.find('#name').html(data.quiz.uName);
-        $focus.find('#questionNo').html(data.quiz.questions.length);
-        $focus.find('#ecoPoints').html(data.quiz.ecoPoints);
+        focus.querySelector('#quizName').innerHTML = data.quiz.name;
+        focus.querySelector('#name').innerHTML = data.quiz.uName;
+        focus.querySelector('#questionNo').innerHTML = data.quiz.questions.length;
+        focus.querySelector('#ecoPoints').innerHTML = data.quiz.ecoPoints;
     }
 });
 
 /* top 5 of the month */
-$.ajax({
-    type: 'POST',
-    url: 'assets/db/db.php',
-    data: '&action=getTopEcoPoints',
-    dataType: 'json'
-})
-.done(function(data) {
+var data = new FormData();
+data.append('action', 'getTopEcoPoints');
+
+httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
-    if (data.success) {
-        $('#topMonth').find('#topMonthContent').empty();
+    var focus = doc.querySelector('#topMonth #topMonthContent');
+    focus.innerHTML = '';
 
-        var $focus = $('#topMonth').find('#topMonthContent');
-        $.each(data.top.name, function(i) {
-            if (i != 0) {
-                $focus.append('<hr />');
-            }
+    for (var i in data.top) {
+        if (i != 0) {
+            var hr = doc.createElement('hr');
+            focus.appendChild(hr);
+        }
 
-            $focus.append('<h6 class="text-center">' + data.top.name[i] + '</h6><h6 class="text-primary text-center">' + data.top.ecoPoints[i] + '</h6>');
-        });
+        var h6Name = doc.createElement('h6');
+        h6Name.className = 'text-center';
+        h6Name.innerHTML = data.top[i].name;
+
+        focus.appendChild(h6Name);
+
+        var h6EcoPoints = h6Name.cloneNode();
+        h6EcoPoints.classList.add('text-primary');
+        h6EcoPoints.innerHTML = data.top[i].ecoPointsMonth;
+
+        focus.appendChild(h6EcoPoints);
     }
 });
 
 /* get today's challenges */
-$.ajax({
-    type: 'POST',
-    url: 'assets/db/db.php',
-    data: '&action=getTodayTask',
-    dataType: 'json'
-})
-.done(function(data) {
-    // console.log(data);  // Debugging Purpose
-    if (data.success) {
-        $('#challenges').find('#challengeContent').empty();
+var data = new FormData();
+data.append('action', 'getTodayTask');
 
-        var $focus = $('#challenges').find('#challengeContent');
-        $.each(data.tasks, function(i) {
+httpPost('./assets/db/db.php', data, function(data) {
+    // console.log(data);  // Debugging Purpose;
+    if (data.success) {
+        var focus = doc.querySelector('#challenges #challengeContent');
+        focus.innerHTML = '';
+
+        for (var i in data.tasks) {
             if (i != 0) {
-                $focus.append('<hr />');
+                var hr = doc.createElement('hr');
+                focus.appendChild(hr);
             }
 
-            $focus.append(data.tasks[i]);
-        });
+            var task = doc.createTextNode(data.tasks[i]);
+            focus.appendChild(task);
+        }
     }
 });

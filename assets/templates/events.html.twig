@@ -1,0 +1,31 @@
+{% extends "base.html.twig" %}
+{% set title = 'Events' %}
+
+{% block main %}
+<section id="events">
+    <p class="small text-danger text-center">
+        Each event participation will award you with 100 EcoPoints.
+    </p>
+
+    <div class="card shadow-lg mb-4">
+        <div class="card-body">
+            <h4 class="text-center pb-4">Upcoming Events</h4>
+
+            <div class="eventsContent">
+                <h6 class="text-muted">Whoops! It seems that there isn't any upcoming events.</h6>
+            </div>
+        </div>
+    </div>
+
+    <p class="font-weight-bold small text-center text-muted">
+        End of Upcoming Events
+    </p>
+</section>
+{% endblock %}
+
+{% block afterMain %}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/events.js"></script>
+{% endblock %}

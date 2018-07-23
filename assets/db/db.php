@@ -403,7 +403,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT oid, date, itemsQty, totalEcoPoints FROM redeemed_history WHERE uid = '$uid' ORDER BY date DESC");
+            $result = $mysqli -> query("SELECT oid, date, itemsQty, totalEcoPoints FROM redeemed_history WHERE uid = '$uid' ORDER BY date DESC LIMIT 10");
             if ($result -> num_rows > 0) {
                 $redeemHistories = [];
                 while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
@@ -463,35 +463,6 @@ switch ($action) {
         }
         break;
 
-    case 'getEventHistories':
-        $uid = checkInput($_POST['uid']);
-
-        if (empty($uid)) {
-            $errors['uid'] = 'User ID is missing!';
-        }
-
-        if (empty($errors)) {
-            $result = $mysqli -> query("SELECT eid, joinDate, event, status FROM event_history WHERE uid = '$uid' ORDER BY joinDate DESC");
-
-            if ($result -> num_rows > 0) {
-                $eventHistories = [];
-                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
-                    $i = $i = count($eventHistories);
-
-                    $eventHistories[$i]['eid'] = $row['eid'];
-                    $eventHistories[$i]['joinDate'] = date_format(date_create($row['joinDate']), 'd/m/Y');
-                    $eventHistories[$i]['event'] = $row['event'];
-                    $eventHistories[$i]['status'] = ($row['status'] == 1 ? 'Present' : 'Absent');
-                }
-
-                $data['event_histories'] = $eventHistories;
-            }
-            else {
-                $errors['event_histories'] = 'No events history!';
-            }
-        }
-        break;
-
     case 'getEventHistory':
         $uid = checkInput($_POST['uid']);
         $eid = checkInput($_POST['eid']);
@@ -509,7 +480,6 @@ switch ($action) {
             if ($result -> num_rows == 1) {
                 $result = $result -> fetch_array(MYSQLI_ASSOC);
                 $data['eid'] = $result['eid'];
-                $data['joinDate'] = date_format(date_create($result['joinDate']), 'd/m/Y');
                 $data['event'] = $result['event'];
                 $data['date'] = date_format(date_create($result['dateTime']), 'd/m/Y');
                 $data['time'] = date_format(date_create($result['dateTime']), 'h:i a');
@@ -522,7 +492,41 @@ switch ($action) {
         }
         break;
 
-    case 'getEventsList':
+        case 'getEventHistories':
+        case 'getRecentEventHistories':
+            $uid = checkInput($_POST['uid']);
+
+            if (empty($uid)) {
+                $errors['uid'] = 'User ID is missing!';
+            }
+
+            if (empty($errors)) {
+                $result = $mysqli -> query("SELECT eid, dateTime, event, status FROM event_history WHERE uid = '$uid' ORDER BY eid DESC");
+
+                if ($result -> num_rows > 0) {
+                    $eventHistories = [];
+                    while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                        $i = count($eventHistories);
+
+                        $eventHistories[$i]['eid'] = $row['eid'];
+                        $eventHistories[$i]['date'] = date_format(date_create($row['dateTime']), 'd/m/Y');
+                        $eventHistories[$i]['event'] = $row['event'];
+                        $eventHistories[$i]['status'] = ($row['status'] == 1 ? 'Present' : 'Absent');
+
+                        if ($action == 'getRecentEventHistories' && $i == 9) {
+                            break;
+                        }
+                    }
+
+                    $data['event_histories'] = $eventHistories;
+                }
+                else {
+                    $errors['event_histories'] = 'No events history!';
+                }
+            }
+            break;
+
+    case 'getRecentEventsList':
         $uid = checkInput($_POST['uid']);
 
         if (empty($uid)) {
@@ -530,7 +534,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT * FROM events WHERE uid = '$uid' ORDER BY eid DESC");
+            $result = $mysqli -> query("SELECT eid, dateTime, event, location, redeemCode FROM events WHERE uid = '$uid' ORDER BY eid DESC LIMIT 10");
 
             if ($result -> num_rows > 0) {
                 $eventsList = [];
@@ -541,14 +545,78 @@ switch ($action) {
                     $eventsList[$i]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
                     $eventsList[$i]['event'] = $row['event'];
                     $eventsList[$i]['location'] = $row['location'];
-                    $eventsList[$i]['ecoPoints'] = $row['ecoPoints'];
+                    $eventsList[$i]['redeemCode'] = $row['redeemCode'];
                 }
 
-                $data['events_list'] = $eventsList;
+                $data['eventsList'] = $eventsList;
             }
             else {
-                $errors['events_list'] = 'No events to list!';
+                $errors['eventsList'] = 'No events to list!';
             }
+        }
+        break;
+
+    case 'getEventsList':
+        $uid = checkInput($_POST['uid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT eid, dateTime, event, location, redeemCode FROM events WHERE uid = '$uid' ORDER BY eid DESC");
+            if ($result -> num_rows > 0) {
+                $eventsList = [];
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $date = date_format(date_create($row['dateTime']), 'd/m/Y');
+
+                    $i = (array_key_exists($date, $eventsList) ? count($eventsList[$date]) : 0);
+                    $eventsList[$date][$i]['eid'] = $row['eid'];
+                    $eventsList[$date][$i]['date'] = date_format(date_create($row['dateTime']), 'd/m/Y');
+                    $eventsList[$date][$i]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                    $eventsList[$date][$i]['event'] = $row['event'];
+                    $eventsList[$date][$i]['location'] = $row['location'];
+                    $eventsList[$date][$i]['redeemCode'] = $row['redeemCode'];
+                }
+
+                $data['eventsList'] = $eventsList;
+            }
+            else {
+                $errors['eventsList'] = 'No events to list!';
+            }
+        }
+        break;
+
+    case 'getUpcomingEvents':
+    case 'getRecentEvents':
+        $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
+
+        if ($result -> num_rows > 0) {
+            $events = [];
+            $i = 0;
+            while (($row = $result -> fetch_array(MYSQLI_ASSOC))) {
+                $date = date_format(date_create($row['dateTime']), 'd/m/Y');
+                $index = (array_key_exists($date, $events) ? count($events[$date]) : 0);
+
+                $events[$date][$index]['eid'] = $row['eid'];
+                $events[$date][$index]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                $events[$date][$index]['event'] = $row['event'];
+                $events[$date][$index]['location'] = $row['location'];
+                $events[$date][$index]['ecoPoints'] = $row['ecoPoints'];
+
+                if ($index == 0) {
+                    $i++;
+                }
+
+                if ($action == 'getRecentEvents' && $i == '9') {
+                    break;
+                }
+            }
+
+            $data['events'] = $events;
+        }
+        else {
+            $errors['events'] = 'No events to list!';
         }
         break;
 
@@ -763,8 +831,8 @@ switch ($action) {
 
         $top = [];
         while($row = $result -> fetch_array(MYSQLI_ASSOC)) {
-            $top['name'][] = $row['name'];
-            $top['ecoPoints'][] = $row['ecoPointsMonth'];
+            $i = count($top);
+            $top[$i] = $row;
         }
 
         $data['top'] = $top;
@@ -791,37 +859,6 @@ switch ($action) {
         $quiz['uName'] = $row['name'];
 
         $data['quiz'] = $quiz;
-        break;
-
-    case 'getRecentEvents':
-        $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
-
-        if ($result -> num_rows > 0) {
-            $events = [];
-            $i = 0;
-            while (($row = $result -> fetch_array(MYSQLI_ASSOC)) && $i < 10) {
-                $date = date_format(date_create($row['dateTime']), 'd/m/Y');
-                if (array_key_exists($date, $events)) {
-                    $newIndex = count($events[$date]);
-                    $events[$date][$newIndex]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
-                    $events[$date][$newIndex]['event'] = $row['event'];
-                    $events[$date][$newIndex]['location'] = $row['location'];
-                    $events[$date][$newIndex]['ecoPoints'] = $row['ecoPoints'];
-                }
-                else {
-                    $events[$date][0]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
-                    $events[$date][0]['event'] = $row['event'];
-                    $events[$date][0]['location'] = $row['location'];
-                    $events[$date][0]['ecoPoints'] = $row['ecoPoints'];
-                    $i++;
-                }
-            }
-
-            $data['events'] = $events;
-        }
-        else {
-            $errors['events'] = 'No events to list!';
-        }
         break;
 
     case 'getUtilities':
@@ -1120,11 +1157,6 @@ switch ($action) {
             }
         }
         break;
-
-    case 'getUsers':
-        $result = $mysqli -> query("SELECT uid, name, bio, ecoPoints FROM users");
-
-        print_r($result);
 }
 
 if (empty($errors)) {

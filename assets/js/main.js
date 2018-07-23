@@ -73,6 +73,7 @@ $('#fixed-action').on('shown.bs.dropdown', '#mProfileDropdown', function(e) {
     $('#mProfileDropdown > button[tooltip-toggle=fab-tooltip]').tooltip('show');
 
     focus = doc.querySelectorAll('#mProfileDropdown .dropdown-menu .btn');
+
     focus.forEach(function(el) {
         el.classList.add('slideInUp', 'short');
 
@@ -100,17 +101,21 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
     var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     data = new FormData();
 
-    data.append('uid', uid);
+    data.append('uid', (uid ? uid : ''));
     data.append('action', 'getUser');
 
     httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);  // Debugging Purpose
         addWindowOnload(function() {
             if (uid) {
                 // Desktop Navs
-                if (doc.querySelector('nav .nav-right #ecopoints')) {
-                    doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
+                if (doc.querySelector('nav .nav-right')) {
                     doc.querySelector('nav .nav-right #name').innerHTML = data.name;
                     doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
+
+                    if (doc.querySelector('nav .nav-right #ecopoints')) {
+                        doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
+                    }
                 }
 
                 // Mobile navs

@@ -7,6 +7,45 @@ var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionSt
     sectionFocus = doc.querySelector('section#profile'),
     accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType'));
 
+/* get user profile details */
+var data = new FormData();
+data.append('uid', uid);
+data.append('action', 'getUser');
+
+httpPost('./assets/db/db.php', data, function(data) {
+    // console.log(data);  // Debugging Purpose
+    if (data.success) {
+        var inputFocus = sectionFocus.querySelectorAll('form#dailyTask input[type=checkbox]'),
+            labelfocus = sectionFocus.querySelectorAll('form#dailyTask label.form-check-label');
+
+        for (var i = 0; i < data.dailyTask.length; i++) {
+            if (data.dailyTask.charAt(i) == '1') {
+                inputFocus[i].checked = true;
+                inputFocus[i].disabled = true;
+                labelfocus[i].style.textDecoration = 'line-through';
+            }
+        }
+
+        sectionFocus.querySelector('#name').innerHTML = data.name;
+        sectionFocus.querySelector('#email').innerHTML = data.email;
+
+        if (accType == '1') {
+            sectionFocus.querySelector('#ecopointsContent').remove();
+        }
+        else {
+            sectionFocus.querySelector('#ecopoints').innerHTML = data.ecoPoints;
+        }
+
+        if (data.bio) {
+            sectionFocus.querySelector('#bio').innerHTML = data.bio;
+        }
+
+        httpGet('./assets/img/uploads/' + data.uid + '.png', function() {
+            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("./assets/img/uploads/' + data.uid + '.png")';
+        });
+    }
+});
+
 // checks account type
 if (accType) {
     // case 0 = user, case 1 = organization
@@ -33,7 +72,7 @@ if (accType) {
             /* get user recent event histories (max 10) */
             var data = new FormData();
             data.append('uid', uid)
-            data.append('action', 'getEventHistories');
+            data.append('action', 'getRecentEventHistories');
 
             httpPost('./assets/db/db.php', data, function(data) {
                 if (data.success) {
@@ -42,18 +81,51 @@ if (accType) {
                         sectionFocus.querySelector('#event-history-table').innerHTML = content;
                         sectionFocus.querySelector('#event-history-table tbody').innerHTML = '';
 
-                        for (var i = 0; i < data.event_histories.length && i < 10; i++) {
+                        for (var i in data.event_histories) {
                             var temp = doc.createElement('div');
                             temp.innerHTML = content;
 
                             var row = temp.querySelector('tbody tr').cloneNode(true);
-                            row.id = data.event_histories[i]['eid'];
 
                             var td = row.querySelectorAll('td');
                             td[0].innerHTML = data.event_histories[i]['eid'];
-                            td[1].innerHTML = data.event_histories[i]['joinDate'];
+                            td[1].innerHTML = data.event_histories[i]['date'];
                             td[2].innerHTML = data.event_histories[i]['event'];
                             td[3].innerHTML = data.event_histories[i]['status'];
+
+                            // view more button
+                            var btnFocus = row.querySelector('button');
+                            btnFocus.setAttribute('data-id', data.event_histories[i]['eid']);
+
+                            btnFocus.onclick = function() {
+                                var eid = this.getAttribute('data-id'),
+                                    data = new FormData();
+
+                                data.append('uid', uid);
+                                data.append('eid', eid);
+                                data.append('action', 'getEventHistory');
+
+                                httpPost('./assets/db/db.php', data, function(data) {
+                                    // console.log(data);  // Debugging Purpose
+                                    if (data.success) {
+                                        httpGet('./assets/templates/profile/event_history.html', function(content) {
+                                            focus = doc.getElementById('view-more-modal');
+                                            focus.getElementsByClassName('modal-body')[0].innerHTML = content;
+                                            focus.querySelector('.modal-header .modal-title').innerHTML = 'Event #' + data.eid + ' Joined On ' + data.joinDate;
+
+                                            var td = focus.querySelectorAll('tbody tr td');
+                                            td[0].innerHTML = data.event;
+                                            td[1].innerHTML = data.date;
+                                            td[2].innerHTML = data.time;
+                                            td[3].innerHTML = data.ecoPoints;
+                                            td[4].innerHTML = data.status;
+                                        });
+
+                                        $('[tooltip-toggle=tooltip]').tooltip('hide');
+                                        $('#view-more-modal').modal('show');
+                                    }
+                                });
+                            }
 
                             sectionFocus.querySelector('#event-history-table tbody').append(row);
                         }
@@ -61,44 +133,6 @@ if (accType) {
                         enableTooltip();
                     });
                 }
-            });
-
-            /* event history view more button */
-            addWindowOnload(function() {
-                var focus = sectionFocus.querySelectorAll('#event-history-table button#view-more');
-
-                focus.forEach(function(el) {
-                    el.addEventListener('click', function() {
-                        var eid = el.parentElement.parentElement.id,
-                            data = new FormData();
-
-                        data.append('uid', uid);
-                        data.append('eid', eid);
-                        data.append('action', 'getEventHistory');
-
-                        httpPost('./assets/db/db.php', data, function(data) {
-                            // console.log(data);  // Debugging Purpose
-                            if (data.success) {
-                                httpGet('./assets/templates/profile/event_history.html', function(content) {
-                                    focus = doc.getElementById('view-more-modal');
-                                    focus.getElementsByClassName('modal-body')[0].innerHTML = content;
-                                    focus.querySelector('.modal-header .modal-title').innerHTML = '# ' + data.eid + ' On ' + data.joinDate;
-
-                                    var td = focus.querySelectorAll('tbody tr td');
-                                    td[0].innerHTML = data.joinDate;
-                                    td[1].innerHTML = data.event;
-                                    td[2].innerHTML = data.date;
-                                    td[3].innerHTML = data.time;
-                                    td[4].innerHTML = data.ecoPoints;
-                                    td[5].innerHTML = data.status;
-                                });
-
-                                $('[tooltip-toggle=tooltip]').tooltip('hide');
-                                $('#view-more-modal').modal('show');
-                            }
-                        });
-                    });
-                });
             });
 
             /* get user redeemed history (max 10) */
@@ -113,7 +147,7 @@ if (accType) {
                         sectionFocus.querySelector('#redeem-history-table').innerHTML = content;
                         sectionFocus.querySelector('#redeem-history-table tbody').innerHTML = '';
 
-                        for (var i = 0; i < data.redeem_histories.length && i < 10; i++) {
+                        for (var i = 0; i < data.redeem_histories.length; i++) {
                             var temp = doc.createElement('div');
                             temp.innerHTML = content;
 
@@ -126,59 +160,56 @@ if (accType) {
                             td[2].innerHTML = data.redeem_histories[i]['totalQty'];
                             td[3].innerHTML = data.redeem_histories[i]['totalEcoPoints'];
 
+                            // view more button
+                            var btnFocus = row.querySelector('button');
+                            btnFocus.setAttribute('data-id', data.redeem_histories[i]['oid']);
+
+                            btnFocus.onclick = function() {
+                                var oid = this.getAttribute('data-id'),
+                                    data = new FormData();
+
+                                data.append('uid', uid);
+                                data.append('oid', oid);
+                                data.append('action', 'getRedeemHistory');
+
+                                httpPost('./assets/db/db.php', data, function(data) {
+                                    // console.log(data);  // Debugging Purpose
+                                    if (data.success) {
+                                        httpGet('./assets/templates/profile/redeem_history.html', function(content) {
+                                            focus = doc.getElementById('view-more-modal');
+
+                                            focus.getElementsByClassName('modal-body')[0].innerHTML = content;
+                                            focus.querySelector('.modal-header .modal-title').innerHTML = '#' + data.oid + ' on ' + data.date;
+                                            focus.querySelector('.modal-body table tbody').innerHTML = '';
+                                            focus.querySelector('.modal-body h6 #total').innerHTML = data.totalEcoPoints;
+
+                                            data.items.forEach(function(k, i) {
+                                                var temp = doc.createElement('div');
+                                                temp.innerHTML = content;
+
+                                                var row = temp.querySelector('tbody tr').cloneNode(true);
+
+                                                var td = row.querySelectorAll('td');
+                                                td[0].innerHTML = k;
+                                                td[1].innerHTML = data.itemsQty[i];
+                                                td[2].innerHTML = data.itemsEcoPoints[i];
+
+                                                focus.querySelector('table tbody').appendChild(row);
+                                            });
+                                        });
+
+                                        $('[tooltip-toggle=tooltip]').tooltip('hide');
+                                        $('#view-more-modal').modal('show');
+                                    }
+                                });
+                            }
+
                             sectionFocus.querySelector('#redeem-history-table tbody').appendChild(row);
                         }
 
                         enableTooltip();
                     });
                 }
-            });
-
-            /* redeem history view more button */
-            addWindowOnload(function() {
-                var focus = sectionFocus.querySelectorAll('#redeem-history-table button#view-more');
-
-                focus.forEach(function(el) {
-                    el.addEventListener('click', function() {
-                        var oid = this.parentElement.parentElement.id;
-
-                        var data = new FormData();
-                        data.append('uid', uid);
-                        data.append('oid', oid);
-                        data.append('action', 'getRedeemHistory');
-
-                        httpPost('./assets/db/db.php', data, function(data) {
-                            // console.log(data);  // Debugging Purpose
-                            if (data.success) {
-                                httpGet('./assets/templates/profile/redeem_history.html', function(content) {
-                                    focus = doc.getElementById('view-more-modal');
-
-                                    focus.getElementsByClassName('modal-body')[0].innerHTML = content;
-                                    focus.querySelector('.modal-header .modal-title').innerHTML = '#' + data.oid + ' on ' + data.date;
-                                    focus.querySelector('.modal-body table tbody').innerHTML = '';
-                                    focus.querySelector('.modal-body h6 #total').innerHTML = data.totalEcoPoints;
-
-                                    data.items.forEach(function(k, i) {
-                                        var temp = doc.createElement('div');
-                                        temp.innerHTML = content;
-
-                                        var row = temp.querySelector('tbody tr').cloneNode(true);
-
-                                        var td = row.querySelectorAll('td');
-                                        td[0].innerHTML = k;
-                                        td[1].innerHTML = data.itemsQty[i];
-                                        td[2].innerHTML = data.itemsEcoPoints[i];
-
-                                        focus.querySelector('table tbody').appendChild(row);
-                                    });
-                                });
-
-                                $('[tooltip-toggle=tooltip]').tooltip('hide');
-                                $('#view-more-modal').modal('show');
-                            }
-                        });
-                    });
-                });
             });
 
             /* daily task form */
@@ -229,7 +260,7 @@ if (accType) {
             /* get events list (max 10) */
             var data = new FormData();
             data.append('uid', uid);
-            data.append('action', 'getEventsList');
+            data.append('action', 'getRecentEventsList');
 
             httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
@@ -238,19 +269,19 @@ if (accType) {
                         sectionFocus.querySelector('#event-list-table').innerHTML = content;
                         sectionFocus.querySelector('#event-list-table tbody').innerHTML = '';
 
-                        for (var i = 0; i < data.events_list.length && i < 10; i++) {
+                        for (var i = 0; i < data.eventsList.length && i < 10; i++) {
                             var temp = doc.createElement('div');
                             temp.innerHTML = content;
 
                             var row = temp.querySelector('tbody tr').cloneNode(true);
-                            row.id = data.events_list[i]['eid'];
+                            row.id = data.eventsList[i]['eid'];
 
                             var td = row.querySelectorAll('td');
-                            td[0].innerHTML = data.events_list[i]['eid'];
-                            td[1].innerHTML = data.events_list[i]['date'];
-                            td[2].innerHTML = data.events_list[i]['time'];
-                            td[3].innerHTML = data.events_list[i]['location'];
-                            td[4].innerHTML = data.events_list[i]['ecoPoints'];
+                            td[0].innerHTML = data.eventsList[i]['eid'];
+                            td[1].innerHTML = data.eventsList[i]['date'];
+                            td[2].innerHTML = data.eventsList[i]['time'];
+                            td[3].innerHTML = data.eventsList[i]['location'];
+                            td[4].innerHTML = data.eventsList[i]['redeemCode'];
 
                             sectionFocus.querySelector('#event-list-table tbody').appendChild(row);
                         }
@@ -353,42 +384,3 @@ if (accType) {
             break;
     }
 }
-
-/* get user profile details */
-var data = new FormData();
-data.append('uid', uid);
-data.append('action', 'getUser');
-
-httpPost('./assets/db/db.php', data, function(data) {
-    // console.log(data);  // Debugging Purpose
-    if (data.success) {
-        var inputFocus = sectionFocus.querySelectorAll('form#dailyTask input[type=checkbox]'),
-            labelfocus = sectionFocus.querySelectorAll('form#dailyTask label.form-check-label');
-
-        for (var i = 0; i < data.dailyTask.length; i++) {
-            if (data.dailyTask.charAt(i) == '1') {
-                inputFocus[i].checked = true;
-                inputFocus[i].disabled = true;
-                labelfocus[i].style.textDecoration = 'line-through';
-            }
-        }
-
-        sectionFocus.querySelector('#name').innerHTML = data.name;
-        sectionFocus.querySelector('#email').innerHTML = data.email;
-
-        if (accType == '1') {
-            sectionFocus.querySelector('#ecopointsContent').remove();
-        }
-        else {
-            sectionFocus.querySelector('#ecopoints').innerHTML = data.ecoPoints;
-        }
-
-        if (data.bio) {
-            sectionFocus.querySelector('#bio').innerHTML = data.bio;
-        }
-
-        httpGet('./assets/img/uploads/' + data.uid + '.png', function() {
-            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("./assets/img/uploads/' + data.uid + '.png")';
-        });
-    }
-});
