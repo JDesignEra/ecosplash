@@ -2,13 +2,33 @@
 var focus;
 
 /* invoke forms onsubmit */
-loginForm('loginForm');
-loginForm('mLoginForm')
-signupForm('uSignupForm');
-signupForm('oSignupForm');
-forgotPasswordForm('fpass_1');
-forgotPasswordForm('fpass_2');
-forgotPasswordForm('fpass_3');
+if (doc.querySelector('form#loginForm')) {
+    loginForm('loginForm');
+}
+
+if (doc.querySelector('form#mLoginForm')) {
+    loginForm('mLoginForm')
+}
+
+if (doc.querySelector('form#uSignupForm')) {
+    signupForm('uSignupForm');
+}
+
+if (doc.querySelector('form#oSignupForm')) {
+    signupForm('oSignupForm');
+}
+
+if (doc.querySelector('form#fpass_1')) {
+    forgotPasswordForm('fpass_1');
+}
+
+if (doc.querySelector('form#fpass_2')) {
+    forgotPasswordForm('fpass_2');
+}
+
+if (doc.querySelector('form#fpass_3')) {
+    forgotPasswordForm('fpass_3');
+}
 
 /* sign up animation */
 $('#signUpCard .card-header a[href="#user"]').on('show.bs.tab', function() {

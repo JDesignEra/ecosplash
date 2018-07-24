@@ -685,12 +685,45 @@ switch ($action) {
             $errors['time'] = 'Time is required!';
         }
 
-        // TODO
         if (empty($errors)) {
             $redeemCode = randAlphaNumeric(4);
+
+            $result = $mysqli -> query("SELECT redeemCode FROM events WHERE redeemCode = '$redeemCode'");
+            while ($result -> num_rows > 0) {
+                $redeemCode = randAlphaNumeric(4);
+            }
+
             $dateTime = date_format(date_create($date.' '.$time), 'Y-m-d H:i:00');
-            $mysqli -> query('INSERT INTO events (uid, dateTime, event, location, redeemCode) VALUES ()');
+            $mysqli -> query("INSERT INTO events (uid, dateTime, event, location, redeemCode) VALUES ('$uid', '$dateTime', '$event', '$location', '$redeemCode')");
         }
+        break;
+
+    case 'redeemEventCode':
+        $uid = checkInput($_POST['uid']);
+        $redeemCode = checkInput($_POST['code']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($redeemCode)) {
+            $errors['code'] = 'Redeem Code is required!';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT eid FFROM events WHERE redeemCode = '$redeemCode'");
+
+            if ($result -> num_rows < 1) {
+                $errors['code'] = 'Redeem Code is invalid!';
+            }
+            else {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $eid = $row['eid'];
+
+                $result = $mysqli -> query("SELECT uid, status FROM events_attendance WHERE eid = '$eid'");
+            }
+        }
+
         break;
 
     case 'getQuizList':

@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% set title = 'Redeem  Event EcoPoints' %}
+{% set bodyBG = './assets/img/background/eventcode.jpg' %}
+{% set mainType = 'vCenter' %}
+
+{% block main %}
+<section id="redeemCode">
+    <div class="row">
+        <div class="col-12 col-md-6 mx-auto">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="pb-3 text-center">Redeem Event EcoPoints</h4>
+
+                    <form id="redeemCode" class="text-left" novalidate>
+                        <div id="code" class="form-label-group">
+                            <input id="e-code" class="form-control" type="text" maxlength="100" placeholder="Redeem Code" name="code" autofocus />
+                            <label for="e-code">Redeem Code</label>
+                            <div class="feedback fadeIn d-none"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-block">
+                            Redeem EcoPoints
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block afterMain %}
+<div id="redeemSuccess" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    EcoPoints Redeemed Successfully
+                </h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                You have redeemed your participated event EcoPoints.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
+                    Dismiss
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/redeemCode.js"></script>
+{% endblock %}

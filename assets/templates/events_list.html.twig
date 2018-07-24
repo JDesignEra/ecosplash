@@ -12,25 +12,25 @@
                 <div id="event" class="form-label-group">
                     <input id="e-name" class="form-control" type="text" maxlength="100" placeholder="Event Name" name="event" autofocus />
                     <label for="e-name">Event Name</label>
-                    <div class="feedback fadeIn"></div>
+                    <div class="feedback fadeIn d-none"></div>
                 </div>
 
                 <div id="location" class="form-label-group">
                     <input id="e-location" class="form-control" type="text" maxlength="100" placeholder="Location" name="location" />
                     <label for="e-location">Location</label>
-                    <div class="feedback fadeIn"></div>
+                    <div class="feedback fadeIn d-none"></div>
                 </div>
 
                 <div id="date" class="form-label-group">
                     <input id="e-date" class="form-control" type="text" maxlength="100" placeholder="Date" name="date" />
                     <label for="e-date">Date</label>
-                    <div class="feedback fadeIn"></div>
+                    <div class="feedback fadeIn d-none"></div>
                 </div>
 
                 <div id="time" class="form-label-group">
                     <input id="e-time" class="form-control" type="text" maxlength="100" placeholder="Time" name="time" />
                     <label for="e-time">Time</label>
-                    <div class="feedback fadeIn"></div>
+                    <div class="feedback fadeIn d-none"></div>
                 </div>
 
                 <button type="submit" class="btn btn-success btn-block">
@@ -56,13 +56,17 @@
                 </button>
             </div>
 
-            <div class="modal-footer">
-                <a  class="btn btn-primary btn-block" href="./display_code">
-                    Enter Event Code or Scan QR Code
-                </a>
-                <a class="btn btn-outline-secondary btn-block mt-0" href="./manual_attendance">
-                    Manual Attendance Check
-                </a>
+            <div class="modal-footer row">
+                <div class="col-12 mx-0 mt-0 mb-2">
+                    <a  class="btn btn-primary btn-block" href="./display_code">
+                        Event Code and QR Code
+                    </a>
+                </div>
+                <div class="col-12 mx-0 mt-0">
+                    <a class="btn btn-outline-secondary btn-block" href="./manual_attendance">
+                        Manual Attendance
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -70,7 +74,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="./assets/js/events_list.js"></script>
+<script type="text/javascript" src="./assets/js/eventsList.js"></script>
 <script type="text/javascript" src="./assets/js/moment.min.js"></script>
 <script type="text/javascript" src="./assets/js/bootstrap-datetimepicker.min.js"></script>
 {% endblock %}
