@@ -381,7 +381,7 @@ switch ($action) {
                     }
 
                     $data['addEcoPoints'] = $addPoints;
-                    $mysqli -> query("UPDATE users SET dailyTask = '$todayTask', ecoPoints = ecoPoints + '$addPoints' WHERE uid = '$uid'");
+                    $mysqli -> query("UPDATE users SET dailyTask = '$todayTask', ecoPoints = ecoPoints + '$addPoints', ecoPointsMonth = ecoPointsMonth + '$addPoints' WHERE uid = '$uid'");
                 }
             }
         break;
@@ -711,7 +711,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT eid FFROM events WHERE redeemCode = '$redeemCode'");
+            $result = $mysqli -> query("SELECT eid, ecoPoints FROM events WHERE redeemCode = '$redeemCode'");
 
             if ($result -> num_rows < 1) {
                 $errors['code'] = 'Redeem Code is invalid!';
@@ -719,8 +719,31 @@ switch ($action) {
             else {
                 $row = $result -> fetch_array(MYSQLI_ASSOC);
                 $eid = $row['eid'];
+                $awardPoints = $row['ecoPoints'];
 
                 $result = $mysqli -> query("SELECT uid, status FROM events_attendance WHERE eid = '$eid'");
+
+                if ($result -> num_rows > 0) {
+                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+                    $uids = explode(',', $row['uid']);
+                    $status = explode(',', $row['status']);
+
+                    $i = array_search($uid, $uids);
+                    if ($i !== false) {
+                        if ($status[$i] == 0) {
+                            $status[$i] = 1;
+                            $uids = implode(',', $uids);
+                            $status = implode(',', $status);
+
+                            $result = $mysqli -> query("UPDATE events_attendance SET uid = '$uids', status = '$status'");
+
+                            $result = $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints + '$awardPoints', ecoPointsMonth = ecoPointsMonth + '$awardPoints' WHERE uid = '$uid'");
+                        }
+                        else {
+                            $errors['code'] = 'EcoPoints have already been redeemed for this event.';
+                        }
+                    }
+                }
             }
         }
 

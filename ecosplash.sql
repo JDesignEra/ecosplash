@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 23, 2018 at 02:26 PM
+-- Generation Time: Jul 26, 2018 at 10:30 AM
 -- Server version: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -115,6 +115,13 @@ CREATE TABLE `events_attendance` (
   `uid` text NOT NULL,
   `status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `events_attendance`
+--
+
+INSERT INTO `events_attendance` (`eid`, `uid`, `status`) VALUES
+(4, '1,2', '1,0');
 
 -- --------------------------------------------------------
 
@@ -313,7 +320,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoints`, `newNotifications`, `dailyQuiz`, `dailyTask`, `ecoPointsMonth`, `fpCode`) VALUES
-(1, 'tgm.joel@gmail.com', '$2y$10$FfCgngRVkP6969kbRB9hde7SQw1Bx.x9k2dLLaBUOKKA5gAvLXKIy', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 16123, 0, 0, '00000', 30105, NULL),
+(1, 'tgm.joel@gmail.com', '$2y$10$FfCgngRVkP6969kbRB9hde7SQw1Bx.x9k2dLLaBUOKKA5gAvLXKIy', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 30707, 0, 0, '11000', 30707, NULL),
 (2, 'joel.jdesignera@gmail.com', '$2y$10$Y8e0dMksupBKm1R0cZf0Ku.lM/jD0Aul9t5hFk3AuQ/vafNgytmZ6', 'JDesign', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 1, 0, 0, 0, '00000', 0, NULL);
 
 -- --------------------------------------------------------
