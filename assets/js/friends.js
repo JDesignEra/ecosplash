@@ -15,20 +15,18 @@ httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
     if (data.success) {
         if (data.friends) {
-            httpGet('./assets/templates/friends/friends_row.html', function(content) {
+            httpGetDoc('./assets/templates/friends/friends_row.html', function(content) {
                 var friendsRow,
                     friendsCount = 0,
                     requestRow,
-                    requestCount = 0,
-                    temp = doc.createElement('div');
-                    temp.innerHTML = content;
+                    requestCount = 0;
 
-                    // Friends tab
+                    // Friends tab empty
                     if (data.friends.status.indexOf('1') != -1) {
                         doc.querySelector('#friends').innerHTML = '';
                     }
 
-                    // Request tab
+                    // Request tab empty
                     if (data.friends.status.indexOf('0') != -1) {
                         doc.querySelector('#requests').innerHTML = '';
                     }
@@ -38,7 +36,7 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                         /* Friends tab */
                         if (friendsCount % 3 == 0 && data.friends.status[fi] == 1) {
-                            friendsRow = temp.getElementsByClassName('row')[0].cloneNode();
+                            friendsRow = content.getElementsByClassName('row')[0].cloneNode();
                         }
 
                         if ((friendsCount != 0 && friendsCount % 4 == 0) || (friendsRow && fi == data.friends.fid.length - 1)) {
@@ -48,7 +46,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                         if (data.friends.status[fi] == 1) {
                             friendsCount++;
 
-                            var friendsCol = temp.getElementsByClassName('card')[0].cloneNode(true);
+                            var friendsCol = content.getElementsByClassName('card')[0].cloneNode(true);
                             friendsCol.id = data.friends.fid[fi];
 
                             friendsCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
@@ -67,7 +65,7 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                         /* requests tab */
                         if (requestCount % 3 == 0 && data.friends.status[fi] == 0) {
-                            requestRow = temp.getElementsByClassName('row')[0].cloneNode();
+                            requestRow = content.getElementsByClassName('row')[0].cloneNode();
                         }
 
                         if ((requestCount != 0 && requestCount % 4 == 0) || (requestRow && fi == data.friends.fid.length - 1)) {
@@ -77,7 +75,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                         if (data.friends.status[fi] == 0) {
                             requestCount++;
 
-                            var requestCol = temp.getElementsByClassName('card')[0].cloneNode(true);
+                            var requestCol = content.getElementsByClassName('card')[0].cloneNode(true);
                             requestCol.id = data.friends.fid[fi];
 
                             requestCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
@@ -120,13 +118,11 @@ addWindowOnload(function() {
         if (data.success) {
             doc.querySelector('#all').innerHTML = '';
 
-            httpGet('./assets/templates/friends/friends_row.html', function(content) {
-                var temp = doc.createElement('div'),
-                        row;
-                temp.innerHTML = content;
+            httpGetDoc('./assets/templates/friends/friends_row.html', function(content) {
+                var row;
 
                 data.users.forEach(function(uv, ui) {
-                    var col = temp.getElementsByClassName('card')[0].cloneNode(true),
+                    var col = content.getElementsByClassName('card')[0].cloneNode(true),
                         btnFocus = col.querySelector('button');
 
                     col.id = uv.uid;
@@ -154,7 +150,7 @@ addWindowOnload(function() {
                     }
 
                     if (ui % 3 == 0) {
-                        row = temp.getElementsByClassName('row')[0].cloneNode();
+                        row = content.getElementsByClassName('row')[0].cloneNode();
                     }
 
                     if ((ui != 0 && ui % 4 == 0) || ui == data.users.length - 1) {

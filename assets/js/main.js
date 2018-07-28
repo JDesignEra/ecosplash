@@ -47,23 +47,43 @@ switch (activeURL) {
 if (localStorage.getItem('accType') == 0 || sessionStorage.getItem('accType') == 0) {
     doc.querySelector('nav .m-nav-right').remove();
 
-    httpGet('./assets/templates/nav_state/navUser.html', function(data) {
-        doc.querySelector('nav .nav-right').innerHTML = data;
+    httpGetDoc('./assets/templates/nav_state/navUser.html', function(content) {
+        var nodes = content.querySelectorAll('li'),
+            focus = doc.querySelector('nav .nav-right');
+
+        focus.innerHTML = ''
+
+        nodes.forEach(function(el) {
+            focus.appendChild(el);
+        });
     });
 
-    httpGet('./assets/templates/nav_state/navUser_mobile.html', function(data) {
-        doc.querySelector('#fixed-action').innerHTML = data;
+    httpGetDoc('./assets/templates/nav_state/navUser_mobile.html', function(content) {
+        var focus = doc.querySelector('#fixed-action');
+
+        focus.innerHTML = '';
+        focus.appendChild(content.querySelector('#mProfileDropdown'));
     });
 }
 else if (localStorage.getItem('accType') == 1 || sessionStorage.getItem('accType') == 1) {
     doc.querySelector('nav .m-nav-right').remove();
 
-    httpGet('./assets/templates/nav_state/navOrganization.html', function(data) {
-        doc.querySelector('nav .nav-right').innerHTML = data;
+    httpGetDoc('./assets/templates/nav_state/navOrganization.html', function(content) {
+        var nodes = content.querySelectorAll('li'),
+            focus = doc.querySelector('nav .nav-right');
+
+        focus.innerHTML = '';
+
+        nodes.forEach(function(el) {
+            focus.appendChild(el);
+        });
     });
 
-    httpGet('./assets/templates/nav_state/navOrganization_mobile.html', function(data) {
-        doc.querySelector('#fixed-action').innerHTML = data;
+    httpGetDoc('./assets/templates/nav_state/navOrganization_mobile.html', function(content) {
+        var focus = doc.querySelector('#fixed-action');
+
+        focus.innerHTML = '';
+        focus.appendChild(content.querySelector('#mProfileDropdown'));
     });
 }
 
@@ -141,12 +161,14 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 doc.querySelector('footer .year').innerHTML = new Date().getFullYear();
 
 /* invoke tooltips */
-enableTooltip();
-enableDangerTooltip();
-enableSuccessToolTip();
-enableNavToolTip();
-enableFabToolTip();
-enableWideFormToolTip();
+addWindowOnload(function() {
+    enableTooltip();
+    enableDangerTooltip();
+    enableSuccessToolTip();
+    enableNavToolTip();
+    enableFabToolTip();
+    enableWideFormToolTip();
+});
 
 /* mobile form tooltip fix */
 if (window.outerWidth < 767) {
@@ -219,7 +241,6 @@ $('.carousel').carousel({
 /* tooltips function */
 function enableTooltip() {
     $('[tooltip-toggle="tooltip"]').tooltip('dispose');
-
     $(function () {
         $('[tooltip-toggle="tooltip"]').tooltip({
             delay: {
@@ -232,7 +253,6 @@ function enableTooltip() {
 
 function enableDangerTooltip() {
     $('[tooltip-toggle="danger-tooltip"]').tooltip('dispose');
-
     $(function () {
         $('[tooltip-toggle="danger-tooltip"]').tooltip({
             template: '<div class="tooltip danger-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
@@ -246,7 +266,6 @@ function enableDangerTooltip() {
 
 function enableSuccessToolTip() {
     $('[tooltip-toggle="success-tooltip"]').tooltip('dispose');
-
     $(function () {
         $('[tooltip-toggle="success-tooltip"]').tooltip({
             template: '<div class="tooltip success-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
@@ -260,7 +279,6 @@ function enableSuccessToolTip() {
 
 function enableNavToolTip() {
     $('[tooltip-toggle="nav-tooltip"]').tooltip('dispose');
-
     $(function () {
         $('[tooltip-toggle="nav-tooltip"]').tooltip({
             delay: {
@@ -275,7 +293,6 @@ function enableNavToolTip() {
 
 function enableFormToolTip() {
     $('[tooltip-toggle="form-tooltip"]').tooltip('dispose');
-
     $(function () {
         $('[tooltip-toggle="form-tooltip"]').tooltip({
             template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
@@ -287,7 +304,6 @@ function enableFormToolTip() {
 
 function enableWideFormToolTip() {
     $('[tooltip-toggle="form-wide-tooltip"]').tooltip('dispose');
-
     $(function () {
         $('[tooltip-toggle="form-wide-tooltip"]').tooltip({
             template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
@@ -299,7 +315,6 @@ function enableWideFormToolTip() {
 
 function enableMobile_FormToolTip() {
     $('[tooltip-toggle="form-tooltip"]').tooltip('dispose');
-
     $(function () {
         $('[tooltip-toggle="form-tooltip"]').tooltip({
             template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
@@ -406,25 +421,43 @@ function securePage(...accTypes) {
     });
 }
 
-/* javascript ajax get function */
-function httpGet(url, callback) {
+/* javascript ajax get document */
+function httpGetDoc(url, callback) {
     var httpRequest = new XMLHttpRequest();
 
     httpRequest.open('GET', url, true);
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var data = httpRequest.responseText;
+    httpRequest.responseType = 'document';
 
-            if (callback) {
-                callback(data);
-            }
+    httpRequest.onload = function(e) {
+        var data = e.target.response;
+
+        if (callback) {
+            callback(data);
+        }
+    };
+    httpRequest.send(null);
+}
+
+/* javascript ajax get image */
+function httpGetImage(url, callback) {
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.open('GET', url, true);
+    httpRequest.responseType = 'blob';
+
+    httpRequest.onload = function(e) {
+        var data = e.target.response;
+
+        if (callback && (data.type == 'image/png' || data.type == 'image/jpg' || data.type == 'image/jpeg')) {
+            data = (window.URL || window.webkitURL).createObjectURL(data);
+            callback(data);
         }
     };
     httpRequest.send(null);
 }
 
 /* javascript ajax post function */
-function httpPost (url, params, callback) {
+function httpPost(url, params, callback) {
     var httpRequest = new XMLHttpRequest();
 
     httpRequest.open('POST', url, true);

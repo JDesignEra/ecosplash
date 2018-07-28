@@ -20,8 +20,8 @@ httpPost('./assets/db/db.php', data, function(data) {
             formFocus.querySelector('#bio.form-group textarea').placeholder = data.bio;
         }
 
-        httpGet('./assets/img/uploads/' + data.uid + '.png', function(content) {
-            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("./assets/img/uploads/' + data.uid + '.png")';
+        httpGetImage('./assets/img/uploads/' + data.uid + '.png', function(content) {
+            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("' + content + '")';
         });
     }
 });
@@ -129,7 +129,6 @@ focus.ondrop = function(e) {
     doc.querySelector('#uploadPhoto h5#action-text').classList.add('d-none');
     doc.querySelector('#uploadPhoto h5#loading-text').classList.remove('d-none');
 
-    console.log(e);
     var file = e.dataTransfer.files[0];
     if (e.dataTransfer.files.length > 1) {
         doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').innerHTML = 'Only 1 image upload is allowed!';
@@ -200,11 +199,7 @@ doc.querySelector('#uploadPhotoModal #uploadPhoto input[name=upload]').onchange 
     }
     else {
         var data = new FormData();
-
-        if (uid) {
-            data.append('uid', uid);
-        }
-
+        data.append('uid', (uid? uid : ''));
         data.append('file', this.files[0]);
         data.append('action', 'uploadPhoto');
 

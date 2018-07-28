@@ -2,7 +2,8 @@ if (!((localStorage.getItem('accType') || sessionStorage.getItem('accType')) && 
     location.href = './'
 }
 
-var sectionFocus = doc.querySelector('section#redeem'),
+var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
+    sectionFocus = doc.querySelector('section#redeem'),
     itemFormGrp,
     formGrpCount = 1;
 
@@ -13,8 +14,10 @@ data.append('action', 'getRewardItems');
 httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
     if (data.items.length > 0) {
-        httpGet('./assets/templates/redeem/item_list.html', function(content) {
-            sectionFocus.querySelector('#itemsList #items-table').innerHTML = content;
+        httpGetDoc('./assets/templates/redeem/item_list.html', function(content) {
+            var focus = sectionFocus.querySelector('#itemsList #items-table');
+            focus.innerHTML = content.querySelector('body').innerHTML;
+            focus.querySelector('tbody tr').innerHTML = '';
 
             data.items.forEach(function(a, i) {
                 /* populate item select */
@@ -29,14 +32,12 @@ httpPost('./assets/db/db.php', data, function(data) {
                 sectionFocus.querySelector('form#redeemForm select#items').appendChild(option);
 
                 /* populate item lists */
-                var row = doc.createElement('tr');
-                row.innerHTML = '<td class="text-left">' +
-                                    data.items[i]['item'] +
-                                '</td><td class="text-center">' +
-                                    data.items[i]['ecoPoints'] +
-                                '</td><td class="text-right">' +
-                                    data.items[i]['quantity'] +
-                                '</td>';
+                var row = content.querySelector('tbody tr').cloneNode(true),
+                    td = row.querySelectorAll('td');
+
+                td[0].innerHTML = data.items[i]['item'];
+                td[1].innerHTML = data.items[i]['ecoPoints'];
+                td[2].innerHTML = data.items[i]['quantity'];
 
                 sectionFocus.querySelector('#itemsList #items-table table tbody').appendChild(row);
             });
@@ -90,8 +91,7 @@ sectionFocus.querySelector('form#redeemForm').onsubmit = function(e) {
 
     formFocus.querySelector('option.default[value=none]').disabled = false;
 
-    var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
-    data = new FormData(formFocus);
+    var data = new FormData(formFocus);
 
     formFocus.querySelector('option.default[value=none]').disabled = true;
     data.append('uid', uid);

@@ -41,6 +41,32 @@ switch ($action) {
         }
         break;
 
+    case 'checkUser':
+        $uid = checkInput($_POST['uid']);
+        $password = checkInput($_POST['pass']);
+
+        if (empty($password)) {
+            $errors['pass'] = 'Pass is missing!';
+        }
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+        else {
+            $result = $mysqli -> query("SELECT uid, password FROM users WHERE uid = '$uid'");
+            if ($result -> num_rows < 1 && $result -> num_rows > 1) {
+                $errors['uid'] = 'User ID does not exist!';
+            }
+        }
+
+        if (empty($errors)) {
+            $result = $result -> fetch_array(MYSQLI_ASSOC);
+            if ($password !== $result['password']) {
+                $errors['check'] = false;
+            }
+        }
+        break;
+
     case 'uSignupForm':
     case 'oSignupForm':
         $name = checkInput($_POST['name']);
@@ -125,32 +151,6 @@ switch ($action) {
             }
 
             $data['users'] = $accs;
-        }
-        break;
-
-    case 'checkUser':
-        $uid = checkInput($_POST['uid']);
-        $password = checkInput($_POST['pass']);
-
-        if (empty($password)) {
-            $errors['pass'] = 'Pass is missing!';
-        }
-
-        if (empty($uid)) {
-            $errors['uid'] = 'User ID is missing!';
-        }
-        else {
-            $result = $mysqli -> query("SELECT uid, password FROM users WHERE uid = '$uid'");
-            if ($result -> num_rows < 1 && $result -> num_rows > 1) {
-                $errors['uid'] = 'User ID does not exist!';
-            }
-        }
-
-        if (empty($errors)) {
-            $result = $result -> fetch_array(MYSQLI_ASSOC);
-            if ($password !== $result['password']) {
-                $errors['check'] = false;
-            }
         }
         break;
 
@@ -342,6 +342,49 @@ switch ($action) {
 
                 $data['pass'] = $result['password'];
                 $data['name'] = $result['name'];
+            }
+        }
+        break;
+
+    case 'uploadPhoto':
+        $uid = checkInput($_POST['uid']);
+        $file = (isset($_FILES['file']) ? $_FILES['file'] : '');
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($file)) {
+            $errors['file'] = 'No file uploaded!';
+        }
+
+        if (empty($errors)) {
+            $exif = exif_imagetype($file['tmp_name']);
+            if ($exif != IMAGETYPE_JPEG && $exif != IMAGETYPE_PNG) {
+                $errors['file']  = 'Image file type allowed are .jpg, .jpeg, .png!';
+            }
+            elseif ($file['size'] > 2097152) {
+                $errors['file'] = 'Image file size cannot exceed 2mb!';
+            }
+
+            if (empty($errors)) {
+                $result = $mysqli -> query("SELECT uid FROM users WHERE uid = '$uid'");
+                if ($result -> num_rows == 1) {
+                    $target = './assets/img/uploads/'.$uid.'.png';
+                    if (exif_imagetype($file['tmp_name']) != IMAGETYPE_PNG) {
+                        if (!imagepng(imagecreatefromstring(file_get_contents($file['tmp_name'])), $target)) {
+                            $errors['file'] = 'Image upload fail, please refresh the page and try again.';
+                        }
+                    }
+                    else {
+                        if (!move_uploaded_file($file['tmp_name'], $target)) {
+                            $errors['file'] = 'Image upload fail, please refresh the page and try again.';
+                        }
+                    }
+                }
+                else {
+                    $errors['uid'] = 'User ID does not exist or has more then one!';
+                }
             }
         }
         break;
@@ -598,6 +641,8 @@ switch ($action) {
         break;
 
     case 'getUpcomingEvents':
+        $uid = checkInput($_POST['uid']);
+        $statuses = [];
     case 'getRecentEvents':
         $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
 
@@ -608,11 +653,21 @@ switch ($action) {
                 $date = date_format(date_create($row['dateTime']), 'd/m/Y');
                 $index = (array_key_exists($date, $events) ? count($events[$date]) : 0);
 
-                $events[$date][$index]['eid'] = $row['eid'];
+                $eid = $row['eid'];
+                $events[$date][$index]['eid'] = $eid;
                 $events[$date][$index]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
                 $events[$date][$index]['event'] = $row['event'];
                 $events[$date][$index]['location'] = $row['location'];
                 $events[$date][$index]['ecoPoints'] = $row['ecoPoints'];
+
+                if ($action == 'getUpcomingEvents') {
+                    if ($sql = $mysqli -> query("SELECT uids FROM events_attendance WHERE eid = '$eid'")) {
+                        $sqlRow = $sql -> fetch_array(MYSQLI_ASSOC);
+
+                        $uids = explode(',', $sqlRow['uids']);
+                        $states[$eid] = (array_search($uid, $uids) === false ? 0 : 1);
+                    }
+                }
 
                 if ($index == 0) {
                     $i++;
@@ -624,9 +679,195 @@ switch ($action) {
             }
 
             $data['events'] = $events;
+
+            if ($action == 'getUpcomingEvents') {
+                $data['states'] = $states;
+            }
         }
         else {
             $errors['events'] = 'No events to list!';
+        }
+        break;
+
+    case 'joinEvent':
+        $uid = checkInput($_POST['uid']);
+        $eid = checkInput($_POST['eid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($eid)) {
+            $errors['eid'] = 'Event ID is missing!';
+        }
+
+        if (empty($errors)) {
+            if ($result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid = '$eid'")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                $uids = (empty($row['uids']) ? [] : explode(',', $row['uids']));
+                $statuses = (empty($row['statuses']) ? [] : explode(',', $row['statuses']));
+
+                if (array_search($uid, $uids) === false) {
+                    $uids[] = $uid;
+                    $statuses[] = 0;
+
+                    $uids = implode(',', $uids);
+                    $statuses = implode(',', $statuses);
+
+                    $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses' WHERE eid = '$eid'");
+                }
+                else {
+                    $errors['eid'] = 'You have already joined this event';
+                }
+            }
+        }
+        break;
+
+    case 'getAttendance':
+        $uid = checkInput($_POST['uid']);
+        $eid = checkInput($_POST['eid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($eid)) {
+            $errors['eid'] = 'Event ID is missing!';
+        }
+
+        if (empty($errors)) {
+            if ($result = $mysqli -> query("SELECT event, dateTime, location FROM events WHERE eid = '$eid'")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $event['name'] = $row['event'];
+                $event['date'] = date_format(date_create($row['dateTime']), 'd/m/Y');
+                $event['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                $event['location'] = $row['location'];
+
+                $data['event'] = $event;
+            }
+
+            if ($result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid = '$eid'")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                if (empty($row['uids'])) {
+                    $errors['attendances'] = 'Nothing to list';
+                }
+                else {
+                    $uids = explode(',', $row['uids']);
+                    $status = explode(',', $row['statuses']);
+
+                    $attendances = [];
+                    for ($i=0; $i < count($uids); $i++) {
+                        $user = [];
+
+                        if ($result = $mysqli -> query("SELECT email, name FROM users WHERE uid = '$uids[$i]'")) {
+                            $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                            $user['email'] = $row['email'];
+                            $user['name'] = $row['name'];
+                            $user['status'] = $status[$i];
+
+                            $attendances[$uids[$i]] = $user;
+                        }
+
+                        $data['attendances'] = $attendances;
+                    }
+                }
+            }
+        }
+        break;
+
+    case 'updateAttendance':
+        $uid = checkInput($_POST['uid']);
+        $eid = checkInput($_POST['eid']);
+        $statusUids = (isset($_POST['status']) ? $_POST['status'] : '');
+
+        if (empty($eid)) {
+            $errors['eid'] = 'Event ID is missing!';
+        }
+
+        if (empty($statusUids)) {
+            $errors['status'] = 'You have not made any changes';
+        }
+
+        if (empty($errors)) {
+            if ($result = $mysqli -> query("SELECT ecoPoints FROM events WHERE eid = '$eid' AND uid = '$uid'")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $awardPoints = $row['ecoPoints'];
+            }
+
+            if ($result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid='$eid' AND uid = '$uid'")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                $uids = explode(',', $row['uids']);
+                $statuses = explode(',', $row['statuses']);
+
+                foreach ($statusUids as $user) {
+                    $i = array_search($user, $uids);
+
+                    if ($i !== false && $statuses[$i] == 0) {
+                        $statuses[$i] = 1;
+
+                        $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints + '$awardPoints', ecoPointsMonth = ecoPointsMonth + '$awardPoints' WHERE uid = '$user'");
+                    }
+                }
+
+                $uids = implode(',', $uids);
+                $statuses = implode(',', $statuses);
+
+                $result = $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses' WHERE eid = '$eid' AND uid = '$uid'");
+            }
+        }
+        break;
+
+    case 'redeemEventCode':
+        $uid = checkInput($_POST['uid']);
+        $redeemCode = checkInput($_POST['code']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($redeemCode)) {
+            $errors['code'] = 'Redeem Code is required!';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT eid, ecoPoints FROM events WHERE redeemCode = '$redeemCode'");
+
+            if ($result -> num_rows < 1) {
+                $errors['code'] = 'Redeem Code is invalid!';
+            }
+            else {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $eid = $row['eid'];
+                $awardPoints = $row['ecoPoints'];
+
+                $result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid = '$eid'");
+
+                if ($result -> num_rows > 0) {
+                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+                    $uids = explode(',', $row['uids']);
+                    $statuses = explode(',', $row['statuses']);
+
+                    $i = array_search($uid, $uids);
+                    if ($i !== false) {
+                        if ($statuses[$i] == 0) {
+                            $statuses[$i] = 1;
+                            $uids = implode(',', $uids);
+                            $statuses = implode(',', $statuses);
+
+                            $result = $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses'");
+
+                            $result = $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints + '$awardPoints', ecoPointsMonth = ecoPointsMonth + '$awardPoints' WHERE uid = '$uid'");
+                        }
+                        else {
+                            $errors['code'] = 'EcoPoints have already been redeemed for this event.';
+                        }
+                    }
+                }
+            }
         }
         break;
 
@@ -698,57 +939,6 @@ switch ($action) {
         }
         break;
 
-    case 'redeemEventCode':
-        $uid = checkInput($_POST['uid']);
-        $redeemCode = checkInput($_POST['code']);
-
-        if (empty($uid)) {
-            $errors['uid'] = 'User ID is missing!';
-        }
-
-        if (empty($redeemCode)) {
-            $errors['code'] = 'Redeem Code is required!';
-        }
-
-        if (empty($errors)) {
-            $result = $mysqli -> query("SELECT eid, ecoPoints FROM events WHERE redeemCode = '$redeemCode'");
-
-            if ($result -> num_rows < 1) {
-                $errors['code'] = 'Redeem Code is invalid!';
-            }
-            else {
-                $row = $result -> fetch_array(MYSQLI_ASSOC);
-                $eid = $row['eid'];
-                $awardPoints = $row['ecoPoints'];
-
-                $result = $mysqli -> query("SELECT uid, status FROM events_attendance WHERE eid = '$eid'");
-
-                if ($result -> num_rows > 0) {
-                    $row = $result -> fetch_array(MYSQLI_ASSOC);
-                    $uids = explode(',', $row['uid']);
-                    $status = explode(',', $row['status']);
-
-                    $i = array_search($uid, $uids);
-                    if ($i !== false) {
-                        if ($status[$i] == 0) {
-                            $status[$i] = 1;
-                            $uids = implode(',', $uids);
-                            $status = implode(',', $status);
-
-                            $result = $mysqli -> query("UPDATE events_attendance SET uid = '$uids', status = '$status'");
-
-                            $result = $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints + '$awardPoints', ecoPointsMonth = ecoPointsMonth + '$awardPoints' WHERE uid = '$uid'");
-                        }
-                        else {
-                            $errors['code'] = 'EcoPoints have already been redeemed for this event.';
-                        }
-                    }
-                }
-            }
-        }
-
-        break;
-
     case 'getQuizList':
         $uid = checkInput($_POST['uid']);
         $qid = checkInput($_POST['qid']);
@@ -779,48 +969,6 @@ switch ($action) {
             }
             else {
                 $errors['eid'] = 'Quizzes ID does not exist or has more then one!';
-            }
-        }
-        break;
-
-    case 'uploadPhoto':
-        $uid = checkInput($_POST['uid']);
-
-        if (empty($uid)) {
-            $errors['uid'] = 'User ID is missing!';
-        }
-
-        if (empty($file = isset($_FILES['file']))) {
-            $errors['file'] = 'No file uploaded!';
-        }
-
-        if (empty($errors)) {
-            $exif = exif_imagetype($file['tmp_name']);
-            if ($exif != IMAGETYPE_JPEG && $exif != IMAGETYPE_PNG) {
-                $errors['file']  = 'Image file type allowed are .jpg, .jpeg, .png!';
-            }
-            elseif ($file['size'] > 2097152) {
-                $errors['file'] = 'Image file size cannot exceed 2mb!';
-            }
-
-            if (empty($errors)) {
-                $result = $mysqli -> query("SELECT uid FROM users WHERE uid = '$uid'");
-                if ($result -> num_rows == 1) {
-                    $target = '../img/uploads/'.$uid.'.png';
-                    if (exif_imagetype($file['tmp_name']) != IMAGETYPE_PNG) {
-                        if (!imagepng(imagecreatefromstring(file_get_contents($file['tmp_name'])), $target)) {
-                            $errors['file'] = 'Image upload fail, please refresh the page and try again.';
-                        }
-                    }
-                    else {
-                        if (!move_uploaded_file($file['tmp_name'], $target)) {
-                            $errors['file'] = 'Image upload fail, please refresh the page and try again.';
-                        }
-                    }
-                }
-                else {
-                    $errors['uid'] = 'User ID does not exist or has more then one!';
-                }
             }
         }
         break;

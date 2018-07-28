@@ -6,7 +6,7 @@ if (eid) {
     window.history.replaceState({}, document.title, './display_code/');
 }
 else {
-    window.location = './';
+    window.location = './event_list';
 }
 
 var data = new FormData();

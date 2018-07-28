@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+{% set title = 'Events List' %}
+
+{% block main %}
+<section id="attendance">
+    <div class="card shadow">
+        <div class="card-body">
+            <h4 class="pb-3 text-center">Manual Attendance</h4>
+            <h5 class="pt-3 text-center eventDetails">
+                <span class="text-primary event"></span> on <span class="text-primary date"></span> at <span class="text-primary time"></span> located at <span class="text-primary location"></span>
+            </h5>
+
+            <div id="attendanceTable">
+                <h6 class="text-muted text-center">
+                    Is seems that no user has joined the event yet.
+                </h6>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block afterMain %}
+<!-- Success Modal -->
+<div id="successModal" class="modal pulse" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Attendance Updated Successful</h5>
+
+                <button type="button" class="close" data-dismiss="modal">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                Attendance have been updated successfuly, and EcoPoints has been distributed.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">Dismiss</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div id="errorModal" class="modal pulse" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Attendance No Changes
+                </h5>
+
+                <button type="button" class="close" data-dismiss="modal">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                There is nothing to update.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">Dismiss</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/attendance.js"></script>
+{% endblock %}

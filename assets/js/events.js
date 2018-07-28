@@ -1,19 +1,19 @@
 // TODO Join btn submit
 'use strict';
-var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid'));
+var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
+    accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType'));
 
 var data = new FormData();
+data.append('uid', (uid ? uid : ''));
 data.append('action', 'getUpcomingEvents');
 
 httpPost('./assets/db/db.php', data, function(data) {
-    console.log(data);  // Debugging Purpose
+    // console.log(data);  // Debugging Purpose
     if (data.success) {
-        httpGet('./assets/templates/events/events_set.html', function(content) {
-            var temp = doc.createElement('div'),
-                focus = doc.querySelector('section#events .card-body .eventsContent');
+        httpGetDoc('./assets/templates/events/events_set.html', function(content) {
+            var focus = doc.querySelector('section#events .card-body .eventsContent');
 
             focus.innerHTML = '';
-            temp.innerHTML = content;
 
             var i = 0;
             for (var date in data.events) {
@@ -22,22 +22,61 @@ httpPost('./assets/db/db.php', data, function(data) {
                     focus.appendChild(hr);
                 }
 
-                var h4Date = temp.querySelector('h4').cloneNode();
+                var h4Date = content.querySelector('h4').cloneNode();
                 h4Date.innerHTML = date;
 
                 focus.appendChild(h4Date);
 
                 for (var event in data.events[date]) {
-                    var row = temp.querySelector('div.row').cloneNode(true),
-                        cols = row.querySelectorAll('div.col-6');
+                    var row = content.querySelector('div.row').cloneNode(true),
+                        cols = row.querySelectorAll('div.cloumn');
 
                     cols[0].innerHTML = '<p><span class="font-weight-bold text-primary">' + data.events[date][event].event + '</span> at <span class="font-weight-bold text-primary">' + data.events[date][event].time + '</span> located at <span class="font-weight-bold text-primary">' + data.events[date][event].location + '</span></p>';
 
-                    var btnFocus = cols[1].querySelector('button');
+                    var eid = data.events[date][event].eid,
+                        btnFocus = cols[1].querySelector('button');
+
                     btnFocus.setAttribute('data-id', data.events[date][event].eid);
 
-                    if (uid == 0) {
+                    if (accType == 0) {
                         btnFocus.classList.remove('d-none');
+
+                        if (data.states[eid]) {
+                            btnFocus.innerHTML = 'Joined';
+                            btnFocus.classList.add('btn-danger', 'disabled');
+                        }
+                        else {
+                            btnFocus.innerHTML = 'Join';
+                            btnFocus.classList.add('btn-success');
+
+                            /* join btn onclick */
+                            btnFocus.onclick = function() {
+                                var data = new FormData();
+                                data.append('uid', uid);
+                                data.append('eid', this.getAttribute('data-id'));
+                                data.append('action', 'joinEvent');
+
+                                httpPost('./assets/db/db.php', data, function(data) {
+                                    //console.log(data);  // Debugging Purpose
+                                    if (data.success) {
+                                        var modal = doc.getElementById('successModal');
+
+                                        $(modal).on('shown.bs.modal', function() {
+                                            modal.querySelector('button.btn[data-dismiss=modal]').focus();
+                                            setTimeout(function () {
+                                                $(modal).modal('hide');
+                                            }, 2500);
+                                        });
+
+                                        $(modal).on('hide.bs.modal', function() {
+                                            location.href = './events';
+                                        });
+
+                                        $(modal).modal("show");
+                                    }
+                                });
+                            }
+                        }
                     }
 
                     focus.appendChild(row);

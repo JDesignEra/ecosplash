@@ -9,8 +9,6 @@ var sectionFocus = doc.querySelector('section#utilities'),
     eData = [],
     wData = [],
     gData = [],
-    delType = '',
-    delId = '',
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     h4Years = sectionFocus.querySelectorAll('.card-body h4 .year');
 
@@ -46,82 +44,82 @@ httpPost('./assets/db/db.php', data, function(data) {
         newChart(eChart, eData, 'KW/H Usage');
 
         if (data.electric) {
-            httpGet('./assets/templates/utilities/electric-table.html', function(content) {
-                sectionFocus.querySelector('#electric-table').innerHTML = content;
-                sectionFocus.querySelector('#electric-table table tbody').innerHTML = '';
-
-                var temp = doc.createElement('div');
-                temp.innerHTML = content;
+            httpGetDoc('./assets/templates/utilities/electric-table.html', function(content) {
+                var focus = sectionFocus.querySelector('#electric-table');
+                focus.innerHTML = content.querySelector('body').innerHTML;
+                focus.querySelector('tbody').innerHTML = '';
 
                 data.electric.useAmounts.forEach(function(ev, ei) {
                     if (ev != '0') {
-                        var row = doc.createElement('tr');
-                        row.id = ei;
-                        row.innerHTML = temp.querySelector('tbody tr').innerHTML;
-
-                        var td = row.querySelectorAll('td');
+                        var row = content.querySelector('tbody tr').cloneNode(true),
+                            td = row.querySelectorAll('td');
                         td[0].innerHTML = months[ei];
                         td[1].innerHTML = ev;
                         td[2].innerHTML = data.electric.prices[ei];
 
-                        sectionFocus.querySelector('#electric-table table tbody').appendChild(row);
+                        /* delete btn */
+                        var btnFocus = td[3].querySelector('button');
+                        btnFocus.setAttribute('data-id', ei)
+
+                        delRowOnClick(btnFocus, 'electric');
+                        focus.querySelector('tbody').appendChild(row);
                     }
                 });
             });
         }
 
         if (data.water) {
-            httpGet('./assets/templates/utilities/water-table.html', function(content) {
-                sectionFocus.querySelector('#water-table').innerHTML = content;
-                sectionFocus.querySelector('#water-table table tbody').innerHTML = '';
+            httpGetDoc('./assets/templates/utilities/water-table.html', function(content) {
+                var focus = sectionFocus.querySelector('#water-table');
+                focus.innerHTML = content.querySelector('body').innerHTML;
+                focus.querySelector('tbody').innerHTML = '';
 
-                var temp = doc.createElement('div');
-                temp.innerHTML = content;
+                data.water.useAmounts.forEach(function(wv, wi) {
+                    if (wv != '0') {
+                        var row = content.querySelector('tbody tr').cloneNode(true),
+                            td = row.querySelectorAll('td');
 
-                data.water.useAmounts.forEach(function(ev, ei) {
-                    if (ev != '0') {
-                        var row = doc.createElement('tr');
-                        row.id = ei;
-                        row.innerHTML = temp.querySelector('tbody tr').innerHTML;
+                        td[0].innerHTML = months[wi];
+                        td[1].innerHTML = wv;
+                        td[2].innerHTML = data.water.prices[wi];
 
-                        var td = row.querySelectorAll('td');
-                        td[0].innerHTML = months[ei];
-                        td[1].innerHTML = ev;
-                        td[2].innerHTML = data.water.prices[ei];
+                        var btnFocus = td[3].querySelector('button');
+                        btnFocus.setAttribute('data-id', wi);
 
-                        sectionFocus.querySelector('#water-table table tbody').appendChild(row);
+                        delRowOnClick(btnFocus, 'water');
+                        focus.querySelector('tbody').appendChild(row);
                     }
                 });
             });
         }
 
         if (data.gas) {
-            httpGet('./assets/templates/utilities/gas-table.html', function(content) {
-                sectionFocus.querySelector('#gas-table').innerHTML = content;
-                sectionFocus.querySelector('#gas-table table tbody').innerHTML = '';
+            httpGetDoc('./assets/templates/utilities/gas-table.html', function(content) {
+                var focus = sectionFocus.querySelector('#gas-table');
+                focus.innerHTML = content.querySelector('body').innerHTML;
+                focus.querySelector('tbody').innerHTML = '';
 
-                var temp = doc.createElement('div');
-                temp.innerHTML = content;
+                data.gas.useAmounts.forEach(function(gv, gi) {
+                    if (gv != '0') {
+                        var row = content.querySelector('tbody tr').cloneNode(true),
+                            td = row.querySelectorAll('td');
 
-                data.gas.useAmounts.forEach(function(ev, ei) {
-                    if (ev != '0') {
-                        var row = doc.createElement('tr');
-                        row.id = ei;
-                        row.innerHTML = temp.querySelector('tbody tr').innerHTML;
+                        td[0].innerHTML = months[gi];
+                        td[1].innerHTML = gv;
+                        td[2].innerHTML = data.gas.prices[gi];
 
-                        var td = row.querySelectorAll('td');
-                        td[0].innerHTML = months[ei];
-                        td[1].innerHTML = ev;
-                        td[2].innerHTML = data.gas.prices[ei];
+                        var btnFocus = td[3].querySelector('button');
+                        btnFocus.setAttribute('data-id', gi);
 
-                        sectionFocus.querySelector('#gas-table table tbody').appendChild(row);
+                        delRowOnClick(btnFocus, 'gas');
+                        focus.querySelector('tbody').appendChild(row);
                     }
                 });
             });
         }
-    }
 
-    enableDangerTooltip();
+        enableDangerTooltip();
+    }
 });
 
 /* show chart on tab shown */
@@ -322,81 +320,13 @@ sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
     });
 }
 
-/* delete button */
-addWindowOnload(function() {
-    var focus = sectionFocus.querySelectorAll('#electric-table button#delete');
-    focus.forEach(function(el) {
-        el.addEventListener('click', function() {
-            delId = el.parentElement.parentElement.id;
-            delType = 'electric';
-
-            var modal = doc.getElementById('deleteModal'),
-                monthFocus = modal.querySelectorAll('.month'),
-                bTypeFocus = modal.querySelectorAll('.bType');
-
-            monthFocus.forEach(function(el) {
-                el.innerHTML = months[delId];
-            });
-
-            bTypeFocus.forEach(function(el) {
-                el.innerHTML = delType;
-            });
-
-            $(modal).modal('show');
-        });
-    });
-
-    var focus = sectionFocus.querySelectorAll('#water-table button#delete');
-    focus.forEach(function(el) {
-        el.addEventListener('click', function() {
-            delId = el.parentElement.parentElement.id;
-            delType = 'water';
-
-            var modal = doc.getElementById('deleteModal'),
-                monthFocus = modal.querySelectorAll('.month'),
-                bTypeFocus = modal.querySelectorAll('.bType');
-
-            monthFocus.forEach(function(el) {
-                el.innerHTML = months[delId];
-            });
-
-            bTypeFocus.forEach(function(el) {
-                el.innerHTML = delType;
-            });
-
-            $(modal).modal('show');
-        });
-    });
-
-    var focus = sectionFocus.querySelectorAll('#gas-table button#delete');
-    focus.forEach(function(el) {
-        el.addEventListener('click', function() {
-            delId = el.parentElement.parentElement.id;
-            delType = 'gas';
-
-            var modal = doc.getElementById('deleteModal'),
-                monthFocus = modal.querySelectorAll('.month'),
-                bTypeFocus = modal.querySelectorAll('.bType');
-
-            monthFocus.forEach(function(el) {
-                el.innerHTML = months[delId];
-            });
-
-            bTypeFocus.forEach(function(el) {
-                el.innerHTML = delType;
-            });
-
-            $(modal).modal('show');
-        });
-    });
-});
-
 /* deleteModal confirm button */
 doc.querySelector('#deleteModal button.confirmDel').onclick = function() {
     var data = new FormData();
     data.append('uid', uid);
-    data.append('uuid', delId);
+    data.append('uuid', this.getAttribute('data-id'));
 
+    var delType = this.getAttribute('data-type');
     if (delType == 'electric') {
         data.append('action', 'deleteElectric');
     }
@@ -417,45 +347,46 @@ doc.querySelector('#deleteModal button.confirmDel').onclick = function() {
 
 /* deleteModal on hide */
 $('#deleteModal').on('hide.bs.modal', function() {
-    delId = '';
-    delType = '';
+    var btnFocus = this.querySelector('.modal-footer button.confirmDel');
+    btnFocus.removeAttribute('data-id');
+    btnFocus.removeAttribute('data-type');
 });
 
 /* delete all button */
 sectionFocus.querySelector('#electric #electricDelAll ').onclick = function() {
-    delType = 'electric';
+    doc.querySelector('#deleteAllModal button.confirmDel').setAttribute('data-type', 'electric');
 
     var modal = doc.getElementById('deleteAllModal'),
         bTypeFocus = modal.querySelectorAll('#deleteAllModal .bType');
 
     bTypeFocus.forEach(function(el) {
-        el.innerHTML = delType;
+        el.innerHTML = 'Electric';
     });
 
     $('#deleteAllModal').modal('show');
 }
 
 sectionFocus.querySelector('#water #waterDelAll ').onclick = function() {
-    delType = 'water';
+    doc.querySelector('#deleteAllModal button.confirmDel').setAttribute('data-type', 'water');
 
     var modal = doc.getElementById('deleteAllModal'),
         bTypeFocus = modal.querySelectorAll('#deleteAllModal .bType');
 
     bTypeFocus.forEach(function(el) {
-        el.innerHTML = delType;
+        el.innerHTML = "Water";
     });
 
     $('#deleteAllModal').modal('show');
 }
 
 sectionFocus.querySelector('#gas #gasDelAll ').onclick = function() {
-    delType = 'gas';
+    doc.querySelector('#deleteAllModal button.confirmDel').setAttribute('data-type', 'gas');
 
     var modal = doc.getElementById('deleteAllModal'),
         bTypeFocus = modal.querySelectorAll('#deleteAllModal .bType');
 
     bTypeFocus.forEach(function(el) {
-        el.innerHTML = delType;
+        el.innerHTML = 'Electric';
     });
 
     $('#deleteAllModal').modal('show');
@@ -466,6 +397,7 @@ doc.querySelector('#deleteAllModal button.confirmDel').onclick = function() {
     var data = new FormData();
     data.append('uid', uid);
 
+    var delType = this.getAttribute('data-type');
     if (delType == 'electric') {
         data.append('action', 'deleteAllElectric');
     }
@@ -486,9 +418,33 @@ doc.querySelector('#deleteAllModal button.confirmDel').onclick = function() {
 
 /* deleteAllModal on hide */
 $('#deleteAllModal').on('hide.bs.modal', function() {
-    delId = '';
-    delType = '';
+    this.querySelector('.modal-footer button.confirmDel').removeAttribute('data-type');
 });
+
+/* delete btn function */
+function delRowOnClick(target, billType) {
+    target.onclick = function() {
+        var id = this.getAttribute('data-id');
+
+        var modal = doc.getElementById('deleteModal'),
+            monthFocus = modal.querySelectorAll('.month'),
+            bTypeFocus = modal.querySelectorAll('.bType'),
+            btnFocus = modal.querySelector('.modal-footer button.confirmDel');
+
+        btnFocus.setAttribute('data-id', id);
+        btnFocus.setAttribute('data-type', billType.toLowerCase());
+
+        monthFocus.forEach(function(el) {
+            el.innerHTML = months[id];
+        });
+
+        bTypeFocus.forEach(function(el) {
+            el.innerHTML = 'Electric';
+        });
+
+        $(modal).modal('show');
+    }
+}
 
 /* new chart function */
 function newChart(target, dataSet, label) {

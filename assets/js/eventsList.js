@@ -1,5 +1,7 @@
 //TODO manual attendance check
 'use strict';
+securePage(1);
+
 var uid = uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     sectionFocus = doc.querySelector('section#eventsList');
 
@@ -13,19 +15,17 @@ httpPost('./assets/db/db.php', data, function(data) {
 
     var focus = sectionFocus.querySelector('.card-body');
 
-    httpGet('./assets/templates/events_list/events_table.html', function(content) {
-        var temp = doc.createElement('div');
-        temp.classList.add('table-responsive', 'mb-5');
-        temp.innerHTML = content;
-
+    httpGetDoc('./assets/templates/events_list/events_table.html', function(content) {
         for (var k in data.eventsList) {
-            var table = temp.cloneNode(true);
-            table.querySelector('h4').innerHTML = k;
+            var h4Date = content.querySelector('h4').cloneNode(),
+                table = content.querySelector('table').cloneNode(true);
+
+            h4Date.innerHTML = k;
             table.querySelector('tbody').innerHTML = '';
 
             var tbodyFocus = table.querySelector('tbody');
             data.eventsList[k].forEach(function(ev, ei) {
-                var row = temp.querySelector('tbody tr').cloneNode(true),
+                var row = content.querySelector('tbody tr').cloneNode(true),
                     td = row.querySelectorAll('td');
 
                 td[0].innerHTML = ev.event;
@@ -51,6 +51,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                 tbodyFocus.appendChild(row);
             });
 
+            focus.appendChild(h4Date);
             focus.appendChild(table);
         }
     });

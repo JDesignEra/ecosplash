@@ -40,8 +40,9 @@ httpPost('./assets/db/db.php', data, function(data) {
             sectionFocus.querySelector('#bio').innerHTML = data.bio;
         }
 
-        httpGet('./assets/img/uploads/' + data.uid + '.png', function() {
-            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("./assets/img/uploads/' + data.uid + '.png")';
+        httpGetImage('./assets/img/uploads/' + data.uid + '.png', function(content) {
+            console.log(content);
+            sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("' + content + '")';
         });
     }
 });
@@ -77,15 +78,13 @@ if (accType) {
             httpPost('./assets/db/db.php', data, function(data) {
                 if (data.success) {
                     // console.log(data); // Debugging Purpose
-                    httpGet('./assets/templates/profile/event_histories.html', function(content) {
-                        sectionFocus.querySelector('#event-history-table').innerHTML = content;
-                        sectionFocus.querySelector('#event-history-table tbody').innerHTML = '';
+                    httpGetDoc('./assets/templates/profile/event_histories.html', function(content) {
+                        var focus = sectionFocus.querySelector('#event-history-table');
+                        focus.innerHTML = content.querySelector('body').innerHTML;
+                        focus.querySelector('tbody').innerHTML = '';
 
                         for (var i in data.event_histories) {
-                            var temp = doc.createElement('div');
-                            temp.innerHTML = content;
-
-                            var row = temp.querySelector('tbody tr').cloneNode(true);
+                            var row = content.querySelector('tbody tr').cloneNode(true);
 
                             var td = row.querySelectorAll('td');
                             td[0].innerHTML = data.event_histories[i]['eid'];
@@ -108,12 +107,12 @@ if (accType) {
                                 httpPost('./assets/db/db.php', data, function(data) {
                                     // console.log(data);  // Debugging Purpose
                                     if (data.success) {
-                                        httpGet('./assets/templates/profile/event_history.html', function(content) {
-                                            focus = doc.getElementById('view-more-modal');
-                                            focus.getElementsByClassName('modal-body')[0].innerHTML = content;
-                                            focus.querySelector('.modal-header .modal-title').innerHTML = 'Event #' + data.eid + ' Joined On ' + data.joinDate;
+                                        httpGetDoc('./assets/templates/profile/event_history.html', function(content) {
+                                            var modal = doc.getElementById('view-more-modal');
+                                            modal.querySelector('.modal-body').innerHTML = content.querySelector('body').innerHTML;
+                                            modal.querySelector('.modal-header .modal-title').innerHTML = 'Event #' + data.eid + ' Joined On ' + data.joinDate;
 
-                                            var td = focus.querySelectorAll('tbody tr td');
+                                            var td = modal.querySelectorAll('tbody tr td');
                                             td[0].innerHTML = data.event;
                                             td[1].innerHTML = data.date;
                                             td[2].innerHTML = data.time;
@@ -127,7 +126,7 @@ if (accType) {
                                 });
                             }
 
-                            sectionFocus.querySelector('#event-history-table tbody').append(row);
+                            focus.querySelector('tbody').appendChild(row);
                         }
 
                         enableTooltip();
@@ -143,15 +142,13 @@ if (accType) {
             httpPost('./assets/db/db.php', data, function(data) {
                 if (data.success) {
                     // console.log(data); // Debugging Purpose
-                    httpGet('./assets/templates/profile/redeem_histories.html', function(content) {
-                        sectionFocus.querySelector('#redeem-history-table').innerHTML = content;
-                        sectionFocus.querySelector('#redeem-history-table tbody').innerHTML = '';
+                    httpGetDoc('./assets/templates/profile/redeem_histories.html', function(content) {
+                        var focus = sectionFocus.querySelector('#redeem-history-table');
+                        focus.innerHTML = content.querySelector('body').innerHTML;
+                        focus.querySelector('tbody').innerHTML = '';
 
                         for (var i = 0; i < data.redeem_histories.length; i++) {
-                            var temp = doc.createElement('div');
-                            temp.innerHTML = content;
-
-                            var row = temp.querySelector('tbody tr').cloneNode(true);
+                            var row = content.querySelector('tbody tr').cloneNode(true);
                             row.id = data.redeem_histories[i]['oid'];
 
                             var td = row.querySelectorAll('td');
@@ -175,26 +172,22 @@ if (accType) {
                                 httpPost('./assets/db/db.php', data, function(data) {
                                     // console.log(data);  // Debugging Purpose
                                     if (data.success) {
-                                        httpGet('./assets/templates/profile/redeem_history.html', function(content) {
-                                            focus = doc.getElementById('view-more-modal');
-
-                                            focus.getElementsByClassName('modal-body')[0].innerHTML = content;
-                                            focus.querySelector('.modal-header .modal-title').innerHTML = '#' + data.oid + ' on ' + data.date;
-                                            focus.querySelector('.modal-body table tbody').innerHTML = '';
-                                            focus.querySelector('.modal-body h6 #total').innerHTML = data.totalEcoPoints;
+                                        httpGetDoc('./assets/templates/profile/redeem_history.html', function(content) {
+                                            var modal = doc.getElementById('view-more-modal');
+                                            modal.querySelector('.modal-body').innerHTML = content.querySelector('body').innerHTML;
+                                            modal.querySelector('.modal-header .modal-title').innerHTML = '#' + data.oid + ' on ' + data.date;
+                                            modal.querySelector('.modal-body table tbody').innerHTML = '';
+                                            modal.querySelector('.modal-body h6 #total').innerHTML = data.totalEcoPoints;
 
                                             data.items.forEach(function(k, i) {
-                                                var temp = doc.createElement('div');
-                                                temp.innerHTML = content;
-
-                                                var row = temp.querySelector('tbody tr').cloneNode(true);
+                                                var row = content.querySelector('tbody tr').cloneNode(true);
 
                                                 var td = row.querySelectorAll('td');
                                                 td[0].innerHTML = k;
                                                 td[1].innerHTML = data.itemsQty[i];
                                                 td[2].innerHTML = data.itemsEcoPoints[i];
 
-                                                focus.querySelector('table tbody').appendChild(row);
+                                                modal.querySelector('table tbody').appendChild(row);
                                             });
                                         });
 
@@ -204,7 +197,7 @@ if (accType) {
                                 });
                             }
 
-                            sectionFocus.querySelector('#redeem-history-table tbody').appendChild(row);
+                            focus.querySelector('tbody').appendChild(row);
                         }
 
                         enableTooltip();
@@ -265,15 +258,13 @@ if (accType) {
             httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
                 if (data.success) {
-                    httpGet('./assets/templates/profile/events_list.html', function(content) {
-                        sectionFocus.querySelector('#event-list-table').innerHTML = content;
-                        sectionFocus.querySelector('#event-list-table tbody').innerHTML = '';
+                    httpGetDoc('./assets/templates/profile/events_list.html', function(content) {
+                        var focus = sectionFocus.querySelector('#event-list-table');
+                        focus.innerHTML = content.querySelector('body').innerHTML;
+                        focus.querySelector('tbody').innerHTML = '';
 
                         for (var i = 0; i < data.eventsList.length && i < 10; i++) {
-                            var temp = doc.createElement('div');
-                            temp.innerHTML = content;
-
-                            var row = temp.querySelector('tbody tr').cloneNode(true);
+                            var row = content.querySelector('tbody tr').cloneNode(true);
                             row.id = data.eventsList[i]['eid'];
 
                             var td = row.querySelectorAll('td');
@@ -283,7 +274,7 @@ if (accType) {
                             td[3].innerHTML = data.eventsList[i]['location'];
                             td[4].innerHTML = data.eventsList[i]['redeemCode'];
 
-                            sectionFocus.querySelector('#event-list-table tbody').appendChild(row);
+                            focus.querySelector('tbody').appendChild(row);
                         }
                     });
                 }
@@ -296,90 +287,80 @@ if (accType) {
 
             httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
+                if (data.success) {
+                    httpGetDoc('./assets/templates/profile/quizzes_list.html', function(content) {
+                        var focus = sectionFocus.querySelector('#quiz-list-table');
+                        focus.innerHTML = content.querySelector('body').innerHTML;
+                        focus.querySelector('tbody').innerHTML = '';
 
-                httpGet('./assets/templates/profile/quizzes_list.html', function(content) {
-                    sectionFocus.querySelector('#quiz-list-table').innerHTML = content;
-                    sectionFocus.querySelector('#quiz-list-table tbody').innerHTML = '';
+                        for (var i = 0; i < data.quizzes_list.length && i < 10; i++) {
+                            var row = content.querySelector('tbody tr').cloneNode(true),
+                                td = row.querySelectorAll('td');
+                            td[0].innerHTML = data.quizzes_list[i]['qid'];
+                            td[1].innerHTML = data.quizzes_list[i]['date'];
+                            td[2].innerHTML = data.quizzes_list[i]['name'];
+                            td[3].innerHTML = data.quizzes_list[i]['ecoPoints'];
 
-                    for (var i = 0; i < data.quizzes_list.length && i < 10; i++) {
-                        var temp = doc.createElement('div');
-                        temp.innerHTML = content;
+                            /* quizzes list view more button */
+                            var btnFocus = td[4].querySelector('button');
+                            btnFocus.setAttribute('data-id', data.quizzes_list[i]['qid']);
 
-                        var row = temp.querySelector('tbody tr').cloneNode(true);
-                        row.id = data.quizzes_list[i]['qid'];
+                            btnFocus.onclick = function() {
+                                var qid = this.getAttribute('data-id'),
+                                    data = new FormData();
 
-                        var td = row.querySelectorAll('td');
-                        td[0].innerHTML = data.quizzes_list[i]['qid'];
-                        td[1].innerHTML = data.quizzes_list[i]['date'];
-                        td[2].innerHTML = data.quizzes_list[i]['name'];
-                        td[3].innerHTML = data.quizzes_list[i]['ecoPoints'];
+                                    data.append('uid', uid);
+                                    data.append('qid', qid);
+                                    data.append('action', 'getQuizList');
+                                    httpPost('./assets/db/db.php', data, function(data) {
+                                        // console.log(data);  // Debugging Purpose
+                                        if (data.success) {
+                                            httpGetDoc('./assets/templates/profile/quiz_list.html', function(content) {
+                                                var modal = doc.getElementById('view-more-modal');
+                                                modal.querySelector('.modal-body').innerHTML = content.querySelector('body').innerHTML;
+                                                modal.querySelector('.modal-body table tbody').innerHTML = '';
+                                                modal.querySelector('.modal-header .modal-title').innerHTML = '# ' + data.qid + ': ' + data.name + ' (' + data.date + ')';
 
-                        sectionFocus.querySelector('#quiz-list-table tbody').appendChild(row);
-                    }
-                });
+                                                data.questions.forEach(function(qv, qi) {
+                                                    var questionRow = content.querySelector('tbody tr.questionRow').cloneNode(true);
+                                                    questionRow.querySelector('th').innerHTML = qv;
 
-                enableTooltip();
-            });
+                                                    modal.querySelector('table tbody').appendChild(questionRow);
 
-            /* quizzes list view more button */
-            addWindowOnload(function() {
-                var focus = sectionFocus.querySelectorAll('#quiz-list-table button#view-more');
+                                                    var optionRow;
+                                                    data.options.splice(0, 4).forEach(function(ov, oi) {
+                                                        if (oi % 2 == 0) {  // create new row
+                                                            optionRow = content.querySelector('tbody tr.optionRow').cloneNode(true);
+                                                            optionRow.querySelectorAll('td.option')[0].innerHTML = ov;
+                                                        }
+                                                        else {  // add created row
+                                                            optionRow.querySelectorAll('td.option')[1].innerHTML = ov;
+                                                            modal.querySelector('table tbody').appendChild(optionRow);
+                                                        }
+                                                    });
 
-                focus.forEach(function(el) {
-                    el.addEventListener('click', function() {
-                        var qid = this.parentElement.parentElement.id;
+                                                    var focusAns = modal.querySelectorAll('.modal-body table tbody td.answer'),
+                                                        minusAns = (data.answers[qi] != 0 ? 3 - data.answers[qi] : 3),
+                                                        correctIcon = doc.createElement('i');
 
-                        var data = new FormData();
-                        data.append('uid', uid);
-                        data.append('qid', qid);
-                        data.append('action', 'getQuizList');
+                                                        correctIcon.classList.add('fas', 'fa-check', 'fa-lg', 'text-success');
 
-                        httpPost('./assets/db/db.php', data, function(data) {
-                            // console.log(data);  // Debugging Purpose
-                            if (data.success) {
-                                httpGet('./assets/templates/profile/quiz_list.html', function(content) {
-                                    focus = doc.getElementById('view-more-modal');
-                                    focus.getElementsByClassName('modal-body')[0].innerHTML = content;
-                                    focus.querySelector('.modal-body table tbody').innerHTML = '';
-                                    focus.querySelector('.modal-header .modal-title').innerHTML = '# ' + data.qid + ': ' + data.name + ' (' + data.date + ')';
+                                                    focusAns[(focusAns.length - 1) - minusAns].appendChild(correctIcon);
+                                                });
+                                            });
 
-                                    data.questions.forEach(function(qv, qi) {
-                                        var temp = doc.createElement('div');
-                                        temp.innerHTML = content;
-
-                                        var questionRow = temp.querySelector('tbody tr.questionRow').cloneNode(true);
-                                        questionRow.querySelector('th').innerHTML = qv;
-
-                                        focus.querySelector('table tbody').appendChild(questionRow);
-
-                                        var optionRow;
-                                        data.options.splice(0, 4).forEach(function(ov, oi) {
-                                            if (oi % 2 == 0) {  // create new row
-                                                optionRow = temp.querySelector('tbody tr.optionRow').cloneNode(true);
-                                                optionRow.querySelectorAll('td.option')[0].innerHTML = ov;
-                                            }
-                                            else {  // add created row
-                                                optionRow.querySelectorAll('td.option')[1].innerHTML = ov;
-                                                focus.querySelector('table tbody').appendChild(optionRow);
-                                            }
-                                        });
-
-                                        var focusAns = focus.querySelectorAll('.modal-body table tbody td.answer'),
-                                            minusAns = (data.answers[qi] != 0 ? 3 - data.answers[qi] : 3),
-                                            correctIcon = doc.createElement('i');
-
-                                            correctIcon.classList.add('fas', 'fa-check', 'fa-lg', 'text-success');
-
-                                        focusAns[(focusAns.length - 1) - minusAns].appendChild(correctIcon);
+                                            $('[tooltip-toggle=tooltip]').tooltip('hide');
+                                            $('#view-more-modal').modal('show');
+                                        }
                                     });
-                                });
-
-                                $('[tooltip-toggle=tooltip]').tooltip('hide');
-                                $('#view-more-modal').modal('show');
                             }
-                        });
+
+                            focus.querySelector('tbody').appendChild(row);
+                        }
                     });
-                });
+
+                    enableTooltip();
+                }
             });
             break;
     }
