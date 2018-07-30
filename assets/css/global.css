@@ -135,6 +135,7 @@ main.home {
 /* form */
 .form-label-group > input,
 .form-label-group > label {
+    height: initial;
     padding: 0.75rem;
 }
 
@@ -194,6 +195,14 @@ form .valid select {
     padding-bottom: calc(0.75rem / 3);
     font-size: 12px;
     color: #777777;
+}
+
+/* remove number input stepper arrow */
+.form-label-group input[type = 'number']::-webkit-inner-spin-button,
+.form-label-group input[type = 'number']::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    margin: 0 !important;
 }
 
 form .invalid input:focus {
@@ -498,12 +507,4 @@ section#friendsList .card-footer {
     section#friendsList .row.card-deck {
         margin: 0 0.25rem 0 0.25rem;
     }
-}
-
-/* remove number input stepper arrow */
-.form-label-group input[type = 'number']::-webkit-inner-spin-button,
-.form-label-group input[type = 'number']::-webkit-outer-spin-button {
-    -webkit-appearance: none !important;
-    -moz-appearance: textfield !important;
-    margin: 0 !important;
 }

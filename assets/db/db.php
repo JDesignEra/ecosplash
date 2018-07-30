@@ -1103,7 +1103,7 @@ switch ($action) {
 
         $options = explode('|', $row['options']);
         foreach ($quiz['questions'] as $key => $value) {
-            $quiz['options'][$key][] = array_splice($options, 0, 4);
+            $quiz['options'][$key] = array_splice($options, 0, 4);
         }
 
         $uid = $row['uid'];

@@ -5,10 +5,33 @@
 
 {% block main %}
 <section id="quiz">
-<div class="card shadow">
-    <div class="card-body">
-        <h4 class="pb-4 text-center">Daily Quiz</h4>
-        <h6 class="text-primary text-center ">Test</h6>
+<div class="row">
+    <div class="col-12 col-md-6 mx-auto">
+        <form id="quizForm" novalidate>
+            <div id="start" class="card shadow">
+                <div class="card-body">
+                    <h4 class="pb-4 text-center">Daily Quiz</h4>
+                    <h6 id="quizName" class="text-center text-primary pb-3"></h6>
+
+                    <p id="description" class="text-center">
+                        It appears that you are not logged in. Please sign up an account or login to attempt this quiz and get rewarded with EcoPoints to redeem for rewards.
+                    </p>
+
+                    <h6 class="text-right pb-4">
+                        By <span id="uName" class="text-primary"></span>
+                    </h6>
+                </div>
+
+                <div class="card-footer">
+                    <button type="button" class="btn btn-primary btn-block login">
+                        Login
+                    </button>
+                    <a class="btn btn-success btn-block" href="./signup">
+                        Sign Up
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 </section>
