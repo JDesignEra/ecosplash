@@ -37,9 +37,16 @@ var activeURL = location.href.split('/'),
     focus = doc.querySelector('nav .navbar-nav');
 
 switch (activeURL) {
-    case 'localhost':
-    case doc.querySelector('base').href.substr(1, doc.querySelector('base').href.length - 2):
+    case window.location.hostname:
         focus.querySelector('a.nav-link[href="./"]').parentElement.classList.add('active');
+        break;
+
+    case 'quiz':
+        focus.querySelector('a.nav-link[href="./quiz"]').parentElement.classList.add('active');
+        break;
+
+    case 'events':
+        focus.querySelector('a.nav-link[href="./events"]').parentElement.classList.add('active');
         break;
 }
 

@@ -1,4 +1,3 @@
-//TODO manual attendance check
 'use strict';
 securePage(1);
 

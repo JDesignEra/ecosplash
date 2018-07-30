@@ -430,6 +430,7 @@ switch ($action) {
         break;
 
     case 'getRedeemHistories':
+    case 'getRecentRedeemHistories':
         $uid = checkInput($_POST['uid']);
 
         if (empty($uid)) {
@@ -437,7 +438,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT oid, date, itemsQty, totalEcoPoints FROM redeemed_history WHERE uid = '$uid' ORDER BY date DESC LIMIT 10");
+            $result = $mysqli -> query("SELECT oid, date, itemsQty, totalEcoPoints FROM redeemed_history WHERE uid = '$uid' ORDER BY date DESC" . ($action == 'getRecentRedeemHistories' ? " LIMIT 10" : ""));
             if ($result -> num_rows > 0) {
                 $redeemHistories = [];
                 while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
@@ -642,7 +643,7 @@ switch ($action) {
 
     case 'getUpcomingEvents':
         $uid = checkInput($_POST['uid']);
-        $statuses = [];
+        $states = [];
     case 'getRecentEvents':
         $result = $mysqli -> query("SELECT * FROM events WHERE dateTime > CURDATE() ORDER BY dateTime ASC");
 
@@ -680,7 +681,7 @@ switch ($action) {
 
             $data['events'] = $events;
 
-            if ($action == 'getUpcomingEvents') {
+            if ($action == 'getUpcomingEvents' && !empty($states)) {
                 $data['states'] = $states;
             }
         }
@@ -936,6 +937,10 @@ switch ($action) {
 
             $dateTime = date_format(date_create($date.' '.$time), 'Y-m-d H:i:00');
             $mysqli -> query("INSERT INTO events (uid, dateTime, event, location, redeemCode) VALUES ('$uid', '$dateTime', '$event', '$location', '$redeemCode')");
+
+            // Insert Notifications
+            $result = $mysqli -> query("SELECT uid FROM users WHERE accType == '0'");
+            $date = date_format(date_create($date), 'd/m/Y');
         }
         break;
 

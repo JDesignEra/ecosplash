@@ -137,7 +137,7 @@ if (accType) {
             /* get user redeemed history (max 10) */
             var data = new FormData();
             data.append('uid', uid);
-            data.append('action', 'getRedeemHistories');
+            data.append('action', 'getRecentRedeemHistories');
 
             httpPost('./assets/db/db.php', data, function(data) {
                 if (data.success) {
