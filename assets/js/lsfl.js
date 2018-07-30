@@ -52,12 +52,8 @@ addWindowOnload(function() {
             el.onclick = function(e) {
                 e.preventDefault();
 
-                if (localStorage.getItem('accType')) {
-                    localStorage.clear();
-                }
-                else {
-                    sessionStorage.clear();
-                }
+                localStorage.clear();
+                sessionStorage.clear();
 
                 $('#logoutModal').on('shown.bs.modal', function() {
                     doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
