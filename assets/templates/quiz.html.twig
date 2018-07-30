@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% set title = 'Daily Quiz' %}
+{% set bodyBG = './assets/img/background/signup.jpg' %}
+{% set mainType = 'vCenter' %}
+
+{% block main %}
+<section id="quiz">
+<div class="card shadow">
+    <div class="card-body">
+        <h4 class="pb-4 text-center">Daily Quiz</h4>
+        <h6 class="text-primary text-center">Test</h6>
+    </div>
+</div>
+</section>
+{% endblock %}
+
+{% block afterMain %}{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="./assets/js/quiz.js"></script>
+{% endblock %}

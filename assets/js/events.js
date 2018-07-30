@@ -40,7 +40,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                     if (accType == 0) {
                         btnFocus.classList.remove('d-none');
 
-                        if (data.states[eid]) {
+                        if (data.states && data.states[eid]) {
                             btnFocus.innerHTML = 'Joined';
                             btnFocus.classList.add('btn-danger', 'disabled');
                         }

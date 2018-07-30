@@ -61,6 +61,10 @@ if (localStorage.getItem('accType') == 0 || sessionStorage.getItem('accType') ==
         focus.innerHTML = ''
 
         nodes.forEach(function(el) {
+            if (el.querySelector('#name')) {
+                el.querySelector('#name').innerHTML = (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
+            }
+
             focus.appendChild(el);
         });
     });
@@ -82,6 +86,10 @@ else if (localStorage.getItem('accType') == 1 || sessionStorage.getItem('accType
         focus.innerHTML = '';
 
         nodes.forEach(function(el) {
+            if (el.querySelector('#name')) {
+                el.querySelector('#name').innerHTML = (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
+            }
+            
             focus.appendChild(el);
         });
     });
