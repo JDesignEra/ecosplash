@@ -66,7 +66,7 @@ addWindowOnload(function() {
                 });
 
                 $('#logoutModal').on('hide.bs.modal', function() {
-                    //location.href = './';
+                    location.href = './';
                 });
 
                 $('#logoutModal').modal("show");

@@ -62,7 +62,7 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
 
             var modal = doc.getElementById('formFeedbackModal');
             modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Profile Changed Successful';
-            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have updated your profile details successfully.';
+            modal.querySelector('.modal-body').innerHTML = 'You have updated your profile details successfully.';
 
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
@@ -79,26 +79,26 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
         else if (data.errors) {
             var focus = formFocus.querySelector('#bio');
             if (data.errors.bio) {
-                focus.addClass('invalid');
-                focus.getElementsByClassName('.feedback')[0].innerHTML(data.errors.bio);
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.bio;
             }
 
             focus = formFocus.querySelector('#email');
             if (data.errors.email) {
-                focus.classList.add('invalid');
-                focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.email;
             }
 
             focus = formFocus.querySelector('#password');
             if (data.errors.password) {
-                focus.classList.add('invalid');
-                focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.password;
             }
 
             focus = formFocus.querySelector('#cfmPassword');
             if (data.errors.cfmPassword) {
-                focus.classList.add('invalid');
-                focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.cfmPassword;
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.cfmPassword;
             }
 
         }
