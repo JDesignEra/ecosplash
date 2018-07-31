@@ -132,7 +132,7 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 });
 
 /* periodic worker every 30 mins */
-(function worker() {
+setTimeout(function worker() {
     var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     data = new FormData();
 
@@ -141,7 +141,6 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 
     httpPost('./assets/db/db.php', data, function(data) {
         // console.log(data);  // Debugging Purpose
-        addWindowOnload(function() {
             if (uid) {
                 // Desktop Navs
                 if (doc.querySelector('nav .nav-right .badge.count')) {
@@ -153,13 +152,12 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
                 }
 
                 // Mobile navs
-                if (doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints')) {
+                if (doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu')) {
                     doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints').setAttribute('data-original-title', data.ecoPoints + ' EcoPoints');
-                }
 
-                doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications').setAttribute('data-original-title', 'Notifications (' + data.newNotifications + ')');
+                    doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications').setAttribute('data-original-title', 'Notifications (' + data.newNotifications + ')');
+                }
             }
-        });
 
         if (doc.querySelector('section#redeem h5#ecopoints')) {
             doc.querySelector('section#redeem h5#ecopoints').innerHTML = data.ecoPoints;
@@ -169,7 +167,7 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
             worker();
         }, 1800000);
     });
-})();
+}, 500);
 
 /* footer year */
 doc.querySelector('footer .year').innerHTML = new Date().getFullYear();
