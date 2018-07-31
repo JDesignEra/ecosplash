@@ -4,8 +4,8 @@ if (!((localStorage.getItem('accType') || sessionStorage.getItem('accType')) && 
 
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     sectionFocus = doc.querySelector('section#redeem'),
-    itemFormGrp,
-    formGrpCount = 1;
+    itemFormGrp;
+    //formGrpCount = 1;
 
 /* populate item list and select item options */
 var data = new FormData();
@@ -48,27 +48,28 @@ httpPost('./assets/db/db.php', data, function(data) {
             sectionFocus.querySelector('select#items').appendChild(noneOption);
 
             /* store item select input for add more items later */
-            itemFormGrp = doc.querySelector('form#redeemForm #formGrp').cloneNode(true);
+            itemFormGrp = doc.querySelector('form#redeemForm .formGrp').cloneNode(true);
         });
     }
 });
 
 /* add more items btn */
 sectionFocus.querySelector('button#addItem').onclick = function() {
-    var hr = doc.createElement('hr');
+    var formFocus = sectionFocus.querySelector('form#redeemForm'),
+        count = formFocus.querySelectorAll('.formGrp').length,
+        hr = doc.createElement('hr');
+
     hr.className = 'my-4';
 
     var row = itemFormGrp.cloneNode(true);
     row.appendChild(hr);
-    row.querySelector('#item').id = 'item-' + formGrpCount;
-    row.querySelector('select#items').id = 'items-' + formGrpCount;
-    row.querySelector('#qty').id = 'qty-' + formGrpCount;
-    row.querySelector('input#quantity').id = 'quantity-' + formGrpCount;
-    row.querySelector('label[for=quantity]').setAttribute('for', 'quantity-' + formGrpCount);
-    formGrpCount++;
+    row.querySelector('#item').id = 'item-' + count;
+    row.querySelector('select#items').id = 'items-' + count;
+    row.querySelector('#qty').id = 'qty-' + count;
+    row.querySelector('input#quantity').id = 'quantity-' + count;
+    row.querySelector('label[for=quantity]').setAttribute('for', 'quantity-' + count);
 
-    var formFocus = sectionFocus.querySelector('form#redeemForm')
-    formFocus.insertBefore(row, formFocus.childNodes[0]);
+    formFocus.insertBefore(row, formFocus.childNodes[count + 1]);
 }
 
 /* redeem form */

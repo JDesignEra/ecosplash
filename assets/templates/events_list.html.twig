@@ -5,18 +5,18 @@
 <section id="eventsList">
     <div class="card shadow">
         <div class="card-body">
-            <h4 class="pb-4">Events List</h4>
-            <button id="addNew" class="btn btn-outline-success btn-block">Add New Event</button>
+            <h4 class="pb-4 text-center">Events List</h4>
+            <button id="newEvent" class="btn btn-outline-success btn-block">Add New Event</button>
 
-            <form id="addEvent" class="text-left fadeIn d-none" novalidate>
+            <form id="addEventForm" class="text-left fadeIn d-none" novalidate>
                 <div id="event" class="form-label-group">
-                    <input id="e-name" class="form-control" type="text" maxlength="100" placeholder="Event Name" name="event" autofocus />
+                    <input id="e-name" class="form-control" type="text" maxlength="100" placeholder="Event Name" name="event" autofocus required />
                     <label for="e-name">Event Name</label>
                     <div class="feedback invalid-feedback fadeIn"></div>
                 </div>
 
                 <div id="location" class="form-label-group">
-                    <input id="e-location" class="form-control" type="text" maxlength="100" placeholder="Location" name="location" />
+                    <input id="e-location" class="form-control" type="text" maxlength="100" placeholder="Location" name="location" required />
                     <label for="e-location">Location</label>
                     <div class="feedback invalid-feedback fadeIn"></div>
                 </div>
@@ -38,6 +38,9 @@
                 </button>
             </form>
             <hr />
+            <div id="events-table">
+                <h6 class="text-muted text-center">You have not published any events yet.</h6>
+            </div>
         </div>
     </div>
 </section>

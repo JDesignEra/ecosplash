@@ -4,13 +4,135 @@
 {% block main %}
 <section id="quizList">
     <div class="card shadow">
-        
+        <div class="card-body">
+            <h4 class="pb-4 text-center">Quiz List</h4>
+            <button id="newQuiz" class="btn btn-outline-success btn-block">Add New Quiz</button>
+
+            <form id="addQuizForm" class="fadeIn d-none" novalidate>
+                <div id="formQuestions">
+                    <div id="quiz" class="form-label-group">
+                        <input id="q-name" class="form-control" type="text" maxlength="100" placeholder="Quiz Name" name="quiz" autofocus required />
+                        <label for="q-name">Quiz Name</label>
+                        <div class="feedback invalid-feedback fadeIn"></div>
+                    </div>
+
+                    <div class="formQset">
+                        <h5 class="pb-2 pt-4">Question 1</h5>
+
+                        <div id="question" class="form-label-group">
+                            <input id="q-question" class="form-control" type="text" maxlength="100" placeholder="Question" name="questions[]" required />
+                            <label for="q-question">Question</label>
+                            <div class="feedback invalid-feedback fadeIn"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <div class="custom-control custom-radio custom-control-inline mr-0">
+                                        <input id="q0-ans0" class="custom-control-input" type="radio" value="0" name="answers[0]" />
+                                        <label class="custom-control-label" for="q0-ans0"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <div class="feedback invalid-feedback fadeIn"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <div class="custom-control custom-radio custom-control-inline mr-0">
+                                        <input id="q0-ans1" class="custom-control-input" type="radio" value="1" name="answers[0]" />
+                                        <label class="custom-control-label" for="q0-ans1"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <div class="feedback invalid-feedback fadeIn"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <div class="custom-control custom-radio custom-control-inline mr-0">
+                                        <input id="q0-ans2" class="custom-control-input" type="radio" value="2" name="answers[0]" />
+                                        <label class="custom-control-label" for="q0-ans2"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <div class="feedback invalid-feedback fadeIn"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <div class="custom-control custom-radio custom-control-inline mr-0">
+                                        <input id="q0-ans3" class="custom-control-input" type="radio" value="3" name="answers[0]" />
+                                        <label class="custom-control-label" for="q0-ans3"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <div class="feedback invalid-feedback fadeIn"></div>
+                        </div>
+
+                        <hr />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-success btn-block" type="submit">
+                            Publish Quiz
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button id="addQ" class="btn btn-primary btn-block" type="button">
+                            Add Question
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <hr />
+
+            <div id="quiz-table">
+                <h6 class="text-muted text-center">You have not published any quiz yet.</h6>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}
 
 {% block afterMain %}
+<div id="view-more-modal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" src="./assets/js/quizList.js"></script>
 {% endblock %}

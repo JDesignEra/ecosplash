@@ -111,10 +111,6 @@ httpPost('./assets/db/db.php', data, function(data) {
                             var cardsFocus = doc.querySelectorAll('.card:not(#start)'),
                                 i = parseInt(this.getAttribute('data-number'));
 
-                            cardsFocus.forEach(function(el) {
-                                el.removeEventListener(animationEnd, function(){});
-                            });
-
                             if (this.type == 'button') {
                                 cardsFocus[i].classList.add('fadeOutRight', 'short');
 

@@ -42,7 +42,7 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                         if (data.states && data.states[eid]) {
                             btnFocus.innerHTML = 'Joined';
-                            btnFocus.classList.add('btn-danger', 'disabled');
+                            btnFocus.classList.add('btn-danger');
                         }
                         else {
                             btnFocus.innerHTML = 'Join';

@@ -6,17 +6,19 @@ if (eid) {
     window.history.replaceState({}, document.title, './display_code/');
 }
 else {
-    window.location = './event_list';
+    window.location = './events_list';
 }
 
-var data = new FormData();
-data.append('uid', (uid ? uid : ''));
-data.append('eid', eid);
-data.append('action', 'getEventCode');
+addWindowOnload(function() {
+    var data = new FormData();
+    data.append('uid', (uid ? uid : ''));
+    data.append('eid', eid);
+    data.append('action', 'getEventCode');
 
-httpPost('./assets/db/db.php', data, function(data) {
-    // console.log(data);  // Debugging Purpose
+    httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);  // Debugging Purpose
 
-    doc.querySelector('h1').innerHTML = data.eventCode.redeemCode;
-    doc.querySelector('img').src = 'https://api.qrserver.com/v1/create-qr-code/?data=https://' + window.location.hostname + '/redeem_code/?redeem=' + data.eventCode.redeemCode + '&size=300x300';
+        doc.querySelector('h1').innerHTML = data.eventCode.redeemCode;
+        doc.querySelector('img').src = 'https://api.qrserver.com/v1/create-qr-code/?data=https://' + window.location.hostname + '/redeem_code/?redeem=' + data.eventCode.redeemCode + '&size=300x300';
+    });
 });

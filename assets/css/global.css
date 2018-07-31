@@ -133,14 +133,14 @@ main.home {
 }
 
 /* form */
-.form-group {
-    position: relative;
-}
-
 .invalid-tooltip {
     width: initial !important;
     top: 0;
     right: 0;
+}
+
+.input-group {
+    margin-bottom: 1rem;
 }
 
 .form-label-group .invalid-tooltip {

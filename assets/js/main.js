@@ -188,24 +188,6 @@ addWindowOnload(function() {
     enableSuccessToolTip();
     enableNavToolTip();
     enableFabToolTip();
-    enableWideFormToolTip();
-});
-
-/* mobile form tooltip fix */
-if (window.outerWidth < 767) {
-    enableMobile_FormToolTip();
-}
-else {
-    enableFormToolTip();
-}
-
-addWindowOnResize(function() {
-    if (window.outerWidth < 767) {
-        enableMobile_FormToolTip();
-    }
-    else {
-        enableFormToolTip();
-    }
 });
 
 /* mobile lanscape / portrait fab tooltip fix */
@@ -309,40 +291,6 @@ function enableNavToolTip() {
             placement: 'left',
             trigger: 'hover'
         });
-    });
-}
-
-function enableFormToolTip() {
-    $('[tooltip-toggle="form-tooltip"]').tooltip('dispose');
-    $(function () {
-        $('[tooltip-toggle="form-tooltip"]').tooltip({
-            template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
-            offset: '0, 20'
-        });
-        // console.clear();
-    });
-}
-
-function enableWideFormToolTip() {
-    $('[tooltip-toggle="form-wide-tooltip"]').tooltip('dispose');
-    $(function () {
-        $('[tooltip-toggle="form-wide-tooltip"]').tooltip({
-            template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
-            offset: '0, 5',
-            placement: 'bottom'
-        });
-    });
-}
-
-function enableMobile_FormToolTip() {
-    $('[tooltip-toggle="form-tooltip"]').tooltip('dispose');
-    $(function () {
-        $('[tooltip-toggle="form-tooltip"]').tooltip({
-            template: '<div class="tooltip form-tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>',
-            offset: '0, 5',
-            placement: 'bottom'
-        });
-        // console.clear();
     });
 }
 

@@ -264,10 +264,9 @@ if (accType) {
                         focus.querySelector('tbody').innerHTML = '';
 
                         for (var i = 0; i < data.eventsList.length && i < 10; i++) {
-                            var row = content.querySelector('tbody tr').cloneNode(true);
-                            row.id = data.eventsList[i]['eid'];
+                            var row = content.querySelector('tbody tr').cloneNode(true),
+                                td = row.querySelectorAll('td');
 
-                            var td = row.querySelectorAll('td');
                             td[0].innerHTML = data.eventsList[i]['eid'];
                             td[1].innerHTML = data.eventsList[i]['date'];
                             td[2].innerHTML = data.eventsList[i]['time'];
@@ -283,27 +282,27 @@ if (accType) {
             /* get quizzes list (max 10) */
             var data = new FormData();
             data.append('uid', uid);
-            data.append('action', 'getQuizzesList');
+            data.append('action', 'getRecentQuizzesList');
 
             httpPost('./assets/db/db.php', data, function(data) {
                 // console.log(data);  // Debugging Purpose
                 if (data.success) {
-                    httpGetDoc('./assets/templates/profile/quizzes_list.html', function(content) {
+                    httpGetDoc('./assets/templates/profile/quizzes_List.html', function(content) {
                         var focus = sectionFocus.querySelector('#quiz-list-table');
                         focus.innerHTML = content.querySelector('body').innerHTML;
                         focus.querySelector('tbody').innerHTML = '';
 
-                        for (var i = 0; i < data.quizzes_list.length && i < 10; i++) {
+                        for (var i = 0; i < data.quizzesList.length && i < 10; i++) {
                             var row = content.querySelector('tbody tr').cloneNode(true),
                                 td = row.querySelectorAll('td');
-                            td[0].innerHTML = data.quizzes_list[i]['qid'];
-                            td[1].innerHTML = data.quizzes_list[i]['date'];
-                            td[2].innerHTML = data.quizzes_list[i]['name'];
-                            td[3].innerHTML = data.quizzes_list[i]['ecoPoints'];
+                            td[0].innerHTML = data.quizzesList[i]['qid'];
+                            td[1].innerHTML = data.quizzesList[i]['date'];
+                            td[2].innerHTML = data.quizzesList[i]['name'];
+                            td[3].innerHTML = data.quizzesList[i]['ecoPoints'];
 
                             /* quizzes list view more button */
                             var btnFocus = td[4].querySelector('button');
-                            btnFocus.setAttribute('data-id', data.quizzes_list[i]['qid']);
+                            btnFocus.setAttribute('data-id', data.quizzesList[i]['qid']);
 
                             btnFocus.onclick = function() {
                                 var qid = this.getAttribute('data-id'),
@@ -312,6 +311,7 @@ if (accType) {
                                     data.append('uid', uid);
                                     data.append('qid', qid);
                                     data.append('action', 'getQuizList');
+                                    
                                     httpPost('./assets/db/db.php', data, function(data) {
                                         // console.log(data);  // Debugging Purpose
                                         if (data.success) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 31, 2018 at 03:40 PM
+-- Generation Time: Aug 01, 2018 at 01:40 AM
 -- Server version: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -99,9 +99,9 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`eid`, `uid`, `dateTime`, `event`, `location`, `ecoPoints`, `redeemCode`) VALUES
-(1, 2, '2018-08-21 15:14:28', 'Clean & Green Singapore 2018', 'Suntec', 100, 'uji4kc'),
-(2, 2, '2018-08-21 15:14:35', 'Food Waste Reduction Roadshow', 'Orchard', 100, '7a7x3j'),
-(3, 2, '2018-08-30 15:14:40', 'Green Living 2018', 'Expo', 100, 'rokuaa');
+(1, 2, '2018-08-21 05:00:00', 'Clean & Green Singapore 2018', 'Suntec', 100, 'uji4kc'),
+(2, 2, '2018-08-21 05:00:00', 'Food Waste Reduction Roadshow', 'Orchard', 100, '7a7x3j'),
+(3, 2, '2018-08-30 06:30:00', 'Green Living 2018', 'Expo', 100, 'rokuaa');
 
 -- --------------------------------------------------------
 
@@ -111,9 +111,18 @@ INSERT INTO `events` (`eid`, `uid`, `dateTime`, `event`, `location`, `ecoPoints`
 
 CREATE TABLE `events_attendance` (
   `eid` int(255) NOT NULL,
-  `uid` text NOT NULL,
-  `status` text NOT NULL
+  `uids` text,
+  `statuses` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `events_attendance`
+--
+
+INSERT INTO `events_attendance` (`eid`, `uids`, `statuses`) VALUES
+(1, NULL, NULL),
+(2, '1', '1'),
+(3, '1', '0');
 
 -- --------------------------------------------------------
 
@@ -156,11 +165,7 @@ CREATE TABLE `friends` (
 --
 
 INSERT INTO `friends` (`fid`, `uid_one`, `uid_two`, `status`) VALUES
-(1, 1, 2, 1),
-(2, 1, 3, 0),
-(3, 4, 1, 0),
-(4, 5, 6, 0),
-(5, 7, 1, 0);
+(1, 1, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -223,11 +228,7 @@ CREATE TABLE `quizzes` (
 --
 
 INSERT INTO `quizzes` (`qid`, `uid`, `date`, `name`, `questions`, `options`, `answers`, `ecoPoints`, `todayQuiz`) VALUES
-(1, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0),
-(2, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 1),
-(3, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0),
-(4, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0),
-(5, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 0);
+(1, 2, '2018-06-24 07:52:07', 'How much do you know about the world around you?', 'About how long does it take a Styrofoam cup to decompose?|What is the most common type of trash thrown away by Americans?|Three Mile Island was the site of what disaster?|What country consumes the most energy in the world?|How much of the world\'s water is available for human use?|What is the most common type of debris that litters our oceans?|According to the World Health Organization, what is the most polluted city in the world?|Which of the following sources of energy is NOT renewable?|Which country produces the most energy in the world?|What is the leading source of energy in the United States?', '10 years|2 months|400 years|150 years|Paper products and cardboard|Metals|Glass|Plastics|The worst nuclear explosion in the world|The worst forest fires in US history|The worst accident in US nuclear reactor history|The worst oil spill in US history|Russia|China|United States|Canada|97%|23%|3%|Less than 1%|Bags|Plastic beverage bottles|Cigarettes|Food packaging|Los Angeles, California|Mexico City, Mexico|New Dehali, India|Shanghai, China|Petroleum|Hydro-power|Biomass|Solar power|Iraq|China|United States|Russia|Coal|Oil|Nuclear power|Natural gas', '2,1,1,2,3,1,0,0,1,1', 20, 1);
 
 -- --------------------------------------------------------
 
@@ -326,8 +327,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoints`, `newNotifications`, `dailyQuiz`, `dailyTask`, `ecoPointsMonth`, `fpCode`) VALUES
-(1, 'tgm.joel@gmail.com', '$2y$10$4cedm8rrtpfiVNxKUhIav.4g1iGv3phsspKx2SH0xKGpVBFg2DgFC', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 30155, 0, 1, '00000', 30155, NULL),
-(2, 'joel.jdesignera@gmail.com', '$2y$10$Y8e0dMksupBKm1R0cZf0Ku.lM/jD0Aul9t5hFk3AuQ/vafNgytmZ6', 'JDesign', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 1, 2500, 0, 0, '00000', 2500, NULL);
+(1, 'tgm.joel@gmail.com', '$2y$10$4cedm8rrtpfiVNxKUhIav.4g1iGv3phsspKx2SH0xKGpVBFg2DgFC', 'Joel', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 0, 30155, 0, 0, '00000', 30155, NULL),
+(2, 'joel.jdesignera@gmail.com', '$2y$10$Y8e0dMksupBKm1R0cZf0Ku.lM/jD0Aul9t5hFk3AuQ/vafNgytmZ6', 'JDesign', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.', 1, 0, 0, 0, '00000', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -350,7 +351,7 @@ CREATE TABLE `utilities` (
 INSERT INTO `utilities` (`euid`, `uid`, `useAmounts`, `prices`, `type`) VALUES
 (1, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'electric'),
 (2, 1, '300,500,600,150,200,350,250,350,200,327,255,300', '$500,$300,$600,$150,$200,$350,$200,$350,$200,$327,$255,$300', 'water'),
-(5, 1, '300,500.56,0,0,0,305.37,0,0,0,0,208.65,0', '$55.59,$92.75,$0,$0,$0,$56.59,$0,$0,$0,$0,$38.66,$0', 'gas');
+(3, 1, '300,500.56,0,0,0,305.37,0,0,0,0,208.65,0', '$55.59,$92.75,$0,$0,$0,$56.59,$0,$0,$0,$0,$38.66,$0', 'gas');
 
 --
 -- Indexes for dumped tables
@@ -455,7 +456,7 @@ ALTER TABLE `event_history`
 -- AUTO_INCREMENT for table `friends`
 --
 ALTER TABLE `friends`
-  MODIFY `fid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `fid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `items`
@@ -473,7 +474,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `quizzes`
 --
 ALTER TABLE `quizzes`
-  MODIFY `qid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `qid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `redeemed_history`
@@ -491,7 +492,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `utilities`
 --
 ALTER TABLE `utilities`
-  MODIFY `euid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `euid` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 DELIMITER $$
 --

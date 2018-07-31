@@ -505,6 +505,53 @@ switch ($action) {
         }
         break;
 
+    case 'addEvent':
+        $uid = checkInput($_POST['uid']);
+        $event = checkInput($_POST['event']);
+        $location = checkInput($_POST['location']);
+        $date = checkInput($_POST['date']);
+        $time = checkInput($_POST['time']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($event)) {
+            $errors['event'] = 'Event name is required!';
+        }
+
+        if (empty($location)) {
+            $errors['location'] = 'Lcoation is required!';
+        }
+
+        if (empty($date)) {
+            $errors['date'] = 'Date is required!';
+        }
+
+        if (empty($time)) {
+            $errors['time'] = 'Time is required!';
+        }
+
+        if (empty($errors)) {
+            $redeemCode = randAlphaNumeric(4);
+
+            $result = $mysqli -> query("SELECT redeemCode FROM events WHERE redeemCode = '$redeemCode'");
+            while ($result -> num_rows > 0) {
+                $redeemCode = randAlphaNumeric(4);
+            }
+
+            $dateTime = date_format(date_create($date.' '.$time), 'Y-m-d H:i:00');
+            $mysqli -> query("INSERT INTO events (uid, dateTime, event, location, redeemCode) VALUES ('$uid', '$dateTime', '$event', '$location', '$redeemCode')");
+
+            if ($result = $mysqli -> query("SELECT eid FROM events WHERE uid = '$uid' ORDER BY eid DESC LIMIT 1")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $eid = $row['eid'];
+
+                $mysqli -> query("INSERT INTO events_attendance (eid) VALUES ('$eid')");
+            }
+        }
+        break;
+
     case 'getEventHistory':
         $uid = checkInput($_POST['uid']);
         $eid = checkInput($_POST['eid']);
@@ -598,25 +645,6 @@ switch ($action) {
         }
         break;
 
-    case 'getEventCode':
-        $uid = checkInput($_POST['uid']);
-        $eid = checkInput($_POST['eid']);
-
-        if (empty($uid)) {
-            $errors['uid'] = 'User ID is missing!!';
-        }
-
-        if (empty($eid)) {
-            $errors['eid'] = 'Event ID is missing!';
-        }
-
-        if (empty($errors)) {
-            $result = $mysqli -> query("SELECT eid, redeemCode FROM events WHERE uid = '$uid' AND eid = '$eid'");
-
-            $data['eventCode'] = $result -> fetch_array(MYSQLI_ASSOC);
-        }
-        break;
-
     case 'getEventsList':
         $uid = checkInput($_POST['uid']);
 
@@ -630,10 +658,9 @@ switch ($action) {
                 $eventsList = [];
                 while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
                     $date = date_format(date_create($row['dateTime']), 'd/m/Y');
-
                     $i = (array_key_exists($date, $eventsList) ? count($eventsList[$date]) : 0);
+
                     $eventsList[$date][$i]['eid'] = $row['eid'];
-                    $eventsList[$date][$i]['date'] = date_format(date_create($row['dateTime']), 'd/m/Y');
                     $eventsList[$date][$i]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
                     $eventsList[$date][$i]['event'] = $row['event'];
                     $eventsList[$date][$i]['location'] = $row['location'];
@@ -694,6 +721,25 @@ switch ($action) {
         }
         else {
             $errors['events'] = 'No events to list!';
+        }
+        break;
+
+    case 'getEventCode':
+        $uid = checkInput($_POST['uid']);
+        $eid = checkInput($_POST['eid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!!';
+        }
+
+        if (empty($eid)) {
+            $errors['eid'] = 'Event ID is missing!';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT eid, redeemCode FROM events WHERE uid = '$uid' AND eid = '$eid'");
+
+            $data['eventCode'] = $result -> fetch_array(MYSQLI_ASSOC);
         }
         break;
 
@@ -805,7 +851,7 @@ switch ($action) {
                 $awardPoints = $row['ecoPoints'];
             }
 
-            if ($result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid='$eid' AND uid = '$uid'")) {
+            if ($result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid='$eid'")) {
                 $row = $result -> fetch_array(MYSQLI_ASSOC);
 
                 $uids = explode(',', $row['uids']);
@@ -824,8 +870,44 @@ switch ($action) {
                 $uids = implode(',', $uids);
                 $statuses = implode(',', $statuses);
 
-                $result = $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses' WHERE eid = '$eid' AND uid = '$uid'");
+                $result = $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses' WHERE eid = '$eid'");
             }
+        }
+        break;
+
+    case 'addQuiz':
+        // TODO
+        $uid = checkInput($_POST['uid']);
+        $questions = (isset($_POST['questions']) ? $_POST['questions'] : '');
+        $answers = (isset($_POST['answers']) ? $_POST['answers'] : '');
+        $options = (isset($_POST['options']) ? $_POST['options'] : '');
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($questions)) {
+            $errors['questions'] = 'Question is required!';
+        }
+        else {
+            //range(0, 3)
+            if (count($question) != count($answers)) {
+                
+            }
+
+            if ($i = array_filter($questions, function($i) { return $i == null; })) {
+                foreach ($i as $key => $value) {
+                    $errors['questions'][$key] = 'Question is required!';
+                }
+            }
+        }
+
+        if (empty($answers)) {
+            $errors['answers'] = 'Answer is required!';
+        }
+
+        if (empty($options)) {
+            $errors['options'] = 'Choice\'s text is required!';
         }
         break;
 
@@ -879,7 +961,7 @@ switch ($action) {
         }
         break;
 
-    case 'getQuizzesList':
+    case 'getRecentQuizzesList':
         $uid = checkInput($_POST['uid']);
 
         if (empty($uid)) {
@@ -887,7 +969,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT * FROM quizzes WHERE uid = '$uid' ORDER BY qid DESC");
+            $result = $mysqli -> query("SELECT qid, date, name, ecoPoints FROM quizzes WHERE uid = '$uid' ORDER BY qid DESC LIMIT 10");
 
             if ($result -> num_rows > 0) {
                 $quizzesList = [];
@@ -899,55 +981,40 @@ switch ($action) {
                     $quizzesList[$i]['ecoPoints'] = $row['ecoPoints'];
                 }
 
-                $data['quizzes_list'] = $quizzesList;
+                $data['quizzesList'] = $quizzesList;
             }
             else {
-                $errors['quizzes_list'] = 'No quizzes to list!';
+                $errors['quizzesList'] = 'No quizzes to list!';
             }
         }
         break;
 
-    case 'addEvent':
+    case 'getQuizzesList':
         $uid = checkInput($_POST['uid']);
-        $event = checkInput($_POST['event']);
-        $location = checkInput($_POST['location']);
-        $date = checkInput($_POST['date']);
-        $time = checkInput($_POST['time']);
 
         if (empty($uid)) {
             $errors['uid'] = 'User ID is missing!';
         }
 
-        if (empty($event)) {
-            $errors['event'] = 'Event name is required!';
-        }
-
-        if (empty($location)) {
-            $errors['location'] = 'Lcoation is required!';
-        }
-
-        if (empty($date)) {
-            $errors['date'] = 'Date is required!';
-        }
-
-        if (empty($time)) {
-            $errors['time'] = 'Time is required!';
-        }
-
         if (empty($errors)) {
-            $redeemCode = randAlphaNumeric(4);
+            $result = $mysqli -> query("SELECT qid, date, name, questions, ecoPoints FROM quizzes WHERE uid = '$uid' ORDER BY qid DESC");
+            if ($result -> num_rows > 0) {
+                $quizzesList = [];
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $date = date_format(date_create($row['date']), 'd/m/Y');
+                    $i = (array_key_exists($date, $quizzesList) ? count($quizzesList[$date]) : 0);
 
-            $result = $mysqli -> query("SELECT redeemCode FROM events WHERE redeemCode = '$redeemCode'");
-            while ($result -> num_rows > 0) {
-                $redeemCode = randAlphaNumeric(4);
+                    $quizzesList[$date][$i]['qid'] = $row['qid'];
+                    $quizzesList[$date][$i]['name'] = $row['name'];
+                    $quizzesList[$date][$i]['qNo'] = count(explode('|', $row['questions']));
+                    $quizzesList[$date][$i]['ecoPoints'] = $row['ecoPoints'];
+                }
+
+                $data['quizzesList'] = $quizzesList;
             }
-
-            $dateTime = date_format(date_create($date.' '.$time), 'Y-m-d H:i:00');
-            $mysqli -> query("INSERT INTO events (uid, dateTime, event, location, redeemCode) VALUES ('$uid', '$dateTime', '$event', '$location', '$redeemCode')");
-
-            // Insert Notifications
-            $result = $mysqli -> query("SELECT uid FROM users WHERE accType == '0'");
-            $date = date_format(date_create($date), 'd/m/Y');
+            else {
+                $errors['quizzesList'] = 'No events to list!';
+            }
         }
         break;
 
@@ -1124,6 +1191,9 @@ switch ($action) {
                 foreach ($dupRidIndex as $key => $value) {
                     if ($qty > $row['quantity']) {
                         $errors['quantity'][$key] = 'Quantity can\'t be more then stock available!';
+                    }
+                    elseif ($qty < 1) {
+                        $errors['quantity'][$key] = 'Quantity can\'t be less then 1!';
                     }
                 }
 

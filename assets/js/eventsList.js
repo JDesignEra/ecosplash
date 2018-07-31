@@ -11,71 +11,76 @@ data.append('action', 'getEventsList');
 /* populate table */
 httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
-    var focus = sectionFocus.querySelector('.card-body');
+    if (data.success) {
+        var focus = sectionFocus.querySelector('.card-body #events-table');
+        focus.innerHTML = '';
 
-    httpGetDoc('./assets/templates/events_list/events_table.html', function(content) {
-        for (var k in data.eventsList) {
-            var h4Date = content.querySelector('h4').cloneNode(),
-                table = content.querySelector('.table-responsive').cloneNode(true);
+        httpGetDoc('./assets/templates/events_list/events_table.html', function(content) {
+            for (var k in data.eventsList) {
+                var h4Date = content.querySelector('h4').cloneNode(),
+                    table = content.querySelector('.table-responsive').cloneNode(true);
 
-            h4Date.innerHTML = k;
-            table.querySelector('tbody').innerHTML = '';
+                h4Date.innerHTML = k;
+                table.querySelector('tbody').innerHTML = '';
 
-            var tbodyFocus = table.querySelector('tbody');
-            data.eventsList[k].forEach(function(ev, ei) {
-                var row = content.querySelector('tbody tr').cloneNode(true),
-                    td = row.querySelectorAll('td');
+                var tbodyFocus = table.querySelector('tbody');
+                data.eventsList[k].forEach(function(ev) {
+                    var row = content.querySelector('tbody tr').cloneNode(true),
+                        td = row.querySelectorAll('td');
 
-                td[0].innerHTML = ev.event;
-                td[1].innerHTML = ev.location;
-                td[2].innerHTML = ev.time;
-                td[3].innerHTML = ev.redeemCode;
+                    td[0].innerHTML = ev.event;
+                    td[1].innerHTML = ev.location;
+                    td[2].innerHTML = ev.time;
+                    td[3].innerHTML = ev.redeemCode;
 
-                var btnFocus = td[4].querySelector('button');
-                btnFocus.setAttribute('data-id', ev.eid);
+                    /* distribute btn */
+                    var btnFocus = td[4].querySelector('button');
+                    btnFocus.setAttribute('data-id', ev.eid);
 
-                btnFocus.onclick = function() {
-                    var eid = this.getAttribute('data-id');
+                    btnFocus.onclick = function() {
+                        var eid = this.getAttribute('data-id');
 
-                    $('#distributeModal').on('show.bs.modal', function() {
-                        var btnFocus = this.querySelectorAll('.modal-footer a');
+                        $('#distributeModal').on('show.bs.modal', function() {
+                            var btnFocus = this.querySelectorAll('.modal-footer a');
 
-                        btnFocus.forEach(function(el) {
-                            el.href = el.href + '?eid=' + eid;
+                            btnFocus.forEach(function(el) {
+                                el.href = el.href + '?eid=' + eid;
+                            });
                         });
-                    });
-                }
+                    }
 
-                tbodyFocus.appendChild(row);
-            });
+                    tbodyFocus.appendChild(row);
+                });
 
-            focus.appendChild(h4Date);
-            focus.appendChild(table);
-        }
-    });
+                focus.appendChild(h4Date);
+                focus.appendChild(table);
+            }
+        });
+    }
 });
 
 // add new event btn
-sectionFocus.querySelector('button#addNew').onclick = function() {
+sectionFocus.querySelector('button#newEvent').onclick = function() {
     this.classList.add('fadeOut', 'short');
 
     this.addEventListener(animationEnd, function _func() {
         this.classList.add('d-none');
-        sectionFocus.querySelector('form#addEvent').classList.remove('d-none');
+        this.classList.remove('fadeOut', 'short');
+        sectionFocus.querySelector('form#addEventForm').classList.remove('d-none');
 
         this.removeEventListener(animationEnd, _func);
     });
 }
 
 // addEvent form submit
-sectionFocus.querySelector('form#addEvent').onsubmit = function(e) {
+sectionFocus.querySelector('form#addEventForm').onsubmit = function(e) {
     e.preventDefault();
 
     var formFocus = this,
         data = new FormData(formFocus);
 
     data.append('uid', uid);
-    data.append('action', 'addEvent');
+    data.append('action', 'addEventForm');
 
     httpPost('./assets/db/db.php', data, function(data) {
         // console.log(data);  // Debugging Purpose
