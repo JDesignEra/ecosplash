@@ -144,12 +144,12 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
         addWindowOnload(function() {
             if (uid) {
                 // Desktop Navs
-                if (doc.querySelector('nav .nav-right')) {
+                if (doc.querySelector('nav .nav-right .badge.count')) {
                     doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
+                }
 
-                    if (doc.querySelector('nav .nav-right #ecopoints')) {
-                        doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
-                    }
+                if (doc.querySelector('nav .nav-right #ecopoints')) {
+                    doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
                 }
 
                 // Mobile navs
