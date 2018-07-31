@@ -163,12 +163,11 @@ sectionFocus.querySelector('#gas button#addUpdate').onclick = function() {
 /* form submits */
 sectionFocus.querySelector('form#electricForm').onsubmit = function(e) {
     e.preventDefault();
-    var formFocus = this;
+    var formFocus = this,
+        focus = formFocus.querySelectorAll('.form-group, .form-label-group');
 
-    var feedbacks = formFocus.querySelectorAll('.feedback');
-    feedbacks.forEach(function(el) {
-        el.parentElement.classList.remove('invalid', 'valid');
-        el.innerHTML = '';
+    focus.forEach(function(el) {
+        el.querySelector('input, select').classList.remove('is-invalid', 'is-valid');
     });
 
     var data = new FormData(formFocus);
@@ -180,7 +179,7 @@ sectionFocus.querySelector('form#electricForm').onsubmit = function(e) {
         if (data.success) {
             var modal = doc.getElementById('successModal');
             modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Electric Bill Updated';
-            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have successfuly updated your electric bill.';
+            modal.querySelector('.modal-body').innerHTML = 'You have successfuly updated your electric bill.';
 
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
@@ -195,20 +194,22 @@ sectionFocus.querySelector('form#electricForm').onsubmit = function(e) {
             $(modal).modal('show');
         }
         else if (data.errors) {
+            focus = formFocus.querySelector('#electricUsage');
             if (data.errors.usage) {
-                formFocus.querySelector('#electricUsage').classList.add('invalid');
-                formFocus.querySelector('#electricUsage .feedback').innerHTML = data.errors.usage;
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.usage;
             }
             else {
-                formFocus.querySelector('#electricUsage').classList.add('valid');
+                focus.querySelector('input').classList.add('is-valid');
             }
 
+            focus = formFocus.querySelector('.form-group.month');
             if (data.errors.month) {
-                formFocus.querySelector('#electricMonth').parentElement.classList.add('invalid');
-                formFocus.querySelector('.form-group.month .feedback').innerHTML = data.errors.month;
+                focus.querySelector('select').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.month;
             }
             else {
-                formFocus.querySelector('#electricMonth').parentElement.classList.add('valid');
+                focus.querySelector('select').classList.add('is-valid');
             }
         }
     });
@@ -216,12 +217,11 @@ sectionFocus.querySelector('form#electricForm').onsubmit = function(e) {
 
 sectionFocus.querySelector('form#waterForm').onsubmit = function(e) {
     e.preventDefault();
-    var formFocus = this;
+    var formFocus = this,
+        focus = formFocus.querySelectorAll('.form-group, .form-label-group');
 
-    var feedbacks = formFocus.querySelectorAll('.feedback');
-    feedbacks.forEach(function(el) {
-        el.parentElement.classList.remove('invalid', 'valid');
-        el.innerHTML = '';
+    focus.forEach(function(el) {
+        el.querySelector('input, select').classList.remove('is-invalid', 'is-valid');
     });
 
     var data = new FormData(formFocus);
@@ -233,7 +233,7 @@ sectionFocus.querySelector('form#waterForm').onsubmit = function(e) {
         if (data.success) {
             var modal = doc.getElementById('successModal');
             modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Water Bill Updated';
-            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have successfuly updated your water bill.';
+            modal.querySelector('.modal-body').innerHTML = 'You have successfuly updated your water bill.';
 
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
@@ -248,20 +248,22 @@ sectionFocus.querySelector('form#waterForm').onsubmit = function(e) {
             $(modal).modal('show');
         }
         else if (data.errors) {
+            focus = formFocus.querySelector('#waterUsage');
             if (data.errors.usage) {
-                formFocus.querySelector('#waterUsage').classList.add('invalid');
-                formFocus.querySelector('#waterUsage .feedback').innerHTML = data.errors.usage;
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.usage;
             }
             else {
-                formFocus.querySelector('#waterUsage').classList.add('valid');
+                focus.querySelector('input').classList.add('is-valid');
             }
 
+            focus = formFocus.querySelector('.form-group.month');
             if (data.errors.month) {
-                formFocus.querySelector('#waterMonth').parentElement.classList.add('invalid');
-                formFocus.querySelector('.form-group.month .feedback').innerHTML = data.errors.month;
+                focus.querySelector('select').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.month;
             }
             else {
-                formFocus.querySelector('#waterMonth').parentElement.classList.add('valid');
+                focus.querySelector('select').classList.add('is-valid');
             }
         }
     });
@@ -269,12 +271,11 @@ sectionFocus.querySelector('form#waterForm').onsubmit = function(e) {
 
 sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
     e.preventDefault();
-    var formFocus = this;
+    var formFocus = this,
+        focus = formFocus.querySelectorAll('.form-group, .form-label-group');
 
-    var feedbacks = formFocus.querySelectorAll('.feedback');
-    feedbacks.forEach(function(el) {
-        el.parentElement.classList.remove('invalid', 'valid');
-        el.innerHTML = '';
+    focus.forEach(function(el) {
+        el.querySelector('input, select').classList.remove('is-invalid', 'is-valid');
     });
 
     var data = new FormData(formFocus);
@@ -286,7 +287,7 @@ sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
         if (data.success) {
             var modal = doc.getElementById('successModal');
             modal.querySelector('.modal-header h5.modal-title').innerHTML = 'Gas Bill Updated';
-            modal.getElementsByClassName('modal-body')[0].innerHTML = 'You have successfuly updated your gas bill.';
+            modal.querySelector('.modal-body').innerHTML = 'You have successfuly updated your gas bill.';
 
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
@@ -301,20 +302,22 @@ sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
             $(modal).modal('show');
         }
         else if (data.errors) {
+            focus = formFocus.querySelector('#gasUsage');
             if (data.errors.usage) {
-                formFocus.querySelector('#gasUsage').classList.add('invalid');
-                formFocus.querySelector('#gasUsage .feedback').innerHTML = data.errors.usage;
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.usage;
             }
             else {
-                formFocus.querySelector('#gasUsage').classList.add('valid');
+                focus.querySelector('input').classList.add('is-valid');
             }
 
+            focus = formFocus.querySelector('.form-group.month');
             if (data.errors.month) {
-                formFocus.querySelector('#gasMonth').parentElement.classList.add('invalid');
-                formFocus.querySelector('.form-group.month .feedback').innerHTML = data.errors.month;
+                focus.querySelector('select').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.month;
             }
             else {
-                formFocus.querySelector('#gasMonth').parentElement.classList.add('valid');
+                focus.querySelector('select').classList.add('is-valid');
             }
         }
     });

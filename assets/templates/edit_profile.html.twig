@@ -27,17 +27,17 @@
 
                     <hr />
 
-                    <div id="bio" class="form-group">
+                    <div id="bio" class="form-group mb-0">
                         <label for="e-bio">Bio <span class="small">(Optional)</span></label>
                         <textarea id="e-bio" class="form-control" type="text" rows="5" maxlength="300" placeholder="Introduce yourself to the world." name="bio"></textarea>
-                        <div class="feedback invalid-feedback fadeIn"></div>
+                        <div class="feedback invalid-tooltip fadeIn"></div>
+                    </div>
 
-                        <div class="custom-control custom-checkbox">
-                            <input id="emptyBio" class="custom-control-input" type="checkbox" name="emptyBio">
-                            <label class="custom-control-label" for="emptyBio">
-                                <small>Empty bio? (Check this if you want to empty your bio)</small>
-                            </label>
-                        </div>
+                    <div class="custom-control custom-checkbox">
+                        <input id="emptyBio" class="custom-control-input" type="checkbox" name="emptyBio">
+                        <label class="custom-control-label" for="emptyBio">
+                            <small>Empty bio? (Check this if you want to empty your bio)</small>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -49,21 +49,22 @@
                     <div id="email" class="form-group">
                         <label for="e-email">Email <span class="small">(Optional)</span></label>
                         <input id="e-email" class="form-control" type="email" maxlength="255" placeholder="Email" name="email" />
-                        <div class="feedback invalid-feedback fadeIn"></div>
+                        <div class="feedback invalid-tooltip fadeIn"></div>
                     </div>
 
                     <hr />
 
                     <div id="password" class="form-group">
                         <label for="e-newPass">Change Password <span class="small">(Optional)</span></label>
-                        <input id="e-newPass" class="form-control" type="password" maxlength="255" placeholder="New Password" tooltip-toggle="form-wide-tooltip" data-placement="right" title="More then 5 characters" name="password" />
-                        <div class="feedback invalid-feedback fadeIn"></div>
+                        <input id="e-newPass" class="form-control" type="password" maxlength="255" placeholder="New Password" name="password" />
+                        <div class="feedback invalid-tooltip fadeIn"></div>
+                        <small class="form-text text-muted">More then 5 characters</small>
                     </div>
 
                     <div id="cfmPassword" class="form-group">
                         <label for="e-cfmPass">Confirm New Password</label>
                         <input id="e-cfmPass" class="form-control" type="password" maxlength="255" placeholder="Confirm New Password" name="cfmPassword" />
-                        <div class="feedback invalid-feedback fadeIn"></div>
+                        <div class="feedback invalid-tooltip fadeIn"></div>
                     </div>
                 </div>
             </div>
@@ -103,7 +104,7 @@
                 </div>
 
                 <input type="file" class="d-none" accept="image/png, image/jpg, image/jpeg" name="upload" />
-                <div class="feedback invalid-feedback bounceIn short small text-danger text-center d-none"></div>
+                <div class="feedback invalid-tooltip bounceIn short small text-danger text-center d-none"></div>
             </div>
 
             <div class="modal-footer">
@@ -140,7 +141,7 @@
     </div>
 </div>
 
-<div id="formfeedback invalid-feedbackModal" class="modal pulse" role="dialog">
+<div id="formFeedbackModal" class="modal pulse" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">

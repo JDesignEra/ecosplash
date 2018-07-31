@@ -221,6 +221,9 @@ switch ($action) {
         if (empty($password)) {
             $errors['password'] = 'New password is required!';
         }
+        else if (strlen($password) < 6) {
+            $errors['password'] = 'New password needs 6 characters or more!';
+        }
 
         if (empty($cfmPassword)) {
             $errors['cfmPassword'] = 'Confirm password is required!';
@@ -282,6 +285,10 @@ switch ($action) {
         }
 
         if (!empty($password)) {
+            if (strlen($password) < 6) {
+                $errors['password'] = 'Password needs 6 characters or more!';
+            }
+
             if (empty($cfmPassword)) {
                 $errors['cfmPassword'] = 'Confirm password is required!';
             }

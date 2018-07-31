@@ -75,13 +75,11 @@ sectionFocus.querySelector('button#addItem').onclick = function() {
 sectionFocus.querySelector('form#redeemForm').onsubmit = function(e) {
     e.preventDefault();
 
-    var formFocus = this;
+    var formFocus = this,
+        focus = formFocus.querySelectorAll('.form-group, .form-label-group');
 
-    var feedbacks = formFocus.querySelectorAll('.feedback');
-    feedbacks.forEach(function(el) {
-        el.innerHTML = '';
-        el.classList.remove('d-block');
-        el.parentElement.classList.remove('invalid', 'valid');
+    focus.forEach(function(el) {
+        el.querySelector('input, select').classList.remove('is-invalid', 'is-valid');
     });
 
     formFocus.querySelector('button[type=submit]').classList.add('btn-secondary');
@@ -125,34 +123,32 @@ sectionFocus.querySelector('form#redeemForm').onsubmit = function(e) {
             $(modal).modal('show');
         }
         else if (data.errors) {
-            var feedbackFocus = formFocus.querySelectorAll('.item.form-group .feedback');
+            var itemFocus = formFocus.querySelectorAll('.form-group.item');
             if(data.errors.items) {
-                feedbackFocus.forEach(function(el) {
-                    el.innerHTML = data.errors.items;
-                    el.parentElement.classList.add('invalid')
-                    el.classList.add('d-block');
+                itemFocus.forEach(function(el) {
+                    el.querySelector('select').classList.add('is-invalid');
+                    el.querySelector('.feedback').innerHTML = data.errors.items;
                 });
             }
             else {
-                feedbackFocus.forEach(function(el) {
-                    el.parentElement.classList.add('valid')
+                itemFocus.forEach(function(el) {
+                    el.querySelector('select').classList.add('is-valid');
                 });
             }
 
-            var feedbackFocus = formFocus.querySelectorAll('.qty.form-label-group .feedback');
+            var qtyFocus = formFocus.querySelectorAll('.form-label-group.qty');
             if (data.errors.quantity) {
                 for (var i = 0; i < Object.keys(data.errors.quantity).length; i++) {
                     var index = Object.keys(data.errors.quantity)[i];
 
-                    feedbackFocus[index].parentElement.classList.add('invalid');
-                    feedbackFocus[index].innerHTML = data.errors.quantity[index];
-                    feedbackFocus[index].classList.add('d-block');
+                    qtyFocus[index].querySelector('input').classList.add('is-invalid');
+                    qtyFocus[index].querySelector('.feedback').innerHTML = data.errors.quantity[index];
                 }
             }
 
-            feedbackFocus.forEach(function(el) {
-                if (!el.parentElement.classList.contains('invalid')) {
-                    el.parentElement.classList.add('valid');
+            qtyFocus.forEach(function(el) {
+                if (!el.querySelector('input').classList.contains('is-invalid')) {
+                    el.querySelector('input').classList.add('is-valid');
                 }
             });
         }

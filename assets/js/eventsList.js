@@ -11,7 +11,6 @@ data.append('action', 'getEventsList');
 /* populate table */
 httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
-
     var focus = sectionFocus.querySelector('.card-body');
 
     httpGetDoc('./assets/templates/events_list/events_table.html', function(content) {
@@ -63,7 +62,7 @@ sectionFocus.querySelector('button#addNew').onclick = function() {
     this.addEventListener(animationEnd, function _func() {
         this.classList.add('d-none');
         sectionFocus.querySelector('form#addEvent').classList.remove('d-none');
-        
+
         this.removeEventListener(animationEnd, _func);
     });
 }
@@ -79,70 +78,51 @@ sectionFocus.querySelector('form#addEvent').onsubmit = function(e) {
     data.append('action', 'addEvent');
 
     httpPost('./assets/db/db.php', data, function(data) {
-        console.log(data);  // Debugging Purpose
-        var inputs = formFocus.querySelectorAll('.form-label-group');
+        // console.log(data);  // Debugging Purpose
+        var focus = formFocus.querySelectorAll('.form-label-group');
 
-        inputs.forEach(function(el) {
-            el.classList.remove('invalid');
-            el.classList.remove('valid');
-
-            el.querySelector('.feedback').classList.add('d-none');
+        focus.forEach(function(el) {
+            el.querySelector('input').classList.remove('is-invalid', 'is-valid');
         });
 
         if (data.success) {
             window.location = './events_list';
         }
         else if (data.errors) {
+            focus = formFocus.querySelector('#date.form-label-group');
             if (data.errors.date) {
-                var focus = formFocus.querySelector('#date.form-label-group');
-                focus.classList.add('invalid');
-
-                focus =  focus.querySelector('.feedback');
-                focus.innerHTML = data.errors.date;
-                focus.classList.remove('d-none');
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.date;
             }
             else {
-                var focus = formFocus.querySelector('#date.form-label-group');
-                focus.classList.add('valid');
+                focus.querySelector('input').classList.add('is-valid');
             }
 
+            focus = formFocus.querySelector('#event.form-label-group');
             if (data.errors.event) {
-                var focus = formFocus.querySelector('#event.form-label-group');
-                focus.classList.add('invalid');
-
-                focus = formFocus.querySelector('#event .feedback');
-                focus.innerHTML = data.errors.event;
-                focus.classList.remove('d-none');
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.event;
             }
             else {
-                var focus = formFocus.querySelector('#event.form-label-group');
-                focus.classList.add('valid');
+                focus.querySelector('input').classList.add('is-valid');
             }
 
+            focus = formFocus.querySelector('#location.form-label-group');
             if (data.errors.location) {
-                var focus = formFocus.querySelector('#location.form-label-group');
-                focus.classList.add('invalid');
-
-                focus = formFocus.querySelector('#location .feedback');
-                focus.innerHTML = data.errors.location;
-                focus.classList.remove('d-none');
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.location;
             }
             else {
-                var focus = formFocus.querySelector('#location.form-label-group');
-                focus.classList.add('valid');
+                focus.querySelector('input').classList.add('is-valid');
             }
 
+            focus = formFocus.querySelector('#time.form-label-group');
             if (data.errors.time) {
-                var focus = formFocus.querySelector('#time.form-label-group');
-                focus.classList.add('invalid');
-
-                focus = formFocus.querySelector('#time .feedback');
-                focus.innerHTML = data.errors.time;
-                focus.classList.remove('d-none');
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.time;
             }
             else {
-                var focus = formFocus.querySelector('#time.form-label-group');
-                focus.classList.add('valid');
+                focus.querySelector('input').classList.add('is-valid');
             }
         }
     });

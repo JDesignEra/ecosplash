@@ -31,16 +31,16 @@
                     <div id="electricUsage" class="form-label-group">
                         <input id="electricKWH" class="form-control" type="text" maxlength="100" placeholder="Electric Usage In KW/H" name="usage" autofocus />
                         <label for="electricKWH">Electric Usage In KW/H</label>
-                        <div class="feedback fadeIn"></div>
+                        <div class="feedback invalid-feedback fadeIn"></div>
                     </div>
 
-                    <div class="form-group item">
+                    <div class="form-group month">
                         <select id="electricMonth" class="custom-select" name="month">
                             <option class="default" value="none" selected disabled>
                                 Select Month
                             </option>
                         </select>
-                        <div class="feedback fadeIn d-none"></div>
+                        <div class="feedback invalid-feedback fadeIn"></div>
                     </div>
                     <button class="btn btn-success btn-block" type="submit">Submit</button>
                 </form>
@@ -82,16 +82,16 @@
                     <div id="waterUsage" class="form-label-group">
                         <input id="waterMC" class="form-control" type="text" maxlength="100" placeholder="Water Usage In M&sup3;" name="usage" autofocus />
                         <label for="waterMC">Water Usage In M&sup3;</label>
-                        <div class="feedback fadeIn"></div>
+                        <div class="feedback invalid-feedback fadeIn"></div>
                     </div>
 
-                    <div class="form-group item">
+                    <div class="form-group month">
                         <select id="waterMonth" class="custom-select" name="month">
                             <option class="default" value="none" selected disabled>
                                 Select Month
                             </option>
                         </select>
-                        <div class="feedback fadeIn d-none"></div>
+                        <div class="feedback invalid-feedback fadeIn"></div>
                     </div>
                     <button class="btn btn-success btn-block" type="submit">Submit</button>
                 </form>
@@ -133,7 +133,7 @@
                     <div id="gasUsage" class="form-label-group">
                         <input id="gasKWH" class="form-control" type="number" min="0" step="0.01" placeholder="Gas Usage In KW/H" name="usage" autofocus />
                         <label for="gasKWH">Gas In KW/H</label>
-                        <div class="feedback fadeIn"></div>
+                        <div class="feedback invalid-feedback fadeIn"></div>
                     </div>
 
                     <div class="form-group month">
@@ -142,7 +142,7 @@
                                 Select Month
                             </option>
                         </select>
-                        <div class="feedback fadeIn"></div>
+                        <div class="feedback invalid-feedback fadeIn"></div>
                     </div>
                     <button class="btn btn-success btn-block" type="submit">Submit</button>
                 </form>

@@ -140,33 +140,36 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 /* periodic worker every 30 mins */
 function worker() {
     var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
-    data = new FormData();
+        data = new FormData();
 
     data.append('uid', (uid ? uid : ''));
     data.append('action', 'getUser');
 
     httpPost('./assets/db/db.php', data, function(data) {
         // console.log(data);  // Debugging Purpose
-            if (uid) {
-                // Desktop Navs
-                if (doc.querySelector('nav .nav-right .badge.count')) {
-                    doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
-                }
-
-                if (doc.querySelector('nav .nav-right #ecopoints')) {
-                    doc.querySelector('nav .nav-right #ecopoints').innerHTML = data.ecoPoints;
-                }
-
-                // Mobile navs
-                if (doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu')) {
-                    doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints').setAttribute('data-original-title', data.ecoPoints + ' EcoPoints');
-
-                    doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications').setAttribute('data-original-title', 'Notifications (' + data.newNotifications + ')');
-                }
+        var focus;
+        if (uid) {
+            // Desktop Navs
+            if (focus = doc.querySelector('nav .nav-right .badge.count')) {
+                focus.innerHTML = data.newNotifications;
             }
 
-        if (doc.querySelector('section#redeem h5#ecopoints')) {
-            doc.querySelector('section#redeem h5#ecopoints').innerHTML = data.ecoPoints;
+            if (focus = doc.querySelector('nav .nav-right #ecopoints')) {
+                focus.innerHTML = data.ecoPoints;
+            }
+
+            // Mobile navs
+            if (focus = doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints')) {
+                focus.setAttribute('data-original-title', data.ecoPoints + ' EcoPoints');
+            }
+
+            if (focus = doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications')) {
+                focus.setAttribute('data-original-title', 'Notifications (' + data.newNotifications + ')');
+            }
+        }
+
+        if (focus = doc.querySelector('section#redeem h5#ecopoints')) {
+            focus.innerHTML = data.ecoPoints;
         }
 
         setTimeout(function () {

@@ -39,13 +39,19 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
     data.append('uid', uid);
     data.append('action', 'updateUser');
 
-    if (!this.querySelector('#bio input[name=emptyBio]').checked) {
+    if (!this.querySelector('input[name=emptyBio]').checked) {
         data.append('emptyBio', '');
     }
 
-    var formFocus = doc.querySelector('form#editProfileForm');
+    var formFocus = this;
     httpPost('./assets/db/db.php', data, function(data) {
         // console.log(data);   // Debugging Purpose
+        var focus = formFocus.querySelectorAll('.form-group');
+
+        focus.forEach(function(el) {
+            el.querySelector('input, textarea').classList.remove('is-invalid', 'is-valid');
+        });
+
         formFocus.querySelector('#action-btn button[type=submit]').classList.remove('btn-secondary', 'fadeIn');
         formFocus.querySelector('#action-btn button[type=submit]').classList.add('btn-success');
         formFocus.querySelector('#action-btn #loading-text').classList.add('d-none');
@@ -79,8 +85,11 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
         else if (data.errors) {
             var focus = formFocus.querySelector('#bio');
             if (data.errors.bio) {
-                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('textarea').classList.add('is-invalid');
                 focus.querySelector('.feedback').innerHTML = data.errors.bio;
+            }
+            else {
+                focus.querySelector('textarea').classList.add('is-valid');
             }
 
             focus = formFocus.querySelector('#email');
@@ -88,11 +97,17 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
                 focus.querySelector('input').classList.add('is-invalid');
                 focus.querySelector('.feedback').innerHTML = data.errors.email;
             }
+            else {
+                focus.querySelector('input').classList.add('is-valid');
+            }
 
             focus = formFocus.querySelector('#password');
             if (data.errors.password) {
                 focus.querySelector('input').classList.add('is-invalid');
                 focus.querySelector('.feedback').innerHTML = data.errors.password;
+            }
+            else {
+                focus.querySelector('input').classList.add('is-valid');
             }
 
             focus = formFocus.querySelector('#cfmPassword');
@@ -100,7 +115,9 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
                 focus.querySelector('input').classList.add('is-invalid');
                 focus.querySelector('.feedback').innerHTML = data.errors.cfmPassword;
             }
-
+            else {
+                focus.querySelector('input').classList.add('is-valid');
+            }
         }
     });
 }
