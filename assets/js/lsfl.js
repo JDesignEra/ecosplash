@@ -42,32 +42,38 @@ $('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function
 });
 
 /* logout on click */
-if (doc.querySelector('.logout')) {
-    //console.log(true);
-    var focus = doc.querySelectorAll('.logout');
+addWindowOnload(function() {
+    if (doc.querySelector('.logout')) {
+        var focus = doc.querySelectorAll('.logout');
 
-    focus.forEach(function(el) {
-        el.onclick = function(e) {
-            e.preventDefault();
+        focus.forEach(function(el) {
+            el.onclick = function(e) {
+                e.preventDefault();
 
-            localStorage.clear();
-            sessionStorage.clear();
+                if (localStorage) {
+                    localStorage.clear();
+                }
 
-            $('#logoutModal').on('shown.bs.modal', function() {
-                doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
-                setTimeout(function () {
-                    $('#logoutModal').modal('hide');
-                }, 2500);
-            });
+                if (sessionStorage) {
+                    sessionStorage.clear();
+                }
 
-            $('#logoutModal').on('hide.bs.modal', function() {
-                location.href = './';
-            });
+                $('#logoutModal').on('shown.bs.modal', function() {
+                    doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
+                    setTimeout(function () {
+                        $('#logoutModal').modal('hide');
+                    }, 2500);
+                });
 
-            $('#logoutModal').modal("show");
-        }
-    });
-}
+                $('#logoutModal').on('hide.bs.modal', function() {
+                    //location.href = './';
+                });
+
+                $('#logoutModal').modal("show");
+            }
+        });
+    }
+});
 
 /* login function */
 function loginForm(formID) {
