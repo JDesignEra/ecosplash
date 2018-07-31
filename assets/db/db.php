@@ -1167,7 +1167,7 @@ switch ($action) {
         break;
 
     case 'getTopEcoPoints':
-        $result = $mysqli -> query("SELECT name, ecoPointsMonth FROM users ORDER BY ecoPointsMonth DESC LIMIT 5");
+        $result = $mysqli -> query("SELECT name, ecoPointsMonth FROM users WHERE type = '0' ORDER BY ecoPointsMonth DESC LIMIT 5");
 
         $top = [];
         while($row = $result -> fetch_array(MYSQLI_ASSOC)) {

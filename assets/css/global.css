@@ -147,15 +147,15 @@ main.home {
     top: initial;
 }
 
+.form-label-group {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
 .form-label-group > input,
 .form-label-group > label {
     height: initial;
     padding: 0.75rem;
-}
-
-.form-label-group {
-    position: relative;
-    margin-bottom: 1rem;
 }
 
 .form-label-group > label {
@@ -201,9 +201,20 @@ main.home {
     color: #777777;
 }
 
-/* remove number input stepper arrow */
-.form-label-group input[type = 'number']::-webkit-inner-spin-button,
-.form-label-group input[type = 'number']::-webkit-outer-spin-button {
+/* date & time input */
+.form-label-group input[type='date']::-webkit-calendar-picker-indicator {
+    margin-top: calc(-26px / 2);
+    width: 0.8rem;
+    height: 0.8rem;
+}
+
+/* remove input stepper arrow */
+.form-label-group input[type='date']::-webkit-inner-spin-button,
+.form-label-group input[type='date']::-webkit-outer-spin-button,
+.form-label-group input[type='time']::-webkit-inner-spin-button,
+.form-label-group input[type='time']::-webkit-outer-spin-button,
+.form-label-group input[type='number']::-webkit-inner-spin-button,
+.form-label-group input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none !important;
     -moz-appearance: textfield !important;
     margin: 0 !important;

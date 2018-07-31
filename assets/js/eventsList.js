@@ -16,7 +16,7 @@ httpPost('./assets/db/db.php', data, function(data) {
     httpGetDoc('./assets/templates/events_list/events_table.html', function(content) {
         for (var k in data.eventsList) {
             var h4Date = content.querySelector('h4').cloneNode(),
-                table = content.querySelector('table').cloneNode(true);
+                table = content.querySelector('.table-responsive').cloneNode(true);
 
             h4Date.innerHTML = k;
             table.querySelector('tbody').innerHTML = '';
@@ -127,14 +127,3 @@ sectionFocus.querySelector('form#addEvent').onsubmit = function(e) {
         }
     });
 }
-
-// enable datepicker
-$(function() {
-    $('#e-date').datetimepicker({
-        format: 'L'
-    });
-
-    $('#e-time').datetimepicker({
-        format: 'LT'
-    });
-});

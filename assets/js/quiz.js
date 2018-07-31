@@ -1,13 +1,14 @@
 'use strict';
 
 var sectionFocus = doc.querySelector('section#quiz'),
+    accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType')),
     uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid'));
 
 /* populate quiz */
 var data = new FormData();
 data.append('action', 'getTodayQuiz');
 httpPost('./assets/db/db.php', data, function(data) {
-    console.log(data);
+    // console.log(data);
 
     if (data.success) {
         sectionFocus.querySelector('#uName').innerHTML = data.quiz.uName;
@@ -17,42 +18,47 @@ httpPost('./assets/db/db.php', data, function(data) {
             sectionFocus.querySelector('#description').innerHTML = 'This quiz has <span class="text-primary font-weight-bold">' + data.quiz.questions.length + '</span> question and each correct question will award you with <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints / data.quiz.questions.length + '</span> EcoPoints. And you are able to earn up to a maximum of <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints + '</span> EcoPoints.';
 
             /* start quiz btn */
-            var btnFocus = sectionFocus.querySelector('.card-footer'),
+            var cardFooterFocus = sectionFocus.querySelector('.card-footer'),
                 formData = new FormData();
 
             formData.append('uid', (uid ? uid : ''));
             formData.append('action', 'getUserQuizStatus');
 
-            /* start btn or attempted btn */
-            httpPost('./assets/db/db.php', formData, function(data) {
-                // console.log(data);  // Debugging Purpose
-                if (data.status) {
-                    btnFocus.innerHTML = '<button type="button" class="btn btn-primary btn-block">Start Quiz</button>';
+            if (accType == 0) {
+                /* start btn or attempted btn */
+                httpPost('./assets/db/db.php', formData, function(data) {
+                    // console.log(data);  // Debugging Purpose
+                    if (data.status) {
+                        cardFooterFocus.innerHTML = '<button type="button" class="btn btn-primary btn-block">Start Quiz</button>';
 
-                    btnFocus.onclick = function() {
-                        var focus = this.parentElement;
-                        focus.classList.add('fadeOut', 'short');
-
-                        focus.addEventListener(animationEnd, function _func() {
-                            focus.classList.add('d-none');
-
-                            focus = sectionFocus.querySelector('.card:not(#start)');
-                            focus.classList.remove('d-none');
-                            focus.classList.add('bounceIn', 'short');
+                        cardFooterFocus.onclick = function() {
+                            var focus = this.parentElement;
+                            focus.classList.add('fadeOut', 'short');
 
                             focus.addEventListener(animationEnd, function _func() {
-                                focus.classList.remove('bounceIn', 'short');
+                                focus.classList.add('d-none');
+
+                                focus = sectionFocus.querySelector('.card:not(#start)');
+                                focus.classList.remove('d-none');
+                                focus.classList.add('bounceIn', 'short');
+
+                                focus.addEventListener(animationEnd, function _func() {
+                                    focus.classList.remove('bounceIn', 'short');
+                                    this.removeEventListener(animationEnd, _func);
+                                });
+
                                 this.removeEventListener(animationEnd, _func);
                             });
-
-                            this.removeEventListener(animationEnd, _func);
-                        });
+                        }
                     }
-                }
-                else {
-                    btnFocus.innerHTML = '<button type="button" class="btn btn-danger btn-block">Quiz Attempted</button>';
-                }
-            });
+                    else {
+                        cardFooterFocus.innerHTML = '<button type="button" class="btn btn-danger btn-block">Quiz Attempted</button>';
+                    }
+                });
+            }
+            else {
+                cardFooterFocus.innerHTML = '<button type="button" class="btn btn-danger btn-block">Organization Can\'t Take Quiz</button>';
+            }
 
             /* populate questions card */
             httpGetDoc('./assets/templates/quiz/quiz_card.html', function(content) {
@@ -60,7 +66,7 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                 for (var i = 0; i < data.quiz.questions.length; i++) {
                     var qCard = temp.cloneNode(true),
-                        btnFocuses = qCard.querySelectorAll('button'),
+                        cardFooterFocuses = qCard.querySelectorAll('button'),
                         radioInputs = qCard.querySelectorAll('.custom-radio');
 
                     qCard.querySelector('h4.qNo').innerHTML = 'Question ' + (i + 1);
@@ -77,13 +83,13 @@ httpPost('./assets/db/db.php', data, function(data) {
                         labelFocus.innerHTML = data.quiz.options[i][x];
                     }
 
-                    btnFocuses.forEach(function(el) {
+                    cardFooterFocuses.forEach(function(el) {
                         el.setAttribute('data-number', i);
                     });
 
                     /* remove previous btn */
                     if (i == 0) {
-                        btnFocuses[0].parentElement.remove();
+                        cardFooterFocuses[0].parentElement.remove();
                     }
 
                     /* next btn to submit */
@@ -91,16 +97,16 @@ httpPost('./assets/db/db.php', data, function(data) {
                         var feedback = doc.createElement('p');
                         feedback.classList.add('feedback', 'text-danger', 'small', 'text-center', 'mb-0', 'pt-4', 'fadeIn', 'd-none');
 
-                        btnFocuses[1].type = 'submit';
-                        btnFocuses[1].classList.remove('btn-primary');
-                        btnFocuses[1].classList.add('btn-success');
-                        btnFocuses[1].innerHTML = 'Submit';
+                        cardFooterFocuses[1].type = 'submit';
+                        cardFooterFocuses[1].classList.remove('btn-primary');
+                        cardFooterFocuses[1].classList.add('btn-success');
+                        cardFooterFocuses[1].innerHTML = 'Submit';
 
                         qCard.querySelector('.card-body').appendChild(feedback);
                     }
 
                     /* previous btn onclick animation */
-                    btnFocuses[0].onclick = function() {
+                    cardFooterFocuses[0].onclick = function() {
                         if (this.type == 'button' && this.getAttribute('data-number') != 0) {
                             var cardsFocus = doc.querySelectorAll('.card:not(#start)'),
                                 i = parseInt(this.getAttribute('data-number'));
@@ -132,7 +138,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                     }
 
                     /* next btn onclick animation */
-                    btnFocuses[1].onclick = function() {
+                    cardFooterFocuses[1].onclick = function() {
                         var cardsFocus = doc.querySelectorAll('.card:not(#start)'),
                             i = parseInt(this.getAttribute('data-number'));
 
@@ -160,6 +166,9 @@ httpPost('./assets/db/db.php', data, function(data) {
                     doc.querySelector('form#quizForm').appendChild(qCard);
                 }
             });
+        }
+        else if (uid == 1) {
+
         }
     }
 });

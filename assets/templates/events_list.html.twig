@@ -22,13 +22,13 @@
                 </div>
 
                 <div id="date" class="form-label-group">
-                    <input id="e-date" class="form-control" type="text" maxlength="100" placeholder="Date" name="date" />
+                    <input id="e-date" class="form-control" type="date" placeholder="Date" name="date" required />
                     <label for="e-date">Date</label>
                     <div class="feedback invalid-feedback fadeIn"></div>
                 </div>
 
                 <div id="time" class="form-label-group">
-                    <input id="e-time" class="form-control" type="text" maxlength="100" placeholder="Time" name="time" />
+                    <input id="e-time" class="form-control" type="time" placeholder="Time" name="time" required />
                     <label for="e-time">Time</label>
                     <div class="feedback invalid-feedback fadeIn"></div>
                 </div>
@@ -75,6 +75,4 @@
 
 {% block scripts %}
 <script type="text/javascript" src="./assets/js/eventsList.js"></script>
-<script type="text/javascript" src="./assets/js/moment.min.js"></script>
-<script type="text/javascript" src="./assets/js/bootstrap-datetimepicker.min.js"></script>
 {% endblock %}
