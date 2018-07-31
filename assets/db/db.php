@@ -987,14 +987,14 @@ switch ($action) {
 
     case 'submitQuiz':
         $uid = checkInput($_POST['uid']);
-        $userAns = $_POST['answers'];
+        $userAns = (isset($_POST['answers']) ? $_POST['answers'] : '');
 
         if (empty($uid)) {
             $errors['uid'] = 'User ID is missing!';
         }
 
         if (empty($userAns)) {
-            $errors['answers'] = 'You have not answered any of the questions!';
+            $errors['questions'] = 'You have not answered any of the questions!';
         }
 
         if (empty($errors)) {
@@ -1015,13 +1015,53 @@ switch ($action) {
                     $correct = array_intersect_assoc($answers, $userAns);
                     $ecoPoints = $point * count($correct);
 
-                    // TODO
-                    if ($result = $mysqli -> query("UPDATE users")) {
-                        // code...
+                    if ($result = $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints + '$ecoPoints', ecoPointsMonth = ecoPointsMonth + '$ecoPoints', dailyQuiz = '1' WHERE uid = '$uid' AND dailyQuiz = '0'")) {
+                        $data['score'] = count($correct);
+                        $data['maxScore'] = count($answers);
+                        $data['ecoPoints'] = $ecoPoints;
+                        $data['maxEcoPoints'] = $point * count($answers);
                     }
                 }
             }
         }
+        break;
+
+    case 'getUserQuizStatus':
+        $uid = checkInput($_POST['uid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($errors)) {
+            if ($result = $mysqli -> query("SELECT dailyQuiz FROM users WHERE uid = '$uid'")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $data['status'] = ($row['dailyQuiz'] ? 0 : 1);
+            }
+        }
+        break;
+
+    case 'getTodayQuiz':
+        $result = $mysqli -> query("SELECT * FROM quizzes WHERE todayQuiz = 1");
+        $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+        $quiz = [];
+        $quiz['name'] = $row['name'];
+        $quiz['questions'] = explode('|', $row['questions']);
+        $quiz['ecoPoints'] = $row['ecoPoints'];
+
+        $options = explode('|', $row['options']);
+        foreach ($quiz['questions'] as $key => $value) {
+            $quiz['options'][$key] = array_splice($options, 0, 4);
+        }
+
+        $uid = $row['uid'];
+        $result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'");
+        $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+        $quiz['uName'] = $row['name'];
+
+        $data['quiz'] = $quiz;
         break;
 
     case 'getRewardItems':
@@ -1136,29 +1176,6 @@ switch ($action) {
         }
 
         $data['top'] = $top;
-        break;
-
-    case 'getTodayQuiz':
-        $result = $mysqli -> query("SELECT * FROM quizzes WHERE todayQuiz = 1");
-        $row = $result -> fetch_array(MYSQLI_ASSOC);
-
-        $quiz = [];
-        $quiz['name'] = $row['name'];
-        $quiz['questions'] = explode('|', $row['questions']);
-        $quiz['ecoPoints'] = $row['ecoPoints'];
-
-        $options = explode('|', $row['options']);
-        foreach ($quiz['questions'] as $key => $value) {
-            $quiz['options'][$key] = array_splice($options, 0, 4);
-        }
-
-        $uid = $row['uid'];
-        $result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'");
-        $row = $result -> fetch_array(MYSQLI_ASSOC);
-
-        $quiz['uName'] = $row['name'];
-
-        $data['quiz'] = $quiz;
         break;
 
     case 'getUtilities':

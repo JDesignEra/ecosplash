@@ -28,7 +28,7 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                 for (var event in data.events[date]) {
                     var row = content.querySelector('div.row').cloneNode(true),
-                        cols = row.querySelectorAll('div.cloumn');
+                        cols = row.querySelectorAll('div.column');
 
                     cols[0].innerHTML = '<p><span class="font-weight-bold text-primary">' + data.events[date][event].event + '</span> at <span class="font-weight-bold text-primary">' + data.events[date][event].time + '</span> located at <span class="font-weight-bold text-primary">' + data.events[date][event].location + '</span></p>';
 

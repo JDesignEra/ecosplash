@@ -34,7 +34,37 @@
 </section>
 {% endblock %}
 
-{% block afterMain %}{% endblock %}
+{% block afterMain %}
+<div id="successModal" class="modal pulse" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Quiz Completed</h5>
+
+                <button type="button" class="close" data-dismiss="modal">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body text-center">
+                <h5 class="text-center">Score</h5>
+                <div class="progress" style="height: 25px;">
+                    <div class="progress-bar" role="progressbar"></div>
+                </div>
+
+                <h5 class="text-center pt-5">EcoPoints Earned</h5>
+                <div class="progress" style="height: 25px;">
+                    <div class="progress-bar" role="progressbar"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">Dismiss</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
 {% block scripts %}
 <script type="text/javascript" src="./assets/js/quiz.js"></script>

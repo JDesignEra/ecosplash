@@ -17,28 +17,42 @@ httpPost('./assets/db/db.php', data, function(data) {
             sectionFocus.querySelector('#description').innerHTML = 'This quiz has <span class="text-primary font-weight-bold">' + data.quiz.questions.length + '</span> question and each correct question will award you with <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints / data.quiz.questions.length + '</span> EcoPoints. And you are able to earn up to a maximum of <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints + '</span> EcoPoints.';
 
             /* start quiz btn */
-            var btnFocus = sectionFocus.querySelector('.card-footer');
-            btnFocus.innerHTML = '<button type="button" class="btn btn-primary btn-block start">Start Quiz</button>';
+            var btnFocus = sectionFocus.querySelector('.card-footer'),
+                formData = new FormData();
 
-            btnFocus.onclick = function() {
-                var focus = this.parentElement;
-                focus.classList.add('fadeOut', 'short');
+            formData.append('uid', (uid ? uid : ''));
+            formData.append('action', 'getUserQuizStatus');
 
-                focus.addEventListener(animationEnd, function _func() {
-                    focus.classList.add('d-none');
+            /* start btn or attempted btn */
+            httpPost('./assets/db/db.php', formData, function(data) {
+                // console.log(data);  // Debugging Purpose
+                if (data.status) {
+                    btnFocus.innerHTML = '<button type="button" class="btn btn-primary btn-block">Start Quiz</button>';
 
-                    focus = sectionFocus.querySelector('.card:not(#start)');
-                    focus.classList.remove('d-none');
-                    focus.classList.add('bounceIn', 'short');
+                    btnFocus.onclick = function() {
+                        var focus = this.parentElement;
+                        focus.classList.add('fadeOut', 'short');
 
-                    focus.addEventListener(animationEnd, function _func() {
-                        focus.classList.remove('bounceIn', 'short');
-                        this.removeEventListener(animationEnd, _func);
-                    });
+                        focus.addEventListener(animationEnd, function _func() {
+                            focus.classList.add('d-none');
 
-                    this.removeEventListener(animationEnd, _func);
-                });
-            }
+                            focus = sectionFocus.querySelector('.card:not(#start)');
+                            focus.classList.remove('d-none');
+                            focus.classList.add('bounceIn', 'short');
+
+                            focus.addEventListener(animationEnd, function _func() {
+                                focus.classList.remove('bounceIn', 'short');
+                                this.removeEventListener(animationEnd, _func);
+                            });
+
+                            this.removeEventListener(animationEnd, _func);
+                        });
+                    }
+                }
+                else {
+                    btnFocus.innerHTML = '<button type="button" class="btn btn-danger btn-block">Quiz Attempted</button>';
+                }
+            });
 
             /* populate questions card */
             httpGetDoc('./assets/templates/quiz/quiz_card.html', function(content) {
@@ -74,10 +88,15 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                     /* next btn to submit */
                     if (i == data.quiz.questions.length - 1) {
+                        var feedback = doc.createElement('p');
+                        feedback.classList.add('feedback', 'text-danger', 'small', 'text-center', 'mb-0', 'pt-4', 'fadeIn', 'd-none');
+
                         btnFocuses[1].type = 'submit';
                         btnFocuses[1].classList.remove('btn-primary');
                         btnFocuses[1].classList.add('btn-success');
                         btnFocuses[1].innerHTML = 'Submit';
+
+                        qCard.querySelector('.card-body').appendChild(feedback);
                     }
 
                     /* previous btn onclick animation */
@@ -91,18 +110,18 @@ httpPost('./assets/db/db.php', data, function(data) {
                             });
 
                             if (this.type == 'button') {
-                                cardsFocus[i].classList.add('fadeOutLeft', 'short');
+                                cardsFocus[i].classList.add('fadeOutRight', 'short');
 
                                 cardsFocus[i].addEventListener(animationEnd, function _func() {
                                     this.classList.add('d-none');
-                                    this.classList.remove('fadeOutLeft', 'short');
+                                    this.classList.remove('fadeOutRight', 'short');
 
                                     cardsFocus[i - 1].classList.remove('d-none');
-                                    cardsFocus[i - 1].classList.add('fadeInRight', 'short');
+                                    cardsFocus[i - 1].classList.add('fadeInLeft', 'short');
 
                                     this.removeEventListener(animationEnd, _func);
                                     cardsFocus[i - 1].addEventListener(animationEnd, function _func() {
-                                        this.classList.remove('fadeInRight', 'short');
+                                        this.classList.remove('fadeInLeft', 'short');
                                         this.removeEventListener(animationEnd, _func);
                                     });
 
@@ -149,10 +168,40 @@ httpPost('./assets/db/db.php', data, function(data) {
 sectionFocus.querySelector('form#quizForm').onsubmit = function(e) {
     e.preventDefault();
 
-    var data = new FormData(this);
+    var formFocus = this,
+        data = new FormData(formFocus);
+
     data.append('uid', (uid ? uid : ''));
     data.append('action', 'submitQuiz');
+
     httpPost('./assets/db/db.php', data, function(data) {
-        console.log(data);
+        // console.log(data);  // Debugging Purpose
+        var feedbackFocus = formFocus.querySelector('.feedback');
+        feedbackFocus.classList.add('d-none');
+
+        if (data.success) {
+            var modal = doc.getElementById('successModal'),
+                progressBars = modal.querySelectorAll('.modal-body .progress-bar');
+
+            progressBars[0].innerHTML = data.score + ' / ' + data.maxScore;
+            progressBars[0].style.width = (data.score / data.maxScore) * 100 + '%';
+            progressBars[0].classList.add(data.score < data.maxScore / 2 ? 'bg-danger' : 'bg-success');
+
+            progressBars[1].innerHTML = data.ecoPoints + ' / ' + data.maxEcoPoints;
+            progressBars[1].style.width = (data.ecoPoints / data.maxEcoPoints) * 100 + '%';
+            progressBars[1].classList.add(data.ecoPoints < data.maxEcoPoints / 2 ? 'bg-danger' : 'bg-success');
+
+            $(modal).on('hide.bs.modal', function() {
+                location.href = './quiz';
+            });
+
+            $(modal).modal('show');
+        }
+        else if (data.errors) {
+            if (data.errors.questions) {
+                feedbackFocus.innerHTML = data.errors.questions;
+                feedbackFocus.classList.remove('d-none');
+            }
+        }
     });
 }
