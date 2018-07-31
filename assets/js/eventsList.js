@@ -8,7 +8,7 @@ var data = new FormData();
 data.append('uid', uid);
 data.append('action', 'getEventsList');
 
-// Populate table
+/* populate table */
 httpPost('./assets/db/db.php', data, function(data) {
     // console.log(data);  // Debugging Purpose
 
@@ -60,9 +60,11 @@ httpPost('./assets/db/db.php', data, function(data) {
 sectionFocus.querySelector('button#addNew').onclick = function() {
     this.classList.add('fadeOut', 'short');
 
-    this.addEventListener(animationEnd, function() {
+    this.addEventListener(animationEnd, function _func() {
         this.classList.add('d-none');
         sectionFocus.querySelector('form#addEvent').classList.remove('d-none');
+        
+        this.removeEventListener(animationEnd, _func);
     });
 }
 

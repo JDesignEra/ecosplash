@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 {% set title = 'Daily Quiz' %}
-{% set bodyBG = './assets/img/background/signup.jpg' %}
+{% set bodyBG = './assets/img/background/quiz.jpg' %}
 {% set mainType = 'vCenter' %}
 
 {% block main %}
@@ -17,15 +17,12 @@
                         It appears that you are not logged in. Please sign up an account or login to attempt this quiz and get rewarded with EcoPoints to redeem for rewards.
                     </p>
 
-                    <h6 class="text-right pb-4">
+                    <h6 class="text-right">
                         By <span id="uName" class="text-primary"></span>
                     </h6>
                 </div>
 
                 <div class="card-footer">
-                    <button type="button" class="btn btn-primary btn-block login">
-                        Login
-                    </button>
                     <a class="btn btn-success btn-block" href="./signup">
                         Sign Up
                     </a>

@@ -978,6 +978,45 @@ switch ($action) {
         }
         break;
 
+    case 'submitQuiz':
+        $uid = checkInput($_POST['uid']);
+        $userAns = $_POST['answers'];
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($userAns)) {
+            $errors['answers'] = 'You have not answered any of the questions!';
+        }
+
+        if (empty($errors)) {
+            if ($result = $mysqli -> query("SELECT answers, ecoPoints FROM quizzes WHERE todayQuiz = '1'")) {
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $answers = explode(',', $row['answers']);
+                $point = $row['ecoPoints'] / count($answers);
+
+                if (count($userAns) != count($answers)) {
+                    $unanswered = array_keys(array_diff_key($answers, $userAns));
+                    for ($i=0; $i < count($unanswered); $i++) {
+                        $unanswered[$i] += 1;
+                    }
+
+                    $errors['questions'] = 'Question(s) ' . implode(', ', $unanswered) . ' unanswered!';
+                }
+                else {
+                    $correct = array_intersect_assoc($answers, $userAns);
+                    $ecoPoints = $point * count($correct);
+
+                    // TODO
+                    if ($result = $mysqli -> query("UPDATE users")) {
+                        // code...
+                    }
+                }
+            }
+        }
+        break;
+
     case 'getRewardItems':
         $result = $mysqli -> query("SELECT * FROM items");
 

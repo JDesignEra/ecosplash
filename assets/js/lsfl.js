@@ -1,6 +1,4 @@
 'use strict';
-var focus;
-
 /* invoke forms onsubmit */
 if (doc.querySelector('form#loginForm')) {
     loginForm('loginForm');
@@ -32,60 +30,54 @@ if (doc.querySelector('form#fpass_3')) {
 
 /* sign up animation */
 $('#signUpCard .card-header a[href="#user"]').on('show.bs.tab', function() {
-    focus = doc.querySelector('#signUpCard #user');
+    var focus = doc.querySelector('#signUpCard #user');
     focus.classList.remove('fadeIn');
     focus.classList.add('fadeIn');
 });
 
 $('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function() {
-    focus = doc.querySelector('#signUpCard #organization');
+    var focus = doc.querySelector('#signUpCard #organization');
     focus.classList.remove('fadeIn');
     focus.classList.add('fadeIn');
 });
 
 /* logout on click */
-addWindowOnload(function() {
-    if (doc.querySelector('.logout')) {
-        var focus = doc.querySelectorAll('.logout');
+if (doc.querySelector('.logout')) {
+    //console.log(true);
+    var focus = doc.querySelectorAll('.logout');
 
-        focus.forEach(function(el) {
-            el.onclick = function(e) {
-                e.preventDefault();
+    focus.forEach(function(el) {
+        el.onclick = function(e) {
+            e.preventDefault();
 
-                localStorage.clear();
-                sessionStorage.clear();
+            localStorage.clear();
+            sessionStorage.clear();
 
-                $('#logoutModal').on('shown.bs.modal', function() {
-                    doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
-                    setTimeout(function () {
-                        $('#logoutModal').modal('hide');
-                    }, 2500);
-                });
+            $('#logoutModal').on('shown.bs.modal', function() {
+                doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
+                setTimeout(function () {
+                    $('#logoutModal').modal('hide');
+                }, 2500);
+            });
 
-                $('#logoutModal').on('hide.bs.modal', function() {
-                    location.href = './';
-                });
+            $('#logoutModal').on('hide.bs.modal', function() {
+                location.href = './';
+            });
 
-                $('#logoutModal').modal("show");
-            }
-        });
-    }
-});
+            $('#logoutModal').modal("show");
+        }
+    });
+}
 
 /* login function */
 function loginForm(formID) {
     doc.querySelector('form#' + formID).onsubmit = function(e) {
         e.preventDefault();
 
-        focus = this.querySelectorAll('.form-label-group');
+        var focus = this.querySelectorAll('.form-label-group');
         focus.forEach(function(el) {
-            el.classList.remove('invalid');
-            el.classList.remove('valid');
-        });
-
-        focus = this.querySelectorAll('.form-label-group .feedback');
-        focus.forEach(function(el) {
-            el.innerHTML = '';
+            el.querySelector('input').classList.remove('is-invalid', 'is-valid');
+            el.querySelector('.feedback').innerHTML = '';
         });
 
         var data = new FormData(this);
@@ -130,20 +122,20 @@ function loginForm(formID) {
             else if (data.errors) {
                 focus = doc.querySelector('#' + formID + ' #password');
                 if (data.errors.password) {
-                    focus.classList.add('invalid');
-                    focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
+                    focus.querySelector('input').classList.add('is-invalid');
+                    focus.querySelector('.feedback').innerHTML = data.errors.password;
                 }
                 else {
-                    focus.classList.remove('valid');
+                    focus.querySelector('input').classList.add('is-valid');
                 }
 
                 focus = doc.querySelector('#' + formID + ' #email');
                 if (data.errors.email) {
-                    focus.classList.add('invalid');
-                    focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
+                    focus.querySelector('input').classList.add('is-invalid');
+                    focus.querySelector('.feedback').innerHTML = data.errors.email;
                 }
                 else {
-                    focus.classList.add('valid');
+                    focus.querySelector('input').classList.add('is-valid');
                 }
             }
         });
@@ -158,13 +150,7 @@ function signupForm(formID) {
 
             focus = this.querySelectorAll('.form-label-group');
             focus.forEach(function(el) {
-                el.classList.remove('invalid');
-                el.classList.remove('valid');
-            });
-
-            focus = this.querySelectorAll('.form-label-group .feedback');
-            focus.forEach(function(el) {
-                el.innerHTML = '';
+                el.querySelector('input').classList.remove('is-invalid', 'is-valid');
             });
 
             this.querySelector('button[type=submit] .signup-text').classList.add('d-none');
@@ -199,29 +185,29 @@ function signupForm(formID) {
                 else if (data.errors) {
                     var focus = doc.querySelector('form#' + formID + ' #password');
                     if (data.errors.password) {
-                        focus.classList.add('invalid');
-                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
+                        focus.querySelector('input').classList.add('is-invalid');
+                        focus.querySelector('.feedback').innerHTML = data.errors.password;
                     }
                     else {
-                        focus.classList.add('valid');
+                        focus.querySelector('input').classList.add('is-valid');
                     }
 
                     focus = doc.querySelector('#' + formID + ' #email');
                     if (data.errors.email) {
-                        focus.classList.add('invalid');
-                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
+                        focus.querySelector('input').classList.add('is-invalid');
+                        focus.querySelector('.feedback').innerHTML = data.errors.email;
                     }
                     else {
-                        focus.classList.add('valid');
+                        focus.querySelector('input').classList.add('is-valid');
                     }
 
                     focus = doc.querySelector('#' + formID + ' #name');
                     if (data.errors.name) {
-                        focus.classList.add('invalid');
-                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.name;
+                        focus.querySelector('input').classList.add('is-invalid');
+                        focus.querySelector('.feedback').innerHTML = data.errors.name;
                     }
                     else {
-                        focus.classList.add('valid');
+                        focus.querySelector('input').classList.add('is-valid');
                     }
                 }
             });
@@ -237,13 +223,7 @@ function forgotPasswordForm(formID) {
 
             focus = this.querySelectorAll('.form-label-group');
             focus.forEach(function(el) {
-                el.classList.remove('invalid');
-                el.classList.remove('valid');
-            });
-
-            focus = this.querySelectorAll('.form-label-group .feedback');
-            focus.forEach(function(el) {
-                el.innerHTML = '';
+                el.querySelector('input').classList.remove('is-invalid', 'is-valid');
             });
 
             if (formID == 'fpass_1') {
@@ -278,35 +258,40 @@ function forgotPasswordForm(formID) {
 
                 if (data.success) {
                     if (formID == 'fpass_1') {
-                        doc.getElementById('fpass_1').classList.add('fadeOutLeft');
-                        doc.getElementById('fpass_1').addEventListener(animationEnd, function() {
-                            doc.getElementById('fpass_1').classList.add('d-none');
-                            doc.getElementById('fpass_1').classList.remove('fadeOutLeft');
+                        var fpass1 = doc.getElementById('fpass_1'),
+                            fpass2 = doc.getElementById('fpass_2');
 
-                            doc.getElementById('fpass_2').classList.add('fadeInRight', 'd-block');
-                            doc.getElementById('fpass_2').addEventListener(animationEnd, function() {
-                                doc.getElementById('fpass_2').classList.add('fadeInRight');
+                        fpass1.classList.add('fadeOutLeft');
+                        fpass1.addEventListener(animationEnd, function _func() {
+                            fpass1.classList.add('d-none');
+                            fpass1.classList.remove('fadeOutLeft');
 
-                                doc.getElementById('fpass_2').removeEventListener(animationEnd, function() {});
+                            fpass2.classList.add('fadeInRight', 'd-block');
+
+                            fpass2.addEventListener(animationEnd, function _func() {
+                                fpass2.classList.add('fadeInRight');
+                                this.removeEventListener(animationEnd, _func);
                             });
 
-                            doc.getElementById('fpass_1').removeEventListener(animationEnd, function() {});
+                            this.removeEventListener(animationEnd, _func);
                         });
                     }
                     else if (formID == 'fpass_2') {
-                        doc.getElementById('fpass_2').classList.add('fadeOutLeft');
-                        doc.getElementById('fpass_2').addEventListener(animationEnd, function() {
-                            doc.getElementById('fpass_2').classList.add('d-none');
-                            doc.getElementById('fpass_2').classList.remove('fadeOutLeft', 'd-block');
+                        var fpass2 = doc.getElementById('fpass_2'),
+                            fpass3 = doc.getElementById('fpass_3');
 
-                            doc.getElementById('fpass_3').classList.add('fadeInRight', 'd-block');
-                            doc.getElementById('fpass_3').addEventListener(animationEnd, function() {
-                                doc.getElementById('fpass_3').classList.remove('fadeInRight');
+                        fpass2.classList.add('fadeOutLeft');
+                        fpass2.addEventListener(animationEnd, function _func() {
+                            fpass2.classList.add('d-none');
+                            fpass2.classList.remove('fadeOutLeft', 'd-block');
 
-                                doc.getElementById('fpass_3').removeEventListener(animationEnd, function() {});
+                            fpass3.classList.add('fadeInRight', 'd-block');
+                            fpass3.addEventListener(animationEnd, function _func() {
+                                fpass3.classList.remove('fadeInRight');
+                                this.removeEventListener(animationEnd, _func);
                             });
 
-                            doc.getElementById('fpass_2').removeEventListener(animationEnd, function() {});
+                            this.removeEventListener(animationEnd, _func);
                         });
                     }
                     else if (formID == 'fpass_3') {
@@ -328,36 +313,36 @@ function forgotPasswordForm(formID) {
                 }
                 else if (data.errors) {
                     focus = doc.querySelector('#fpass_1 #email');
-                    if (data.errors.email) {
-                        focus.classList.add('invalid');
-                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.email;
+                    if (data.errors.email && formID == 'fpass_1') {
+                        focus.querySelector('input').classList.add('is-invalid');
+                        focus.querySelector('.feedback').innerHTML = data.errors.email;
                     }
                     else {
-                        focus.classList.add('valid');
+                        focus.querySelector('input').classList.add('is-valid');
                     }
 
                     focus = doc.querySelector('#fpass_2 #fcode');
-                    if (data.errors.fcode) {
-                        focus.classList.add('invalid');
-                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.fcode;
+                    if (data.errors.fcode && formID == 'fpass_2') {
+                        focus.querySelector('input').classList.add('is-invalid');
+                        focus.querySelector('.feedback').innerHTML = data.errors.fcode;
                     }
                     else {
-                        focus.classList.remove('valid');
+                        focus.querySelector('input').classList.add('is-valid');
                     }
 
                     focus = doc.querySelector('#fpass_3 #password');
-                    if (data.errors.password) {
-                        focus.classList.add('invalid');
-                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.password;
+                    if (data.errors.password && formID == 'fpass_3') {
+                        focus.querySelector('input').classList.add('is-invalid');
+                        focus.querySelector('.feedback').innerHTML = data.errors.password;
                     }
                     else {
-                        focus.classList.add('valid');
+                        focus.querySelector('input').classList.add('is-valid');
                     }
 
                     focus = doc.querySelector('#fpass_3 #cfmPassword');
-                    if (data.errors.cfmPassword) {
-                        focus.classList.add('invalid');
-                        focus.getElementsByClassName('feedback')[0].innerHTML = data.errors.cfmPassword;
+                    if (data.errors.cfmPassword && formID == 'fpass_3') {
+                        focus.querySelector('input').classList.add('is-invalid');
+                        focus.querySelector('.feedback').innerHTML = data.errors.cfmPassword;
                     }
                 }
             });

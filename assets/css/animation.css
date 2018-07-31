@@ -78,7 +78,7 @@
 @keyframes fadeInRight {
     from {
         opacity: 0;
-        transform: translate3d(100%, 0, 0);
+        transform: translate3d(50%, 0, 0);
     }
 
     to {
@@ -115,7 +115,7 @@
 
     to {
         opacity: 0;
-        transform: translate3d(-100%, 0, 0);
+        transform: translate3d(-50%, 0, 0);
     }
 }
 

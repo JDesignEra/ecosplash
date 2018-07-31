@@ -77,6 +77,11 @@ httpPost('./assets/db/db.php', data, function(data) {
                             }
                         }
                     }
+                    else {
+                        cols[0].classList.remove('col-8', 'col-md-10');
+                        cols[0].classList.add('col-12');
+                        cols[1].remove();
+                    }
 
                     focus.appendChild(row);
                     i++;

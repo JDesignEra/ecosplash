@@ -53,11 +53,11 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
         if (data.success) {
             if (localStorage.getItem('name')) {
                 localStorage.setItem('name', data.name);
-                localStorage.setItem('pass', data.password);
+                localStorage.setItem('pass', data.pass);
             }
-            else if (sessionStorage.getItem('name')) {
-                localStorage.setItem('name', data.name);
-                sessionStorage.setItem('pass', data.password);
+            else {
+                sessionStorage.setItem('name', data.name);
+                sessionStorage.setItem('pass', data.pass);
             }
 
             var modal = doc.getElementById('formFeedbackModal');
@@ -263,7 +263,8 @@ function profilePicMouseLeave() {
         focus.classList.add('flipOutX', 'short');
     }
 
-    focus.addEventListener(animationEnd, function() {
+    focus.addEventListener(animationEnd, function _func() {
         focus.classList.add('d-md-none', 'd-xl-none', 'd-lg-none');
+        this.removeEventListener(animationEnd, _func);
     });
 }

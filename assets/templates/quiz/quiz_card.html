@@ -1,37 +1,43 @@
 <!DOCTYPE html>
-<div class="card shadow">
+<div class="card shadow d-none">
     <div class="card-body">
         <h4  class="pb-4 qNo"></h4>
 
         <p class="text-primary font-weight-bold question"></p>
 
         <div class="custom-control custom-radio">
-            <input type="radio" id="o1" class="custom-control-input" name="" />
+            <input type="radio" id="o1" class="custom-control-input" />
             <label class="custom-control-label" for="o1"></label>
         </div>
 
         <div class="custom-control custom-radio">
-            <input type="radio" id="o2" class="custom-control-input" name="" />
+            <input type="radio" id="o2" class="custom-control-input" />
             <label class="custom-control-label" for="o2"></label>
         </div>
 
         <div class="custom-control custom-radio">
-            <input type="radio" id="o3" class="custom-control-input" name="" />
+            <input type="radio" id="o3" class="custom-control-input" />
             <label class="custom-control-label" for="o3"></label>
         </div>
 
         <div class="custom-control custom-radio">
-            <input type="radio" id="o4" class="custom-control-input" name="" />
+            <input type="radio" id="o4" class="custom-control-input" />
             <label class="custom-control-label" for="o4"></label>
         </div>
     </div>
 
     <div class="card-footer">
-        <button type="button" class="btn btn-danger d-inline w-50">
-            Previous
-        </button>
-        <button type="button" class="btn btn-success d-inline w-50">
-            Next
-        </button>
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-danger btn-block">
+                    Previous
+                </button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-primary btn-block">
+                    Next
+                </button>
+            </div>
+        </div>
     </div>
 </div>

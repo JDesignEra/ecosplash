@@ -112,10 +112,10 @@ $('#fixed-action').on('shown.bs.dropdown', '#mProfileDropdown', function(e) {
     focus.forEach(function(el) {
         el.classList.add('slideInUp', 'short');
 
-        el.addEventListener(animationEnd, function() {
+        el.addEventListener(animationEnd, function _func() {
             $(el).tooltip('show');
             el.classList.remove('slideInUp', 'short');
-            el.removeEventListener(animationEnd, function() {});
+            el.removeEventListener(animationEnd, _func);
         });
     });
 });
@@ -145,7 +145,6 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
             if (uid) {
                 // Desktop Navs
                 if (doc.querySelector('nav .nav-right')) {
-                    doc.querySelector('nav .nav-right #name').innerHTML = data.name;
                     doc.querySelector('nav .nav-right .badge.count').innerHTML = data.newNotifications;
 
                     if (doc.querySelector('nav .nav-right #ecopoints')) {
