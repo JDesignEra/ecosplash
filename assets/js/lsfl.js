@@ -41,8 +41,8 @@ $('#signUpCard .card-header a[href="#organization"]').on('show.bs.tab', function
     focus.classList.add('fadeIn');
 });
 
-/* logout on click */
-addWindowOnload(function() {
+/* logout function */
+function logoutListener() {
     if (doc.querySelector('.logout')) {
         var focus = doc.querySelectorAll('.logout');
 
@@ -73,7 +73,7 @@ addWindowOnload(function() {
             }
         });
     }
-});
+}
 
 /* login function */
 function loginForm(formID) {

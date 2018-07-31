@@ -74,6 +74,9 @@ if (localStorage.getItem('accType') == 0 || sessionStorage.getItem('accType') ==
 
         focus.innerHTML = '';
         focus.appendChild(content.querySelector('#mProfileDropdown'));
+
+        logoutListener();
+        worker();
     });
 }
 else if (localStorage.getItem('accType') == 1 || sessionStorage.getItem('accType') == 1) {
@@ -99,6 +102,9 @@ else if (localStorage.getItem('accType') == 1 || sessionStorage.getItem('accType
 
         focus.innerHTML = '';
         focus.appendChild(content.querySelector('#mProfileDropdown'));
+
+        logoutListener();
+        worker();
     });
 }
 
@@ -132,7 +138,7 @@ $('#fixed-action').on('hide.bs.dropdown', '#mProfileDropdown', function(e) {
 });
 
 /* periodic worker every 30 mins */
-setTimeout(function worker() {
+function worker() {
     var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     data = new FormData();
 
@@ -167,7 +173,7 @@ setTimeout(function worker() {
             worker();
         }, 1800000);
     });
-}, 500);
+}
 
 /* footer year */
 doc.querySelector('footer .year').innerHTML = new Date().getFullYear();
@@ -433,7 +439,7 @@ function securePage(...accTypes) {
     });
 }
 
-/* javascript ajax get document */
+/* javascript GET document */
 function httpGetDoc(url, callback) {
     var httpRequest = new XMLHttpRequest();
 
@@ -450,7 +456,7 @@ function httpGetDoc(url, callback) {
     httpRequest.send(null);
 }
 
-/* javascript ajax get image */
+/* javascript GET image */
 function httpGetImage(url, callback) {
     var httpRequest = new XMLHttpRequest();
 
@@ -468,7 +474,7 @@ function httpGetImage(url, callback) {
     httpRequest.send(null);
 }
 
-/* javascript ajax post function */
+/* javascript POST function */
 function httpPost(url, params, callback) {
     var httpRequest = new XMLHttpRequest();
 
