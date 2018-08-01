@@ -80,10 +80,10 @@ sectionFocus.querySelector('form#addEventForm').onsubmit = function(e) {
         data = new FormData(formFocus);
 
     data.append('uid', uid);
-    data.append('action', 'addEventForm');
+    data.append('action', 'addEvent');
 
     httpPost('./assets/db/db.php', data, function(data) {
-        // console.log(data);  // Debugging Purpose
+        console.log(data);  // Debugging Purpose
         var focus = formFocus.querySelectorAll('.form-label-group');
 
         focus.forEach(function(el) {

@@ -166,7 +166,7 @@ focus.ondrop = function(e) {
         data.append('file', file);
 
         httpPost('./assets/db/db.php', data, function(data) {
-            // console.log(data);  // Debugging Purpose
+            console.log(data);  // Debugging Purpose
             doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
             doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
 

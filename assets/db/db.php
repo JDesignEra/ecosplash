@@ -377,7 +377,7 @@ switch ($action) {
             if (empty($errors)) {
                 $result = $mysqli -> query("SELECT uid FROM users WHERE uid = '$uid'");
                 if ($result -> num_rows == 1) {
-                    $target = './assets/img/uploads/'.$uid.'.png';
+                    $target = $_SERVER['DOCUMENT_ROOT'].'assets/img/uploads/'.$uid.'.png';
                     if (exif_imagetype($file['tmp_name']) != IMAGETYPE_PNG) {
                         if (!imagepng(imagecreatefromstring(file_get_contents($file['tmp_name'])), $target)) {
                             $errors['file'] = 'Image upload fail, please refresh the page and try again.';
@@ -567,13 +567,19 @@ switch ($action) {
         if (empty($errors)) {
             $result = $mysqli -> query("SELECT * FROM event_history WHERE uid = '$uid' AND eid = '$eid'");
             if ($result -> num_rows == 1) {
-                $result = $result -> fetch_array(MYSQLI_ASSOC);
-                $data['eid'] = $result['eid'];
-                $data['event'] = $result['event'];
-                $data['date'] = date_format(date_create($result['dateTime']), 'd/m/Y');
-                $data['time'] = date_format(date_create($result['dateTime']), 'h:i a');
-                $data['ecoPoints'] = $result['ecoPoints'];
-                $data['status'] = ($result['status'] == 1 ? 'Present' : 'Absent');
+                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                $data['eid'] = $row['eid'];
+                $data['event'] = $row['event'];
+                $data['joinDate'] = date_format(date_create($row['dateTime']), 'd/m/Y');
+                $data['ecoPoints'] = $row['ecoPoints'];
+                $data['status'] = ($row['status'] == 1 ? 'Present' : 'Absent');
+
+                if ($result = $mysqli -> query("SELECT dateTime FROM events WHERE eid = '$eid'")) {
+                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                    $data['date'] = date_format(date_create($row['dateTime']), 'd/m/Y');
+                    $data['time'] = date_format(date_create($row['dateTime']), 'h:i a');
+                }
             }
             else {
                 $errors['eid'] = 'Event history ID does not exist or has more then one!';
@@ -890,15 +896,27 @@ switch ($action) {
             $errors['questions'] = 'Question is required!';
         }
         else {
-            //range(0, 3)
-            if (count($question) != count($answers)) {
-                
-            }
-
-            if ($i = array_filter($questions, function($i) { return $i == null; })) {
-                foreach ($i as $key => $value) {
+            if ($arr = array_filter($questions, function($i) { return $i == null; })) {
+                foreach ($arr as $key => $value) {
                     $errors['questions'][$key] = 'Question is required!';
                 }
+            }
+        }
+
+        if (empty($options)) {
+            $errors['options'] = 'Choice\'s text is required!';
+        }
+        else {
+            foreach ($options as $i => $v) {
+                if ($arr = array_filter($options[$i], function($i) { return $i == null; })) {
+                    foreach ($arr as $key => $value) {
+                        $errors['options'][$i][$key] = 'Choice\'s text is required!';
+                    }
+                }
+            }
+
+            if (empty($errors)) {
+                // code...
             }
         }
 
@@ -906,8 +924,17 @@ switch ($action) {
             $errors['answers'] = 'Answer is required!';
         }
 
-        if (empty($options)) {
-            $errors['options'] = 'Choice\'s text is required!';
+        if (!empty($questions) && !empty($answers)) {
+            if ($arr = array_diff_key($questions, $answers)) {
+                foreach ($arr as $key => $value) {
+                    if (empty($value)) {
+                        $errors['answers'][$key] = 'Answer is required!';
+                    }
+                    else {
+                        $errors['questions'][$key] = 'Question is required!';
+                    }
+                }
+            }
         }
         break;
 
@@ -1390,16 +1417,16 @@ switch ($action) {
                     if ($usage > 40) {
                         $calPrices = round((40 * 1.19) * 0.01, 2);
                         $calPrices += round((($usage - 40) * 1.46) * 0.01, 2);
-                        $prices = '$'.$calPrices;
+                        $prices[$month] = '$'.$calPrices;
                     }
                     else {
-                        $prices = '$'.round(($usage * 1.19) * 1.19, 2);
+                        $prices[$month] = '$'.round(($usage * 1.19) * 1.19, 2);
                     }
 
                     $useAmounts = implode(',', $useAmounts);
                     $prices = implode(',', $prices);
 
-                    $mysqli -> query("UPDATE utilities set useAmounts = '$useAmounts', prices = '$prices' WHERE uid = '$uid' AND type = 'electric'");
+                    $mysqli -> query("UPDATE utilities set useAmounts = '$useAmounts', prices = '$prices' WHERE uid = '$uid' AND type = 'water'");
                 }
             }
             elseif ($action == 'updateAddGas') {

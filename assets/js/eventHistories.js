@@ -39,7 +39,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                     data.append('action', 'getEventHistory');
 
                     httpPost('./assets/db/db.php', data, function(data) {
-                        // console.log(data);  // Debugging Purpose
+                        console.log(data);  // Debugging Purpose
                         if (data.success) {
                             httpGetDoc('./assets/templates/event_histories/event_history.html', function(content) {
                                 var modal = doc.getElementById('view-more-modal');
