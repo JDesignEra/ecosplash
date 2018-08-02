@@ -1732,10 +1732,10 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT nid, message, nType FROM notifications WHERE uid = '$uid' LIMIT 20");
-
-            while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
-                $data['notifications'][] = $row;
+            if ($result = $mysqli -> query("SELECT nid, message, nType FROM notifications WHERE uid = '$uid' LIMIT 20")) {
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $data['notifications'][] = $row;
+                }
             }
         }
         break;
