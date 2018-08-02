@@ -184,7 +184,7 @@ sectionFocus.querySelector('form#electricForm').onsubmit = function(e) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 5000);
+                }, 4000);
             });
 
             $(modal).on('hide.bs.modal', function() {
@@ -238,7 +238,7 @@ sectionFocus.querySelector('form#waterForm').onsubmit = function(e) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 5000);
+                }, 4000);
             });
 
             $(modal).on('hide.bs.modal', function() {
@@ -292,7 +292,7 @@ sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 5000);
+                }, 4000);
             });
 
             $(modal).on('hide.bs.modal', function() {

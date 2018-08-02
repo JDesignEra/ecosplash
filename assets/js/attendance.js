@@ -70,7 +70,7 @@ if (eid) {
                                 modal.querySelector('button.btn[data-dismiss=modal]').focus();
                                 setTimeout(function () {
                                     $(modal).modal('hide');
-                                }, 5000);
+                                }, 4000);
                             });
 
                             $(modal).on('hide.bs.modal', function() {
@@ -87,7 +87,7 @@ if (eid) {
                                     modal.querySelector('button.btn[data-dismiss=modal]').focus();
                                     setTimeout(function () {
                                         $(modal).modal('hide');
-                                    }, 5000);
+                                    }, 4000);
                                 });
 
                                 $(modal).modal("show");

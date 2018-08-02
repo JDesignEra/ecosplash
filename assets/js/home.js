@@ -1,14 +1,44 @@
 'use strict'
 
 if (localStorage.getItem('accType') || sessionStorage.getItem('accType')) {
-    //<a class="btn btn-primary btn-block mt-3" href="./profile">Update Your Daily Challenges</a>
+    /* update daily challenges btn */
     var btn = doc.createElement('a');
     btn.classList.add('btn', 'btn-primary', 'btn-block', 'mt-3');
     btn.href = './profile';
     btn.innerHTML = 'Update Your Daily Challenges';
 
     doc.querySelector('#challenges .card-body').appendChild(btn);
+
+    /* carousel signup btn */
+    var carouselSignups = doc.querySelectorAll('#carousel .carousel-item a[href="./signup"]');
+    carouselSignups.forEach(function(el) {
+        el.classList.add('d-none');
+    });
 }
+
+/* today's weather */
+httpGet('http://dataservice.accuweather.com/currentconditions/v1/300597?apikey=FCF3U9Xnmk1q178auAekAaH2oFEifTEo', function(data) {
+    // console.log(data[0]);  // Debugging Purpose
+    if (data[0]) {
+        var focus = doc.querySelector('#weather #weatherContent'),
+            weatherText = doc.createElement('p'),
+            weatherImg = doc.createElement('img'),
+            weatherTemp = doc.createElement('h4');
+
+        weatherImg.src = './assets/img/weather_icons/' + data[0].WeatherIcon + '.svg';
+
+        weatherTemp.innerHTML = data[0].Temperature.Metric.Value + '&deg;' + data[0].Temperature.Metric.Unit;
+        weatherTemp.classList.add('text-center', 'text-primary');
+
+        weatherText.innerHTML = data[0].WeatherText;
+        weatherText.className = 'text-center';
+
+        focus.innerHTML = '';
+        focus.appendChild(weatherImg);
+        focus.appendChild(weatherTemp);
+        focus.appendChild(weatherText);
+    }
+});
 
 /* recent upcoming events (10 dates) */
 var data = new FormData();

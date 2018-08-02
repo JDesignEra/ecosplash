@@ -5,30 +5,6 @@ $secondary: #4db6ac !default;
 $enable-shadows: true !default;
 // $enable-gradients: true !default;
 
-// Spacers
-//$spacers: () !default;
-/*
-$spacers: map-merge((
-  0: 0,
-  1: ($spacer * .25),
-  2: ($spacer * .5),
-  3: $spacer,
-  4: ($spacer * 1.5),
-  5: ($spacer * 3)
-), $spacers);
-*/
-
-//$sizes: () !default;
-/*
-$sizes: map-merge((
-  25: 25%,
-  50: 50%,
-  75: 75%,
-  100: 100%,
-  auto: auto
-), $sizes);
-*/
-
 // Links
 $link-hover-color: darken($primary, 5%) !default;
 
@@ -41,6 +17,35 @@ $navbar-light-active-color: $primary !default;
 
 // Table
 $table-striped-order: even !default;
-$table-accent-bg: lighten(#13547a, 68%) !default;
+$table-accent-bg: lighten($primary, 68%) !default;
+
+// Dropdown
+$dropdown-link-hover-bg: lighten($primary, 68%) !default;
+
+// Spacers
+//$spacers: () !default;
+
+/*
+$spacers: map-merge((
+  0: 0,
+  1: ($spacer * .25),
+  2: ($spacer * .5),
+  3: $spacer,
+  4: ($spacer * 1.5),
+  5: ($spacer * 3)
+), $spacers);
+*/
+
+//$sizes: () !default;
+
+/*
+$sizes: map-merge((
+  25: 25%,
+  50: 50%,
+  75: 75%,
+  100: 100%,
+  auto: auto
+), $sizes);
+*/
 
 @import 'bootstrap';

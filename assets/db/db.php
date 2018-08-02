@@ -136,24 +136,6 @@ switch ($action) {
         }
         break;
 
-    case 'getAllUsers':
-        $result = $mysqli -> query("SELECT uid, name, bio, ecoPoints FROM users");
-
-        if ($result -> num_rows < 1) {
-            $errors['uid'] = 'No accounts to display!';
-        }
-
-        if (empty($errors)) {
-            $accs = [];
-            while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
-                $i = count($accs);
-                $accs[$i] = $row;
-            }
-
-            $data['users'] = $accs;
-        }
-        break;
-
     case 'fpass_1':
         $email = checkInput($_POST['email']);
 
@@ -775,7 +757,36 @@ switch ($action) {
                     $uids = implode(',', $uids);
                     $statuses = implode(',', $statuses);
 
-                    $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses' WHERE eid = '$eid'");
+                    if ($mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses' WHERE eid = '$eid'")) {
+                        if ($result = $mysqli -> query("SELECT event, dateTime, location FROM events WHERE eid = '$eid'")) {
+                            $row = $result -> fetch_array(MYSQLI_ASSOC);
+                            $event = $row['event'];
+                            $date = date_format(date_create($row['dateTime']), 'd/m/Y');
+                            $time = date_format(date_create($row['dateTime']), 'h:i a');
+                            $location = $row['location'];
+
+                            if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
+                                $row = $result -> fetch_array(MYSQLI_ASSOC);
+                                $name = $row['name'];
+
+                                if ($result = $mysqli -> query("SELECT uid_one, uid_two FROM friends WHERE status = '1' AND uid_one = '$uid' OR uid_two = '$uid'")) {
+                                    $row = $result -> fetch_array(MYSQLI_ASSOC);
+
+                                    if (($key = array_search($uid, $row)) !== false) {
+                                        unset($row[$key]);
+                                    }
+
+                                    if (!(empty($name) || empty($event) || empty($date) || empty($time))) {
+                                        $notiText = '<span class="text-primary font-weight-bold">'.$name.'</span> joined <span class="text-primary font-weight-bold">'.$event.'</span> on <span class="text-primary font-weight-bold">'.$date.'</span> at <span class="text-primary font-weight-bold">'.$time.'</span> located at <span class="text-primary font-weight-bold">'.$location.'</span>';
+
+                                        foreach ($row as $key => $value) {
+                                            $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$value', '$notiText', '5')");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 else {
                     $errors['eid'] = 'You have already joined this event';
@@ -1568,6 +1579,50 @@ switch ($action) {
         }
         break;
 
+    case 'getAllUsers':
+        $uid = checkInput($_POST['uid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT uid, name, bio, ecoPoints FROM users WHERE uid != '$uid'");
+
+            if ($result -> num_rows < 1) {
+                $errors['uid'] = 'No accounts to display!';
+            }
+            else {
+                $accs = [];
+                while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                    $cuid = $row ['uid'];
+
+                    $sql = $mysqli -> query ("SELECT uid_one, uid_two, status FROM friends WHERE uid_one = '$cuid' OR uid_two = '$cuid' AND uid_one = '$uid' OR uid_two = '$uid'");
+                    $sqlRow = $sql -> fetch_array(MYSQLI_ASSOC);
+
+                    if ($sqlRow['status'] == 0) {
+                        if ($sqlRow['uid_one'] == $uid) {
+                            $row['status'] = 'request';
+                        }
+                        else if ($sqlRow['uid_two'] == $uid) {
+                            $row['status'] = 'response';
+                        }
+                    }
+                    elseif ($sqlRow['status'] = 1) {
+                        $row['status'] = 'followed';
+                    }
+                    else {
+                        $row['status'] = 'none';
+                    }
+
+                    $accs[count($accs)] = $row;
+                }
+
+                $data['users'] = $accs;
+            }
+        }
+        break;
+
     case 'getFriends':
         $uid = checkInput($_POST['uid']);
 
@@ -1599,10 +1654,107 @@ switch ($action) {
         }
         break;
 
-    case 'followFriends':
-        // TODO
+    case 'followFriend':
+    case 'unfollowFriend':
+    case 'acceptFollowFriend':
+    case 'rejectFollowFriend':
+    case 'cancelFollowFriend':
         $uid = $_POST['uid'];
         $fuid = $_POST['fuid'];
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($fuid)) {
+            $errors['fuid'] = 'Follow user ID is missing!';
+        }
+
+        if (empty($errors)) {
+            if ($action == 'followFriend') {
+                if ($result = $mysqli -> query("INSERT INTO friends (uid_one, uid_two, status) VALUES ('$uid', '$fuid', '0')")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                        $row = $result -> fetch_array(MYSQLI_ASSOC);
+                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> have send you a follow request.';
+
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '0')");
+                    }
+                }
+            }
+            elseif ($action == 'unfollowFriend') {
+                if ($result = $mysqli -> query("DELETE FROM friends WHERE uid_one = '$uid' AND uid_two = '$fuid' OR uid_one = '$fuid' AND uid_two = '$uid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                        $row = $result -> fetch_array(MYSQLI_ASSOC);
+                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> unfollowed you.';
+
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '1')");
+                    }
+                }
+            }
+            elseif ($action == 'acceptFollowFriend') {
+                if ($result = $mysqli -> query("UPDATE friends SET status = '1' WHERE uid_one = '$fuid' AND uid_two = '$uid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                        $row = $result -> fetch_array(MYSQLI_ASSOC);
+                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> accepted your follow request.';
+
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '2')");
+                    }
+                }
+            }
+            elseif ($action == 'rejectFollowFriend') {
+                if ($result = $mysqli -> query("DELETE FROM friends WHERE uid_one = '$fuid' AND uid_two = '$uid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                        $row = $result -> fetch_array(MYSQLI_ASSOC);
+                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> reject your follow request.';
+
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '3')");
+                    }
+                }
+            }
+            elseif ($action == 'cancelFollowFriend') {
+                if ($result = $mysqli -> query("DELETE FROM friends WHERE uid_one = '$uid' AND uid_two = '$fuid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                        $row = $result -> fetch_array(MYSQLI_ASSOC);
+                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> have canceled their follow request.';
+
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '4')");
+                    }
+                }
+            }
+        }
+        break;
+
+    case 'getNotifications':
+        $uid = checkInput($_POST['uid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("SELECT nid, message, nType FROM notifications WHERE uid = '$uid' LIMIT 20");
+
+            while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
+                $data['notifications'][] = $row;
+            }
+        }
+        break;
+
+    case 'deleteNotification':
+        $uid = checkInput($_POST['uid']);
+        $nid = checkInput($_POST['nid']);
+
+        if (empty($uid)) {
+            $errors['uid'] = 'User ID is missing';
+        }
+
+        if (empty($nid)) {
+            $errors['nid'] = 'Notification ID is missing';
+        }
+
+        if (empty($errors)) {
+            $result = $mysqli -> query("DELETE FROM notifications WHERE uid = '$uid' AND nid = '$nid'");
+        }
         break;
 }
 

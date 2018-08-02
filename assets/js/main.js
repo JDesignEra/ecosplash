@@ -147,11 +147,10 @@ function worker() {
 
     httpPost('./assets/db/db.php', data, function(data) {
         // console.log(data);  // Debugging Purpose
-        var focus;
         if (uid) {
             // Desktop Navs
             if (focus = doc.querySelector('nav .nav-right .badge.count')) {
-                focus.innerHTML = data.newNotifications;
+                focus.innerHTML = 0;
             }
 
             if (focus = doc.querySelector('nav .nav-right #ecopoints')) {
@@ -164,7 +163,7 @@ function worker() {
             }
 
             if (focus = doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications')) {
-                focus.setAttribute('data-original-title', 'Notifications (' + data.newNotifications + ')');
+                focus.setAttribute('data-original-title', 'Notifications (0)');
             }
         }
 
@@ -175,6 +174,63 @@ function worker() {
         setTimeout(function () {
             worker();
         }, 1800000);
+    });
+
+    data = new FormData();
+    data.append('uid', (uid ? uid : ''));
+    data.append('action', 'getNotifications');
+
+    /* Notfication type: 0 = Follow Request, 1 = Unfollowed, 2 = Accept Follow Request, 3 = Reject Follow Request, 4 = Canceled Follow Request, 5 = Friends Joined Event */
+    httpPost('./assets/db/db.php', data, function(data) {
+        // console.log(data);  // Debugging Prupose
+
+        if (data.notifications) {
+            if (focus = doc.querySelector('#notificationDropdown .noti-content')) {
+                focus.innerHTML = '';
+
+                var badges = doc.querySelectorAll('.notifications-count');
+                badges.forEach(function(el) {
+                    if (el.getAttribute('data-title')) {
+                        el.setAttribute('data-title', data.notifications.length)
+                    }
+                    else {
+                        el.innerHTML = data.notifications.length;
+                    }
+                });
+
+                for (var i = 0; i < data.notifications.length; i++) {
+                    var notiNode = doc.createElement('a');
+                    notiNode.className = 'dropdown-item';
+                    notiNode.setAttribute('data-id', data.notifications[i].nid);
+                    notiNode.innerHTML = data.notifications[i].message;
+
+                    if (data.notifications[i].nType >= 0 && data.notifications[i].nType <= 4) {
+                        notiNode.href = './friends';
+                    }
+                    else if (data.notifications[i].nType == 5) {
+                        notiNode.href = './events';
+                    }
+
+                    /* notification link onclick */
+                    notiNode.onclick = function _onclick(e) {
+                        e.preventDefault();
+
+                        var aFocus = this;
+                        data = new FormData();
+                        data.append('uid', (uid ? uid : ''));
+                        data.append('nid', this.getAttribute('data-id'));
+                        data.append('action', 'deleteNotification');
+
+                        httpPost('./assets/db/db.php', data, function(data) {
+                            // console.log(data);  // Debugging Purpose
+                            window.location = aFocus.href;
+                        });
+                    }
+
+                    focus.appendChild(notiNode);
+                }
+            }
+        }
     });
 }
 
@@ -390,7 +446,7 @@ function securePage(...accTypes) {
     });
 }
 
-/* javascript GET document */
+/* GET document */
 function httpGetDoc(url, callback) {
     var httpRequest = new XMLHttpRequest();
 
@@ -407,7 +463,7 @@ function httpGetDoc(url, callback) {
     httpRequest.send(null);
 }
 
-/* javascript GET image */
+/* GET image */
 function httpGetImage(url, callback) {
     var httpRequest = new XMLHttpRequest();
 
@@ -425,7 +481,21 @@ function httpGetImage(url, callback) {
     httpRequest.send(null);
 }
 
-/* javascript POST function */
+/* GET function */
+function httpGet(url, callback) {
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.open('GET', url, true);
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            data = JSON.parse(httpRequest.responseText);
+            callback(data);
+        }
+    };
+    httpRequest.send(null);
+}
+
+/* POST function */
 function httpPost(url, params, callback) {
     var httpRequest = new XMLHttpRequest();
 

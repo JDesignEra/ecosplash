@@ -73,7 +73,7 @@ doc.querySelector('form#editProfileForm').onsubmit = function(e) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 5000);
+                }, 4000);
             });
 
             $(modal).on('hide.bs.modal', function() {
@@ -181,7 +181,7 @@ focus.ondrop = function(e) {
                     modal.querySelector('.modal-footer button[data-dismiss=modal]').focus();
                     setTimeout(function () {
                         $(modal).modal('hide');
-                    }, 5000);
+                    }, 4000);
                 });
 
                 $(modal).on('hide.bs.modal', function() {
@@ -235,7 +235,7 @@ doc.querySelector('#uploadPhotoModal #uploadPhoto input[name=upload]').onchange 
                     modal.querySelector('.modal-footer button[data-dismiss=modal]').focus();
                     setTimeout(function () {
                         $(modal).modal('hide');
-                    }, 5000);
+                    }, 4000);
                 });
 
                 $(modal).on('hide.bs.modal', function() {

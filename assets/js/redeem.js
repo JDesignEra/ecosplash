@@ -114,7 +114,7 @@ sectionFocus.querySelector('form#redeemForm').onsubmit = function(e) {
 
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 5000);
+                }, 4000);
             });
 
             $(modal).on('hide.bs.modal', function() {
