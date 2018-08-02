@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType'));
 
@@ -64,7 +64,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                                             modal.querySelector('button.btn[data-dismiss=modal]').focus();
                                             setTimeout(function () {
                                                 $(modal).modal('hide');
-                                            }, 2500);
+                                            }, 5000);
                                         });
 
                                         $(modal).on('hide.bs.modal', function() {

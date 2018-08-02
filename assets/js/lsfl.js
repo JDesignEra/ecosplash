@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 /* invoke forms onsubmit */
 if (doc.querySelector('form#loginForm')) {
     loginForm('loginForm');
@@ -62,7 +62,7 @@ function logoutListener() {
                     doc.querySelector('#logoutModal button.btn[data-dismiss=modal]').focus();
                     setTimeout(function () {
                         $('#logoutModal').modal('hide');
-                    }, 2500);
+                    }, 5000);
                 });
 
                 $('#logoutModal').on('hide.bs.modal', function() {
@@ -116,7 +116,7 @@ function loginForm(formID) {
                     modal.querySelector('button.btn[data-dismiss=modal]').focus();
                     setTimeout(function () {
                         $(modal).modal('hide');
-                    }, 2500);
+                    }, 5000);
                 });
 
                 $(modal).on('hide.bs.modal', function() {
@@ -179,7 +179,7 @@ function signupForm(formID) {
 
                         setTimeout(function () {
                             $(modal).modal('hide');
-                        }, 2500);
+                        }, 5000);
                     });
 
                     $(modal).on('hide.bs.modal', function() {
@@ -307,7 +307,7 @@ function forgotPasswordForm(formID) {
                             doc.querySelector('#fpassModal button.btn[data-dismiss=modal]').focus();
                             setTimeout(function () {
                                 $(modal).modal('hide');
-                            }, 2500);
+                            }, 5000);
                         });
 
                         $(modal).on('hide.bs.modal', function() {

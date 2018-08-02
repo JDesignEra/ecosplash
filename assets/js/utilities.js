@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 securePage(0, 1);
 
 var sectionFocus = doc.querySelector('section#utilities'),
@@ -184,7 +184,7 @@ sectionFocus.querySelector('form#electricForm').onsubmit = function(e) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 2500);
+                }, 5000);
             });
 
             $(modal).on('hide.bs.modal', function() {
@@ -238,7 +238,7 @@ sectionFocus.querySelector('form#waterForm').onsubmit = function(e) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 2500);
+                }, 5000);
             });
 
             $(modal).on('hide.bs.modal', function() {
@@ -292,7 +292,7 @@ sectionFocus.querySelector('form#gasForm').onsubmit = function(e) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 2500);
+                }, 5000);
             });
 
             $(modal).on('hide.bs.modal', function() {

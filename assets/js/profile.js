@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 securePage(0, 1);
 
 document.title = 'EcoSplash \u00B7 ' + (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
@@ -232,7 +232,7 @@ if (accType) {
 
                             setTimeout(function () {
                                 $(modal).modal('hide');
-                            }, 2500);
+                            }, 5000);
                         });
 
                         $(modal).on('hide.bs.modal', function() {

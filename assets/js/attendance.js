@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 securePage(1);
 
 /* populate attendance data */
@@ -70,7 +70,7 @@ if (eid) {
                                 modal.querySelector('button.btn[data-dismiss=modal]').focus();
                                 setTimeout(function () {
                                     $(modal).modal('hide');
-                                }, 2500);
+                                }, 5000);
                             });
 
                             $(modal).on('hide.bs.modal', function() {
@@ -87,7 +87,7 @@ if (eid) {
                                     modal.querySelector('button.btn[data-dismiss=modal]').focus();
                                     setTimeout(function () {
                                         $(modal).modal('hide');
-                                    }, 2500);
+                                    }, 5000);
                                 });
 
                                 $(modal).modal("show");

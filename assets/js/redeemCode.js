@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 securePage(0);
 
 var sectionFocus = doc.querySelector('section#redeemCode'),
@@ -40,7 +40,7 @@ function postRedeemCode(data) {
             $(modal).on('shown.bs.modal', function() {
                 setTimeout(function () {
                     $(modal).modal('hide');
-                }, 2500);
+                }, 5000);
             });
 
             $(modal).on('hide.bs.modal', function() {

@@ -19,7 +19,7 @@
                     <div class="formQset">
                         <h5 class="pb-2 pt-4">Question 1</h5>
 
-                        <div id="question" class="form-label-group">
+                        <div id="question" class="form-label-group question">
                             <input id="q-question" class="form-control" type="text" maxlength="100" placeholder="Question" name="questions[]" required />
                             <label for="q-question">Question</label>
                             <div class="feedback invalid-feedback fadeIn"></div>
@@ -35,7 +35,7 @@
                                 </div>
                             </div>
 
-                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <input type="text" class="form-control option" placeholder="Choice's Text" name="options[0][]" />
                             <div class="feedback invalid-feedback fadeIn"></div>
                         </div>
 
@@ -49,7 +49,7 @@
                                 </div>
                             </div>
 
-                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <input type="text" class="form-control option" placeholder="Choice's Text" name="options[0][]" />
                             <div class="feedback invalid-feedback fadeIn"></div>
                         </div>
 
@@ -63,7 +63,7 @@
                                 </div>
                             </div>
 
-                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <input type="text" class="form-control option" placeholder="Choice's Text" name="options[0][]" />
                             <div class="feedback invalid-feedback fadeIn"></div>
                         </div>
 
@@ -77,7 +77,7 @@
                                 </div>
                             </div>
 
-                            <input type="text" class="form-control" placeholder="Choice's Text" name="options[0][]" />
+                            <input type="text" class="form-control option" placeholder="Choice's Text" name="options[0][]" />
                             <div class="feedback invalid-feedback fadeIn"></div>
                         </div>
 
@@ -126,6 +126,32 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
                     Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="formSuccessModal" class="modal pulse" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    New Quiz Added
+                </h5>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="far fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                You have successfully published a new quiz.
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger btn-block" data-dismiss="modal">
+                    Dismiss
                 </button>
             </div>
         </div>

@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 
 var sectionFocus = doc.querySelector('section#quiz'),
     accType = (localStorage.getItem('accType') ? localStorage.getItem('accType') : sessionStorage.getItem('accType')),

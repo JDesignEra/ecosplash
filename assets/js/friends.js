@@ -1,5 +1,5 @@
-'use strict';
-// Status, 0 = Pending Request, 1 = Friends
+"user strict";
+// Status: 0 = Pending Request, 1 = Friends
 
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid'));
 
@@ -113,7 +113,7 @@ addWindowOnload(function() {
     data.append('action', 'getAllUsers');
 
     httpPost('./assets/db/db.php', data, function(data) {
-        // console.log(data);  // Debugging Purpose
+        console.log(data);  // Debugging Purpose
 
         if (data.success) {
             doc.querySelector('#all').innerHTML = '';
@@ -125,7 +125,8 @@ addWindowOnload(function() {
                     var col = content.getElementsByClassName('card')[0].cloneNode(true),
                         btnFocus = col.querySelector('button');
 
-                    col.id = uv.uid;
+                    btnFocus.setAttribute('data-id', uv.uid);
+
                     col.querySelector('h5.name').innerHTML = uv.name;
                     col.querySelector('h5.ecopoints').innerHTML = uv.ecoPoints;
 
@@ -145,8 +146,12 @@ addWindowOnload(function() {
                         }
                     }
                     else {
-                        btnFocus.classList.add('btn-success', 'follow');
+                        btnFocus.classList.add('btn-success');
                         btnFocus.innerHTML = 'Follow'
+
+                        btnFocus.onclick = function(e) {
+                            var fuid = this.getAttribute('data-id');
+                        }
                     }
 
                     if (ui % 3 == 0) {

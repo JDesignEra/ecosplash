@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 securePage(1);
 
 var uid = uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
@@ -83,7 +83,7 @@ sectionFocus.querySelector('form#addEventForm').onsubmit = function(e) {
     data.append('action', 'addEvent');
 
     httpPost('./assets/db/db.php', data, function(data) {
-        console.log(data);  // Debugging Purpose
+        // console.log(data);  // Debugging Purpose
         var focus = formFocus.querySelectorAll('.form-label-group');
 
         focus.forEach(function(el) {
@@ -91,7 +91,18 @@ sectionFocus.querySelector('form#addEventForm').onsubmit = function(e) {
         });
 
         if (data.success) {
-            window.location = './events_list';
+            var modal = doc.getElementById('formSuccessModal');
+            $(modal).on('shown.bs.modal', function() {
+                setTimeout(function () {
+                    $(modal).modal('hide');
+                }, 5000);
+            });
+
+            $(modal).on('hide.bs.modal', function() {
+                location.href = './events_list';
+            });
+
+            $(modal).modal('show');
         }
         else if (data.errors) {
             focus = formFocus.querySelector('#date.form-label-group');

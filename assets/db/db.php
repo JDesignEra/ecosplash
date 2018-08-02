@@ -882,14 +882,18 @@ switch ($action) {
         break;
 
     case 'addQuiz':
-        // TODO
         $uid = checkInput($_POST['uid']);
+        $name = checkInput($_POST['quiz']);
         $questions = (isset($_POST['questions']) ? $_POST['questions'] : '');
         $answers = (isset($_POST['answers']) ? $_POST['answers'] : '');
         $options = (isset($_POST['options']) ? $_POST['options'] : '');
 
         if (empty($uid)) {
             $errors['uid'] = 'User ID is missing!';
+        }
+
+        if (empty($name)) {
+            $errors['quiz'] = 'Quiz name is required!';
         }
 
         if (empty($questions)) {
@@ -913,10 +917,12 @@ switch ($action) {
                         $errors['options'][$i][$key] = 'Choice\'s text is required!';
                     }
                 }
-            }
 
-            if (empty($errors)) {
-                // code...
+                foreach ($arr as $key => $value) {
+                    if (strpos($value, '|') !== false) {
+                        $errors['options'][$i][$key] = 'Choice\'s text does not allowed "|" character.';
+                    }
+                }
             }
         }
 
@@ -925,16 +931,37 @@ switch ($action) {
         }
 
         if (!empty($questions) && !empty($answers)) {
+            foreach ($questions as $key => $value) {
+                if (strpos($value, '|') !== false) {
+                    $errors['questions'][$key] = 'Question does not allowed "|" character.';
+                }
+            }
+
+            foreach ($answers as $key => $value) {
+                if (strpos($value, '|') !== false) {
+                    $errors['answers'][$key] = 'Answer does not allowed "|" character.';
+                }
+            }
+
             if ($arr = array_diff_key($questions, $answers)) {
                 foreach ($arr as $key => $value) {
                     if (empty($value)) {
-                        $errors['answers'][$key] = 'Answer is required!';
+                        $errors['questions'][$key] = 'Question is required!';
                     }
                     else {
-                        $errors['questions'][$key] = 'Question is required!';
+                        $errors['answers'][$key] = 'Answer is required!';
                     }
                 }
             }
+        }
+
+        if (empty($errors)) {
+            $ecoPoints = count($questions) * 2;
+            $questions = implode('|', $questions);
+            $options = implode('|', array_reduce($options, 'array_merge', array()));
+            $answers = implode(',', $answers);
+
+            $result = $mysqli -> query("INSERT INTO quizzes (uid, name, questions, options, answers, ecoPoints) VALUES ('$uid', '$name', '$questions', '$options', '$answers', '$ecoPoints')");
         }
         break;
 
@@ -1570,6 +1597,12 @@ switch ($action) {
                 $data['friends'] = $friends;
             }
         }
+        break;
+
+    case 'followFriends':
+        // TODO
+        $uid = $_POST['uid'];
+        $fuid = $_POST['fuid'];
         break;
 }
 

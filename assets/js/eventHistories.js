@@ -1,4 +1,4 @@
-'use strict';
+"user strict";
 securePage(0);
 
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
