@@ -776,13 +776,13 @@ switch ($action) {
                                         if (($key = array_search($uid, $row)) !== false) {
                                             unset($row[$key]);
                                         }
-                                    }
 
-                                    if (!(empty($name) || empty($event) || empty($date) || empty($time))) {
-                                        $notiText = '<span class="text-primary font-weight-bold">'.$name.'</span> joined <span class="text-primary font-weight-bold">'.$event.'</span> on <span class="text-primary font-weight-bold">'.$date.'</span> at <span class="text-primary font-weight-bold">'.$time.'</span> located at <span class="text-primary font-weight-bold">'.$location.'</span>';
+                                        if (!(empty($name) || empty($event) || empty($date) || empty($time))) {
+                                            $notiText = '<span class="text-primary font-weight-bold">'.$name.'</span> joined <span class="text-primary font-weight-bold">'.$event.'</span> on <span class="text-primary font-weight-bold">'.$date.'</span> at <span class="text-primary font-weight-bold">'.$time.'</span> located at <span class="text-primary font-weight-bold">'.$location.'</span>';
 
-                                        foreach ($row as $key => $value) {
-                                            $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$value', '$notiText', '5')");
+                                            foreach ($row as $key => $value) {
+                                                $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$value', '$notiText', '5')");
+                                            }
                                         }
                                     }
                                 }

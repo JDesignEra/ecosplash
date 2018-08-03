@@ -247,7 +247,7 @@ addWindowOnload(function() {
 });
 
 /* mobile lanscape / portrait fab tooltip fix */
-if (window.outerHeight < 565) {
+if (document.documentElement.clientHeight < 565) {
     fabTooltip_mobileLandscape();
 }
 else {
@@ -255,7 +255,7 @@ else {
 }
 
 addWindowOnResize(function() {
-    if (window.outerHeight < 565) {
+    if (document.documentElement.clientHeight < 565) {
         fabTooltip_mobileLandscape();
         $('[toggle-tooltip=fab-tooltip]').tooltip('hide');
 
