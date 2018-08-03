@@ -165,7 +165,7 @@ sectionFocus.querySelector('form#addQuizForm').onsubmit = function(e) {
             });
 
             $(modal).on('hide.bs.modal', function() {
-                location.href = './events_list';
+                location.href = './quiz_list';
             });
 
             $(modal).modal('show');
