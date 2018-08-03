@@ -772,8 +772,10 @@ switch ($action) {
                                 if ($result = $mysqli -> query("SELECT uid_one, uid_two FROM friends WHERE status = '1' AND uid_one = '$uid' OR uid_two = '$uid'")) {
                                     $row = $result -> fetch_array(MYSQLI_ASSOC);
 
-                                    if (($key = array_search($uid, $row)) !== false) {
-                                        unset($row[$key]);
+                                    if ($row) {
+                                        if (($key = array_search($uid, $row)) !== false) {
+                                            unset($row[$key]);
+                                        }
                                     }
 
                                     if (!(empty($name) || empty($event) || empty($date) || empty($time))) {
