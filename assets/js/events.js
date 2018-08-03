@@ -68,7 +68,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                                         });
 
                                         $(modal).on('hide.bs.modal', function() {
-                                            location.href = './events';
+                                            window.location = './events';
                                         });
 
                                         $(modal).modal("show");

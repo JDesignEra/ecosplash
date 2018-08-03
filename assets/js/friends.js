@@ -46,6 +46,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                             friendsCount++;
 
                             var friendsCol = content.getElementsByClassName('card')[0].cloneNode(true);
+                            friendsCol.setAttribute('data-name', data.friends.name[fi]);
                             friendsCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
                             friendsCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
 
@@ -77,6 +78,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                             requestCount++;
 
                             var requestCol = content.getElementsByClassName('card')[0].cloneNode(true);
+                            requestCol.setAttribute('data-name', data.friends.name[fi]);
                             requestCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
                             requestCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
 
@@ -138,6 +140,7 @@ addWindowOnload(function() {
 
                     btnFocus.setAttribute('data-id', uv.uid);
 
+                    col.setAttribute('data-name', uv.name);
                     col.querySelector('h5.name').innerHTML = uv.name;
                     col.querySelector('h5.ecopoints').innerHTML = uv.ecoPoints;
                     col.querySelector('p.bio').innerHTML = uv.bio;
@@ -224,4 +227,18 @@ function friendBtnOnClick(btnTarget, action, modalHeader, modalBody) {
             }
         });
     }
+}
+
+/* search btn */
+doc.querySelector('button#search').onclick = function() {
+    var cardsFocus = doc.querySelectorAll('.tab-content .card'),
+        search = doc.querySelector('input#search').value;
+
+    cardsFocus.forEach(function(el) {
+        var name = el.getAttribute('data-name');
+
+        if (name.indexOf(search) === -1) {
+            el.classList.add('d-none');
+        }
+    });
 }
