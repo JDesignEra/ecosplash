@@ -761,9 +761,12 @@ switch ($action) {
                         if ($result = $mysqli -> query("SELECT event, dateTime, location FROM events WHERE eid = '$eid'")) {
                             $row = $result -> fetch_array(MYSQLI_ASSOC);
                             $event = $row['event'];
-                            $date = date_format(date_create($row['dateTime']), 'd/m/Y');
-                            $time = date_format(date_create($row['dateTime']), 'h:i a');
+                            $dateTime = $row['dateTime'];
+                            $date = date_format(date_create($dateTime), 'd/m/Y');
+                            $time = date_format(date_create($dateTime), 'h:i a');
                             $location = $row['location'];
+
+                            $mysqli -> query("INSERT INTO event_history (uid, event, dateTime, ecoPoints, status) VALUES ('$uid', '$event', '$dateTime', '100', '0')");
 
                             if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
                                 $row = $result -> fetch_array(MYSQLI_ASSOC);
@@ -823,10 +826,7 @@ switch ($action) {
             if ($result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid = '$eid'")) {
                 $row = $result -> fetch_array(MYSQLI_ASSOC);
 
-                if (empty($row['uids'])) {
-                    $errors['attendances'] = 'Nothing to list';
-                }
-                else {
+                if (!empty($row['uids'])) {
                     $uids = explode(',', $row['uids']);
                     $status = explode(',', $row['statuses']);
 
@@ -1001,26 +1001,28 @@ switch ($action) {
                 $eid = $row['eid'];
                 $awardPoints = $row['ecoPoints'];
 
-                $result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid = '$eid'");
+                if ($result = $mysqli -> query("SELECT uids, statuses FROM events_attendance WHERE eid = '$eid'")) {
+                    if ($result -> num_rows > 0) {
+                        $row = $result -> fetch_array(MYSQLI_ASSOC);
+                        $uids = explode(',', $row['uids']);
+                        $statuses = explode(',', $row['statuses']);
+                        // TODO
+                        $i = array_search($uid, $uids);
+                        if ($i !== false) {
+                            if ($statuses[$i] == 0) {
+                                $statuses[$i] = 1;
+                                $uids = implode(',', $uids);
+                                $statuses = implode(',', $statuses);
 
-                if ($result -> num_rows > 0) {
-                    $row = $result -> fetch_array(MYSQLI_ASSOC);
-                    $uids = explode(',', $row['uids']);
-                    $statuses = explode(',', $row['statuses']);
-
-                    $i = array_search($uid, $uids);
-                    if ($i !== false) {
-                        if ($statuses[$i] == 0) {
-                            $statuses[$i] = 1;
-                            $uids = implode(',', $uids);
-                            $statuses = implode(',', $statuses);
-
-                            $result = $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses'");
-
-                            $result = $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints + '$awardPoints', ecoPointsMonth = ecoPointsMonth + '$awardPoints' WHERE uid = '$uid'");
+                                $mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses'");
+                                $mysqli -> query("UPDATE users SET ecoPoints = ecoPoints + '$awardPoints', ecoPointsMonth = ecoPointsMonth + '$awardPoints' WHERE uid = '$uid'");
+                            }
+                            else {
+                                $errors['code'] = 'EcoPoints have already been redeemed for this event.';
+                            }
                         }
                         else {
-                            $errors['code'] = 'EcoPoints have already been redeemed for this event.';
+                            $errors['code'] = 'You did not joined this event.';
                         }
                     }
                 }

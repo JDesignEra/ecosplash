@@ -8,15 +8,13 @@ var sectionFocus = doc.querySelector('section#quiz'),
 var data = new FormData();
 data.append('action', 'getTodayQuiz');
 httpPost('./assets/db/db.php', data, function(data) {
-    // console.log(data);
-
+    // console.log(data);  // Debugging Purpose
     if (data.success) {
         sectionFocus.querySelector('#uName').innerHTML = data.quiz.uName;
         sectionFocus.querySelector('#quizName').innerHTML = data.quiz.name;
+        sectionFocus.querySelector('#description').innerHTML = 'This quiz has <span class="text-primary font-weight-bold">' + data.quiz.questions.length + '</span> question and each correct question will award you with <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints / data.quiz.questions.length + '</span> EcoPoints. And you are able to earn up to a maximum of <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints + '</span> EcoPoints.';
 
         if (uid) {
-            sectionFocus.querySelector('#description').innerHTML = 'This quiz has <span class="text-primary font-weight-bold">' + data.quiz.questions.length + '</span> question and each correct question will award you with <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints / data.quiz.questions.length + '</span> EcoPoints. And you are able to earn up to a maximum of <span class="text-primary font-weight-bold">' + data.quiz.ecoPoints + '</span> EcoPoints.';
-
             /* start quiz btn */
             var cardFooterFocus = sectionFocus.querySelector('.card-footer'),
                 formData = new FormData();

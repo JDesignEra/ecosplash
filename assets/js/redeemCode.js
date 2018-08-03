@@ -31,8 +31,7 @@ function postRedeemCode(data) {
             focus = formFocus.querySelector('#code'),
             feedback = focus.querySelector('.feedback');
 
-        focus.classList.remove('invalid', 'valid');
-        feedback.classList.add('d-none');
+        focus.classList.remove('is-invalid');
 
         if (data.success) {
             var modal = doc.getElementById('redeemSuccessModal');
@@ -51,10 +50,8 @@ function postRedeemCode(data) {
         }
         else if (data.errors) {
             if (data.errors.code) {
-                focus.classList.add('invalid');
-
+                focus.querySelector('input[type=text]').classList.add('is-invalid');
                 feedback.innerHTML = data.errors.code;
-                feedback.classList.remove('d-none');
             }
         }
     });
