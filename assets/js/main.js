@@ -160,6 +160,7 @@ function worker() {
             // Mobile navs
             if (focus = doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .ecopoints')) {
                 focus.setAttribute('data-original-title', data.ecoPoints + ' EcoPoints');
+                focus.setAttribute('title', data.ecoPoints + ' EcoPoints');
             }
 
             if (focus = doc.querySelector('#fixed-action #mProfileDropdown .dropdown-menu .notifications')) {
@@ -247,7 +248,7 @@ addWindowOnload(function() {
 });
 
 /* mobile lanscape / portrait fab tooltip fix */
-if (document.documentElement.clientHeight < 565) {
+if (window.innerHeight < 565) {
     fabTooltip_mobileLandscape();
 }
 else {
@@ -255,7 +256,7 @@ else {
 }
 
 addWindowOnResize(function() {
-    if (document.documentElement.clientHeight < 565) {
+    if (window.innerHeight < 565) {
         fabTooltip_mobileLandscape();
         $('[toggle-tooltip=fab-tooltip]').tooltip('hide');
 
