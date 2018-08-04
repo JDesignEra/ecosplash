@@ -30,11 +30,12 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                     td[0].innerHTML = ev.event;
                     td[1].innerHTML = ev.location;
-                    td[2].innerHTML = ev.time;
-                    td[3].innerHTML = ev.redeemCode;
+                    td[2].innerHTML = ev.postal;
+                    td[3].innerHTML = ev.time;
+                    td[4].innerHTML = ev.redeemCode;
 
                     /* distribute btn */
-                    var btnFocus = td[4].querySelector('button');
+                    var btnFocus = td[5].querySelector('button');
                     btnFocus.setAttribute('data-id', ev.eid);
 
                     btnFocus.onclick = function() {
@@ -83,7 +84,7 @@ sectionFocus.querySelector('form#addEventForm').onsubmit = function(e) {
     data.append('action', 'addEvent');
 
     httpPost('./assets/db/db.php', data, function(data) {
-        // console.log(data);  // Debugging Purpose
+         console.log(data);  // Debugging Purpose
         var focus = formFocus.querySelectorAll('.form-label-group');
 
         focus.forEach(function(el) {
@@ -127,6 +128,15 @@ sectionFocus.querySelector('form#addEventForm').onsubmit = function(e) {
             if (data.errors.location) {
                 focus.querySelector('input').classList.add('is-invalid');
                 focus.querySelector('.feedback').innerHTML = data.errors.location;
+            }
+            else {
+                focus.querySelector('input').classList.add('is-valid');
+            }
+
+            focus = formFocus.querySelector('#postal.form-label-group');
+            if (data.errors.postal) {
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.postal;
             }
             else {
                 focus.querySelector('input').classList.add('is-valid');

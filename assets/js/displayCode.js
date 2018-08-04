@@ -17,7 +17,6 @@ addWindowOnload(function() {
 
     httpPost('./assets/db/db.php', data, function(data) {
         // console.log(data);  // Debugging Purpose
-
         doc.querySelector('h1').innerHTML = data.eventCode.redeemCode;
         doc.querySelector('img').src = 'https://api.qrserver.com/v1/create-qr-code/?data=https://' + window.location.hostname + '/redeem_code/?redeem=' + data.eventCode.redeemCode + '&size=300x300';
     });

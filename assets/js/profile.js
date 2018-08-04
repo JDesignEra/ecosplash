@@ -41,7 +41,7 @@ httpPost('./assets/db/db.php', data, function(data) {
         }
 
         httpGetImage('./assets/img/uploads/' + data.uid + '.png', function(content) {
-            console.log(content);
+            // console.log(content);
             sectionFocus.querySelector('#basicProfile.card .pic').style.backgroundImage = 'url("' + content + '")';
         });
     }
@@ -116,8 +116,10 @@ if (accType) {
                                             td[0].innerHTML = data.event;
                                             td[1].innerHTML = data.date;
                                             td[2].innerHTML = data.time;
-                                            td[3].innerHTML = data.ecoPoints;
-                                            td[4].innerHTML = data.status;
+                                            td[3].innerHTML = data.location;
+                                            td[4].innerHTML = data.postal;
+                                            td[5].innerHTML = data.ecoPoints;
+                                            td[6].innerHTML = data.status;
                                         });
 
                                         $('[tooltip-toggle=tooltip]').tooltip('hide');
@@ -311,7 +313,7 @@ if (accType) {
                                     data.append('uid', uid);
                                     data.append('qid', qid);
                                     data.append('action', 'getQuizList');
-                                    
+
                                     httpPost('./assets/db/db.php', data, function(data) {
                                         // console.log(data);  // Debugging Purpose
                                         if (data.success) {

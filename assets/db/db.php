@@ -491,6 +491,7 @@ switch ($action) {
         $uid = checkInput($_POST['uid']);
         $event = checkInput($_POST['event']);
         $location = checkInput($_POST['location']);
+        $postal = checkInput($_POST['postal']);
         $date = checkInput($_POST['date']);
         $time = checkInput($_POST['time']);
 
@@ -503,7 +504,14 @@ switch ($action) {
         }
 
         if (empty($location)) {
-            $errors['location'] = 'Lcoation is required!';
+            $errors['location'] = 'Location is required!';
+        }
+
+        if (empty($postal)) {
+            $errors['postal'] = 'Postal is required!';
+        }
+        elseif (strlen($postal) != 6) {
+            $errors['postal'] = 'Postal has to be 6 numbers!';
         }
 
         if (empty($date)) {
@@ -523,7 +531,7 @@ switch ($action) {
             }
 
             $dateTime = date_format(date_create($date.' '.$time), 'Y-m-d H:i:00');
-            $mysqli -> query("INSERT INTO events (uid, dateTime, event, location, redeemCode) VALUES ('$uid', '$dateTime', '$event', '$location', '$redeemCode')");
+            $mysqli -> query("INSERT INTO events (uid, dateTime, event, location, postal, redeemCode) VALUES ('$uid', '$dateTime', '$event', '$location', '$postal', '$redeemCode')");
 
             if ($result = $mysqli -> query("SELECT eid FROM events WHERE uid = '$uid' ORDER BY eid DESC LIMIT 1")) {
                 $row = $result -> fetch_array(MYSQLI_ASSOC);
@@ -553,6 +561,8 @@ switch ($action) {
                 $data['eid'] = $row['eid'];
                 $data['event'] = $row['event'];
                 $data['joinDate'] = date_format(date_create($row['dateTime']), 'd/m/Y');
+                $data['location'] = $row['location'];
+                $data['postal'] = $row['postal'];
                 $data['ecoPoints'] = $row['ecoPoints'];
                 $data['status'] = ($row['status'] == 1 ? 'Present' : 'Absent');
 
@@ -641,7 +651,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT eid, dateTime, event, location, redeemCode FROM events WHERE uid = '$uid' ORDER BY eid DESC");
+            $result = $mysqli -> query("SELECT eid, dateTime, event, location, postal, redeemCode FROM events WHERE uid = '$uid' ORDER BY eid DESC");
             if ($result -> num_rows > 0) {
                 $eventsList = [];
                 while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
@@ -652,6 +662,7 @@ switch ($action) {
                     $eventsList[$date][$i]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
                     $eventsList[$date][$i]['event'] = $row['event'];
                     $eventsList[$date][$i]['location'] = $row['location'];
+                    $eventsList[$date][$i]['postal'] = $row['postal'];
                     $eventsList[$date][$i]['redeemCode'] = $row['redeemCode'];
                 }
 
@@ -681,6 +692,7 @@ switch ($action) {
                 $events[$date][$index]['time'] = date_format(date_create($row['dateTime']), 'h:i a');
                 $events[$date][$index]['event'] = $row['event'];
                 $events[$date][$index]['location'] = $row['location'];
+                $events[$date][$index]['postal'] = $row['postal'];
                 $events[$date][$index]['ecoPoints'] = $row['ecoPoints'];
 
                 if ($action == 'getUpcomingEvents') {
@@ -758,15 +770,16 @@ switch ($action) {
                     $statuses = implode(',', $statuses);
 
                     if ($mysqli -> query("UPDATE events_attendance SET uids = '$uids', statuses = '$statuses' WHERE eid = '$eid'")) {
-                        if ($result = $mysqli -> query("SELECT event, dateTime, location FROM events WHERE eid = '$eid'")) {
+                        if ($result = $mysqli -> query("SELECT event, dateTime, location, postal FROM events WHERE eid = '$eid'")) {
                             $row = $result -> fetch_array(MYSQLI_ASSOC);
                             $event = $row['event'];
                             $dateTime = $row['dateTime'];
                             $date = date_format(date_create($dateTime), 'd/m/Y');
                             $time = date_format(date_create($dateTime), 'h:i a');
                             $location = $row['location'];
+                            $postal = $row['postal'];
 
-                            $mysqli -> query("INSERT INTO event_history (uid, event, dateTime, ecoPoints, status) VALUES ('$uid', '$event', '$dateTime', '100', '0')");
+                            $mysqli -> query("INSERT INTO event_history (uid, event, dateTime, location, postal, ecoPoints, status) VALUES ('$uid', '$event', '$dateTime', '$location', '$postal', '100', '0')");
 
                             if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
                                 $row = $result -> fetch_array(MYSQLI_ASSOC);
@@ -1006,7 +1019,7 @@ switch ($action) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
                         $uids = explode(',', $row['uids']);
                         $statuses = explode(',', $row['statuses']);
-                        // TODO
+
                         $i = array_search($uid, $uids);
                         if ($i !== false) {
                             if ($statuses[$i] == 0) {
@@ -1591,7 +1604,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT uid, name, bio, ecoPoints FROM users WHERE uid != '$uid'");
+            $result = $mysqli -> query("SELECT uid, name, bio, type, ecoPoints FROM users WHERE uid != '$uid'");
 
             if ($result -> num_rows < 1) {
                 $errors['uid'] = 'No accounts to display!';
@@ -1645,12 +1658,13 @@ switch ($action) {
                     $friends['rr_status'][] = ($row['uid_one'] == $uid ? 'request' : 'response');
                     $friends['status'][] = $row['status'];
 
-                    $accResult = $mysqli -> query("SELECT name, bio, ecoPoints FROM users WHERE uid = '$fid'");
+                    $accResult = $mysqli -> query("SELECT name, bio, ecoPoints, type FROM users WHERE uid = '$fid'");
                     $accResult = $accResult -> fetch_array(MYSQLI_ASSOC);
 
                     $friends['name'][] = $accResult['name'];
                     $friends['bio'][] = $accResult['bio'];
                     $friends['ecoPoints'][] = $accResult['ecoPoints'];
+                    $friends['type'][] = $accResult['type'];
                 }
 
                 $data['friends'] = $friends;
@@ -1681,7 +1695,7 @@ switch ($action) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
                         $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> have send you a follow request.';
 
-                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '0')");
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '0')");
                     }
                 }
             }
@@ -1691,7 +1705,7 @@ switch ($action) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
                         $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> unfollowed you.';
 
-                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '1')");
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '1')");
                     }
                 }
             }
@@ -1701,7 +1715,7 @@ switch ($action) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
                         $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> accepted your follow request.';
 
-                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '2')");
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '2')");
                     }
                 }
             }
@@ -1711,7 +1725,7 @@ switch ($action) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
                         $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> reject your follow request.';
 
-                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '3')");
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '3')");
                     }
                 }
             }
@@ -1721,7 +1735,7 @@ switch ($action) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
                         $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> have canceled their follow request.';
 
-                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$uid', '$notiText', '4')");
+                        $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '4')");
                     }
                 }
             }

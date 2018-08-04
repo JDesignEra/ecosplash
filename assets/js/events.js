@@ -30,7 +30,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                     var row = content.querySelector('div.row').cloneNode(true),
                         cols = row.querySelectorAll('div.column');
 
-                    cols[0].innerHTML = '<p><span class="font-weight-bold text-primary">' + data.events[date][event].event + '</span> at <span class="font-weight-bold text-primary">' + data.events[date][event].time + '</span> located at <span class="font-weight-bold text-primary">' + data.events[date][event].location + '</span></p>';
+                    cols[0].innerHTML = '<p><span class="font-weight-bold text-primary">' + data.events[date][event].event + '</span> at <span class="font-weight-bold text-primary">' + data.events[date][event].time + '</span> located at <a class="font-weight-bold text-secondary" href="./find_event/?postal=' + data.events[date][event].postal + '">' + data.events[date][event].location + '</a></p>';
 
                     var eid = data.events[date][event].eid,
                         btnFocus = cols[1].querySelector('button');

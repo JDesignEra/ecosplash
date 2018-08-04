@@ -39,7 +39,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                     data.append('action', 'getEventHistory');
 
                     httpPost('./assets/db/db.php', data, function(data) {
-                        console.log(data);  // Debugging Purpose
+                        // console.log(data);  // Debugging Purpose
                         if (data.success) {
                             httpGetDoc('./assets/templates/event_histories/event_history.html', function(content) {
                                 var modal = doc.getElementById('view-more-modal');
@@ -50,8 +50,10 @@ httpPost('./assets/db/db.php', data, function(data) {
                                 td[0].innerHTML = data.event;
                                 td[1].innerHTML = data.date;
                                 td[2].innerHTML = data.time;
-                                td[3].innerHTML = data.ecoPoints;
-                                td[4].innerHTML = data.status;
+                                td[3].innerHTML = data.location;
+                                td[4].innerHTML = data.postal;
+                                td[5].innerHTML = data.ecoPoints;
+                                td[6].innerHTML = data.status;
                             });
 
                             $('[tooltip-toggle=tooltip]').tooltip('hide');

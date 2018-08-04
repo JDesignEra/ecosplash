@@ -48,7 +48,13 @@ httpPost('./assets/db/db.php', data, function(data) {
                             var friendsCol = content.getElementsByClassName('card')[0].cloneNode(true);
                             friendsCol.setAttribute('data-name', data.friends.name[fi]);
                             friendsCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
-                            friendsCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
+
+                            if (data.friends.type[fi] == 0) {
+                                friendsCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
+                            }
+                            else {
+                                friendsCol.querySelector('#ePoints').remove();
+                            }
 
                             if (data.friends.bio[fi]) {
                                 friendsCol.querySelector('p.bio').innerHTML = data.friends.bio[fi];
@@ -80,7 +86,13 @@ httpPost('./assets/db/db.php', data, function(data) {
                             var requestCol = content.getElementsByClassName('card')[0].cloneNode(true);
                             requestCol.setAttribute('data-name', data.friends.name[fi]);
                             requestCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
-                            requestCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
+
+                            if (data.friends.type[fi] == 0) {
+                                requestCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
+                            }
+                            else {
+                                requestCol.querySelector('#ePoints').remove();
+                            }
 
                             if (data.friends.rr_status[fi] == 'request') {
                                 var btnFocus = requestCol.querySelector('button');
@@ -142,8 +154,14 @@ addWindowOnload(function() {
 
                     col.setAttribute('data-name', uv.name);
                     col.querySelector('h5.name').innerHTML = uv.name;
-                    col.querySelector('h5.ecopoints').innerHTML = uv.ecoPoints;
                     col.querySelector('p.bio').innerHTML = uv.bio;
+
+                    if (uv.type == 0) {
+                        col.querySelector('h5.ecopoints').innerHTML = uv.ecoPoints;
+                    }
+                    else {
+                        col.querySelector('#ePoints').remove();
+                    }
 
                     if (uv.status == 'request') {
                         btnFocus.classList.add('btn-danger');
