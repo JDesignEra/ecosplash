@@ -361,11 +361,15 @@ switch ($action) {
                 if ($result -> num_rows == 1) {
                     $target = $_SERVER['DOCUMENT_ROOT'].'assets/img/uploads/'.$uid.'.png';
                     if (exif_imagetype($file['tmp_name']) != IMAGETYPE_PNG) {
+                        resizeCropImg(800, 800, $file['tmp_name'], $file['tmp_name']);
+
                         if (!imagepng(imagecreatefromstring(file_get_contents($file['tmp_name'])), $target)) {
                             $errors['file'] = 'Image upload fail, please refresh the page and try again.';
                         }
                     }
                     else {
+                        resizeCropImg(800, 800, $file['tmp_name'], $file['tmp_name']);
+
                         if (!move_uploaded_file($file['tmp_name'], $target)) {
                             $errors['file'] = 'Image upload fail, please refresh the page and try again.';
                         }
@@ -1193,6 +1197,7 @@ switch ($action) {
     case 'getTodayQuiz':
         $result = $mysqli -> query("SELECT * FROM quizzes WHERE todayQuiz = 1");
         $row = $result -> fetch_array(MYSQLI_ASSOC);
+        $uid = $row['uid'];
 
         $quiz = [];
         $quiz['name'] = $row['name'];
@@ -1204,12 +1209,10 @@ switch ($action) {
             $quiz['options'][$key] = array_splice($options, 0, 4);
         }
 
-        $uid = $row['uid'];
         $result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'");
         $row = $result -> fetch_array(MYSQLI_ASSOC);
 
         $quiz['uName'] = $row['name'];
-
         $data['quiz'] = $quiz;
         break;
 
@@ -1805,6 +1808,63 @@ function randAlphaNumeric($length) {
     }
 
     return implode($code);
+}
+
+//resize and crop image by center
+function resizeCropImg ($max_width, $max_height, $source_file, $dst_dir, $quality = 80){
+    $imgsize = getimagesize($source_file);
+    $width = $imgsize[0];
+    $height = $imgsize[1];
+    $mime = $imgsize['mime'];
+
+    switch($mime){
+        case 'image/gif':
+            $image_create = "imagecreatefromgif";
+            $image = "imagegif";
+            break;
+
+        case 'image/png':
+            $image_create = "imagecreatefrompng";
+            $image = "imagepng";
+            $quality = 7;
+            break;
+
+        case 'image/jpeg':
+            $image_create = "imagecreatefromjpeg";
+            $image = "imagejpeg";
+            $quality = 80;
+            break;
+
+        default:
+            return false;
+            break;
+    }
+
+    $dst_img = imagecreatetruecolor($max_width, $max_height);
+    $src_img = $image_create($source_file);
+
+    if($image == 'imagepng'){
+        imagecolortransparent($dst_img, imagecolorallocatealpha($dst_img, 0, 0, 0, 127));
+        imagealphablending($dst_img, false);
+        imagesavealpha($dst_img, true);
+    }
+
+    $width_new = $height * $max_width / $max_height;
+    $height_new = $width * $max_height / $max_width;
+
+    if($width_new > $width) {
+        $h_point = (($height - $height_new) / 2);
+        imagecopyresampled($dst_img, $src_img, 0, 0, 0, $h_point, $max_width, $max_height, $width, $height_new);
+    }
+    else {
+        $w_point = (($width - $width_new) / 2);
+        imagecopyresampled($dst_img, $src_img, 0, 0, $w_point, 0, $max_width, $max_height, $width_new, $height);
+    }
+
+    $image($dst_img, $dst_dir, $quality);
+
+    if($dst_img)imagedestroy($dst_img);
+    if($src_img)imagedestroy($src_img);
 }
 
 function sendMail($subject, $fileURL, ...$email) {

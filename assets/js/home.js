@@ -1,5 +1,4 @@
-'use strict'
-
+"use strict";
 if (localStorage.getItem('accType') || sessionStorage.getItem('accType')) {
     /* update daily challenges btn */
     var btn = doc.createElement('a');
@@ -17,7 +16,6 @@ if (localStorage.getItem('accType') || sessionStorage.getItem('accType')) {
 }
 
 /* today's weather */
-/*
 httpGet('https://dataservice.accuweather.com/currentconditions/v1/300597?apikey=CAWQjoOpwTwnuOVCHwTaYy2lus6hFTTh', function(data) {
     // console.log(data[0]);  // Debugging Purpose
     if (data[0]) {
@@ -40,7 +38,6 @@ httpGet('https://dataservice.accuweather.com/currentconditions/v1/300597?apikey=
         focus.appendChild(weatherText);
     }
 });
-*/
 
 /* recent upcoming events (10 dates) */
 var data = new FormData();
@@ -88,7 +85,7 @@ var data = new FormData();
 data.append('action', 'getTodayQuiz');
 
 httpPost('./assets/db/db.php', data, function(data) {
-    // console.log(data);  // Debugging Purpose
+     console.log(data);  // Debugging Purpose
     var focus = doc.getElementById('todayQuiz');
     if (data.success) {
         focus.querySelector('#quizName').innerHTML = data.quiz.name;

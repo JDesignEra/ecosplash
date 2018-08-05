@@ -11,7 +11,7 @@ data.append('uid', uid);
 data.append('action', 'getFriends');
 
 httpPost('./assets/db/db.php', data, function(data) {
-     console.log(data);  // Debugging Purpose
+    // console.log(data);  // Debugging Purpose
     if (data.success) {
         if (data.friends) {
             httpGetDoc('./assets/templates/friends/friends_row.html', function(content) {
@@ -45,9 +45,14 @@ httpPost('./assets/db/db.php', data, function(data) {
                         if (data.friends.status[fi] == 1) {
                             friendsCount++;
 
-                            var friendsCol = content.getElementsByClassName('card')[0].cloneNode(true);
+                            var fid = data.friends.fid[fi],
+                            friendsCol = content.getElementsByClassName('card')[0].cloneNode(true);
                             friendsCol.setAttribute('data-name', data.friends.name[fi]);
                             friendsCol.querySelector('h5.name').innerHTML = data.friends.name[fi];
+
+                            httpGetImage('./assets/img/uploads/' + fid + '.png', function(content) {
+                                friendsCol.querySelector('img.pic').src = './assets/img/uploads/' + fid + '.png';
+                            });
 
                             if (data.friends.type[fi] == 0) {
                                 friendsCol.querySelector('h5.ecopoints').innerHTML = data.friends.ecoPoints[fi];
@@ -62,7 +67,7 @@ httpPost('./assets/db/db.php', data, function(data) {
 
                             var btnFocus = friendsCol.querySelector('button');
                             btnFocus.classList.add('btn-outline-danger');
-                            btnFocus.setAttribute('data-id', data.friends.fid[fi]);
+                            btnFocus.setAttribute('data-id', fid);
                             btnFocus.innerHTML = 'Unfollow';
 
                             /* unfollow btn onclick */
@@ -152,6 +157,10 @@ addWindowOnload(function() {
 
                     btnFocus.setAttribute('data-id', uv.uid);
 
+                    httpGetImage('./assets/img/uploads/' + uv.uid + '.png', function(content) {
+                        col.querySelector('img.pic').src = content;
+                    });
+
                     col.setAttribute('data-name', uv.name);
                     col.querySelector('h5.name').innerHTML = uv.name;
                     col.querySelector('p.bio').innerHTML = uv.bio;
@@ -208,7 +217,6 @@ addWindowOnload(function() {
                     }
 
                     if ((ui == 2 || (ui != 0 && ui % 3 == 0)) || ui == data.users.length - 1) {
-                        console.log(ui);
                         doc.getElementById('all').appendChild(row);
                     }
 

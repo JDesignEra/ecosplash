@@ -1,7 +1,7 @@
 "user strict";
 securePage(0, 1);
 
-document.title = 'EcoSplash \u00B7 ' + (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
+doc.title = 'EcoSplash \u00B7 ' + (localStorage.getItem('name') ? localStorage.getItem('name') : sessionStorage.getItem('name'));
 
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     sectionFocus = doc.querySelector('section#profile'),
@@ -70,7 +70,7 @@ if (accType) {
                 }
             });
 
-            /* get user recent event histories (max 10) */
+            /* get user recent Event History (max 10) */
             var data = new FormData();
             data.append('uid', uid)
             data.append('action', 'getRecentEventHistories');

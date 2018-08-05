@@ -4,7 +4,7 @@ securePage(0);
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
     sectionFocus = doc.querySelector('section#eventHistories');
 
-/* get user event histories */
+/* get user Event History */
 var data = new FormData();
 data.append('uid', uid)
 data.append('action', 'getEventHistories');

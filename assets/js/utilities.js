@@ -3,9 +3,9 @@ securePage(0, 1);
 
 var sectionFocus = doc.querySelector('section#utilities'),
     uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid')),
-    eChart = document.getElementById('electricChart').getContext('2d'),
-    wChart = document.getElementById('waterChart').getContext('2d'),
-    gChart = document.getElementById('gasChart').getContext('2d'),
+    eChart = doc.getElementById('electricChart').getContext('2d'),
+    wChart = doc.getElementById('waterChart').getContext('2d'),
+    gChart = doc.getElementById('gasChart').getContext('2d'),
     eData = [],
     wData = [],
     gData = [],

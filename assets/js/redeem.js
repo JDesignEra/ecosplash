@@ -1,3 +1,4 @@
+"use strict";
 if (!((localStorage.getItem('accType') || sessionStorage.getItem('accType')) && (localStorage.getItem('accType') == 0 || sessionStorage.getItem('accType') == 0))) {
     location.href = './'
 }

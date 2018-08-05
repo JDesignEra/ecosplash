@@ -174,7 +174,7 @@ function worker() {
 
         setTimeout(function () {
             worker();
-        }, 1800000);
+        }, 1800000);    // 30 mins
     });
 
     data = new FormData();
@@ -248,7 +248,7 @@ addWindowOnload(function() {
 });
 
 /* mobile lanscape / portrait fab tooltip fix */
-if (window.innerHeight < 565) {
+if (window.innerHeight < 390 || window.orientation == 90 || window.orientation == -90) {
     fabTooltip_mobileLandscape();
 }
 else {
@@ -256,7 +256,7 @@ else {
 }
 
 addWindowOnResize(function() {
-    if (window.innerHeight < 565) {
+    if (window.innerHeight < 390 || window.orientation == 90 || window.orientation == -90) {
         fabTooltip_mobileLandscape();
         $('[toggle-tooltip=fab-tooltip]').tooltip('hide');
 
@@ -277,7 +277,7 @@ addWindowOnResize(function() {
 });
 
 /* nav tooltips fix */
-$(document).on('focus', 'nav [tooltip-toggle=tooltip]', function() {
+$(doc).on('focus', 'nav [tooltip-toggle=tooltip]', function() {
     $(this).tooltip('hide');
 });
 

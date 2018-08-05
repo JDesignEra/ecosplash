@@ -346,13 +346,14 @@ main.home {
         margin: 0 0.5rem 0 0;
     }
 
-    @media (min-height: 565px) {
+    @media (min-height: 390px) {
         #fixed-action .dropdown-menu {
             width: 3.5rem;
             min-width: 3.5rem;
             background: transparent;
             border: none;
             box-shadow: none;
+            text-align: right;
         }
 
         #fixed-action .dropdown-menu .btn {
@@ -372,10 +373,11 @@ main.home {
 
 .btn.btn-fab-sm {
     border-radius: 100%;
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0.5rem;
-    font-size: 0.8rem;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.3rem;
+    font-size: 0.7rem;
+    vertical-align: middle;
 }
 
 .btn.btn-gradient {

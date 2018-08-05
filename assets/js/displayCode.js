@@ -1,3 +1,4 @@
+"use strict";
 securePage(1);
 var uid = (localStorage.getItem('uid') ? localStorage.getItem('uid') : sessionStorage.getItem('uid'));
     eid = (window.location.href.indexOf('?') != -1 ? window.location.href.split('?')[1].split('=')[1] : '');

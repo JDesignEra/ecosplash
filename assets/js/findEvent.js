@@ -112,21 +112,23 @@ else {
 }
 
 /* find event on click */
-var focus = doc.querySelector('#findEvent')
-focus.querySelector('button').onclick = function() {
-    setEventMarker(focus.querySelector('input').value);
+addWindowOnload(function() {
+    var focus = doc.querySelector('#findEvent')
+    focus.querySelector('button').onclick = function() {
+        setEventMarker(focus.querySelector('input').value);
 
-    setTimeout(function () {
-        var userLng = doc.querySelector('button#zoomMe').getAttribute('data-lng'),
-            userLat = doc.querySelector('button#zoomMe').getAttribute('data-lat'),
-            eventLng = doc.querySelector('button#zoomEvent').getAttribute('data-lng'),
-            eventLat = doc.querySelector('button#zoomEvent').getAttribute('data-lat');
+        setTimeout(function () {
+            var userLng = doc.querySelector('button#zoomMe').getAttribute('data-lng'),
+                userLat = doc.querySelector('button#zoomMe').getAttribute('data-lat'),
+                eventLng = doc.querySelector('button#zoomEvent').getAttribute('data-lng'),
+                eventLat = doc.querySelector('button#zoomEvent').getAttribute('data-lat');
 
-        if (userLng && userLat && eventLng && eventLat) {
-            drawDirection(userLng, userLat, eventLng, eventLat);
-        }
-    }, 500);
-}
+            if (userLng && userLat && eventLng && eventLat) {
+                drawDirection(userLng, userLat, eventLng, eventLat);
+            }
+        }, 500);
+    }
+});
 
 /* set event marker function */
 function setEventMarker(postal) {
