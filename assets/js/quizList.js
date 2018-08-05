@@ -171,6 +171,12 @@ sectionFocus.querySelector('form#addQuizForm').onsubmit = function(e) {
             $(modal).modal('show');
         }
         else if (data.errors) {
+            if (data.errors.quiz) {
+                var focus = formFocus.querySelector('#quiz.form-label-group');
+                focus.querySelector('input').classList.add('is-invalid');
+                focus.querySelector('.feedback').innerHTML = data.errors.quiz;
+            }
+
             if (data.errors.answers) {
                 if (typeof data.errors.answers == 'string') {
                     var focus = formFocus.querySelectorAll('input[type=radio]');

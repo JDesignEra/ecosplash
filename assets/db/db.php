@@ -114,7 +114,7 @@ switch ($action) {
                 $mysqli -> query("INSERT INTO users (name, email, password, type) VALUES ('$name', '$email', '$password', 1)");
             }
 
-            sendMail('[EcoSplash] Sign Up Successful', '../templates/email/signup.php?name='.$name.'&email='.$email.'&password='.$mailPass, $email);
+            sendMail('[EcoSplash] Sign Up Successful', '../templates/email/signup.php?name='.urlencode($name).'&email='.urlencode($email).'&password='.urlencode($mailPass), $email);
         }
         break;
 
@@ -152,7 +152,7 @@ switch ($action) {
                 $fcode = randAlphaNumeric(8);
                 $mysqli -> query("UPDATE users SET fpCode = '$fcode' WHERE email = '$email'");
 
-                sendMail('[EcoSplash] Forgot Password Code', '../templates/email/forgot_password.php?fcode='.$fcode, $email);
+                sendMail('[EcoSplash] Forgot Password Code', '../templates/email/forgot_password.php?fcode='.urlencode($fcode), $email);
             }
             else {
                 $errors['email'] = $email.' is not a registered user with us.';
@@ -231,7 +231,7 @@ switch ($action) {
                         $password = password_hash($password, PASSWORD_BCRYPT);
                         $mysqli -> query("UPDATE users SET password = '$password', fpCode = NULL WHERE email = '$email'");
 
-                        sendMail('[EcoSplash] Password Changed Successful', '../templates/email/forgot_password_success.php?email='.$email.'&password='.$mailPass, $email);
+                        sendMail('[EcoSplash] Password Changed Successful', '../templates/email/forgot_password_success.php?email='.urlencode($email).'&password='.urlencode($mailPass), $email);
                     }
                 }
             }
@@ -317,10 +317,10 @@ switch ($action) {
 
                 if ($email != $oEmail || (!empty($mailPass) && !password_verify($mailPass, $result['password']))) {
                     if ($email == $oEmail) {
-                        sendMail('[EcoSplash] Login Details Changed Successful', '../templates/email/login_details_success.php?email='.$email.'&password='.$mailPass, $email);
+                        sendMail('[EcoSplash] Login Details Changed Successful', '../templates/email/login_details_success.php?email='.urlencode($email).'&password='.urlencode($mailPass), $email);
                     }
                     else {
-                        sendMail('[EcoSplash] Login Details Changed Successful', '../templates/email/login_details_success.php?email='.$email.'&password='.$mailPass, $email, $oEmail);
+                        sendMail('[EcoSplash] Login Details Changed Successful', '../templates/email/login_details_success.php?email='.urlencode($email).'&password='.urlencode($mailPass), $email, $oEmail);
                     }
                 }
 
@@ -763,8 +763,8 @@ switch ($action) {
                 $statuses = (empty($row['statuses']) ? [] : explode(',', $row['statuses']));
 
                 if (array_search($uid, $uids) === false) {
-                    $uids[] = $uid;
-                    $statuses[] = 0;
+                    array_push($uids, $uid);
+                    array_push($statuses, 0);
 
                     $uids = implode(',', $uids);
                     $statuses = implode(',', $statuses);
@@ -794,7 +794,7 @@ switch ($action) {
                                         }
 
                                         if (!(empty($name) || empty($event) || empty($date) || empty($time))) {
-                                            $notiText = '<span class="text-primary font-weight-bold">'.$name.'</span> joined <span class="text-primary font-weight-bold">'.$event.'</span> on <span class="text-primary font-weight-bold">'.$date.'</span> at <span class="text-primary font-weight-bold">'.$time.'</span> located at <span class="text-primary font-weight-bold">'.$location.'</span>';
+                                            $notiText = '<span class="text-secondary font-weight-bold">'.$name.'</span> joined <span class="text-secondary font-weight-bold">'.$event.'</span> on <span class="text-secondary font-weight-bold">'.$date.'</span> at <span class="text-secondary font-weight-bold">'.$time.'</span> located at <span class="text-secondary font-weight-bold">'.$location.'</span>';
 
                                             foreach ($row as $key => $value) {
                                                 $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$value', '$notiText', '5')");
@@ -1313,7 +1313,7 @@ switch ($action) {
                 $data['oid'] = $row['oid'];
                 $data['totalEcoPoints'] = $row['totalEcoPoints'];
 
-                sendMail('[EcoSplash] Redeem #'.$row['oid'], '../templates/email/redeem_success.php?'.http_build_query(array('items' => $sql['items'])).'&'.http_build_query(array('itemsQty' => $sql['itemsQty'])).'&'.http_build_query(array('itemsEcoPoints' => $sql['itemsEcoPoints'])).'&oid='.$row['oid'].'&totalEcoPoints='.$row['totalEcoPoints'], $email);
+                sendMail('[EcoSplash] Redeem #'.urlencode($row['oid']), '../templates/email/redeem_success.php?'.http_build_query(array('items' => $sql['items'])).'&'.http_build_query(array('itemsQty' => $sql['itemsQty'])).'&'.http_build_query(array('itemsEcoPoints' => $sql['itemsEcoPoints'])).'&oid='.$row['oid'].'&totalEcoPoints='.$row['totalEcoPoints'], $email);
             }
         }
         break;
@@ -1604,7 +1604,7 @@ switch ($action) {
         }
 
         if (empty($errors)) {
-            $result = $mysqli -> query("SELECT uid, name, bio, type, ecoPoints FROM users WHERE uid != '$uid'");
+            $result = $mysqli -> query("SELECT uid, name, bio, type, ecoPoints FROM users WHERE uid != '$uid' ORDER BY name ASC");
 
             if ($result -> num_rows < 1) {
                 $errors['uid'] = 'No accounts to display!';
@@ -1614,7 +1614,7 @@ switch ($action) {
                 while ($row = $result -> fetch_array(MYSQLI_ASSOC)) {
                     $cuid = $row ['uid'];
 
-                    $sql = $mysqli -> query ("SELECT uid_one, uid_two, status FROM friends WHERE uid_one = '$cuid' OR uid_two = '$cuid' AND uid_one = '$uid' OR uid_two = '$uid'");
+                    $sql = $mysqli -> query ("SELECT uid_one, uid_two, status FROM friends WHERE uid_one = '$cuid' AND uid_two = '$uid' OR uid_one = '$uid' AND  uid_two = '$cuid' ");
                     $sqlRow = $sql -> fetch_array(MYSQLI_ASSOC);
 
                     if ($sqlRow['status'] == 0) {
@@ -1691,9 +1691,9 @@ switch ($action) {
         if (empty($errors)) {
             if ($action == 'followFriend') {
                 if ($result = $mysqli -> query("INSERT INTO friends (uid_one, uid_two, status) VALUES ('$uid', '$fuid', '0')")) {
-                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
-                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> have send you a follow request.';
+                        $notiText = '<span class="text-secondary font-weight-bold">'.$row['name'].'</span> have send you a follow request.';
 
                         $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '0')");
                     }
@@ -1701,9 +1701,9 @@ switch ($action) {
             }
             elseif ($action == 'unfollowFriend') {
                 if ($result = $mysqli -> query("DELETE FROM friends WHERE uid_one = '$uid' AND uid_two = '$fuid' OR uid_one = '$fuid' AND uid_two = '$uid'")) {
-                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
-                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> unfollowed you.';
+                        $notiText = '<span class="text-secondary font-weight-bold">'.$row['name'].'</span> unfollowed you.';
 
                         $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '1')");
                     }
@@ -1711,9 +1711,9 @@ switch ($action) {
             }
             elseif ($action == 'acceptFollowFriend') {
                 if ($result = $mysqli -> query("UPDATE friends SET status = '1' WHERE uid_one = '$fuid' AND uid_two = '$uid'")) {
-                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
-                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> accepted your follow request.';
+                        $notiText = '<span class="text-secondary font-weight-bold">'.$row['name'].'</span> accepted your follow request.';
 
                         $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '2')");
                     }
@@ -1721,9 +1721,9 @@ switch ($action) {
             }
             elseif ($action == 'rejectFollowFriend') {
                 if ($result = $mysqli -> query("DELETE FROM friends WHERE uid_one = '$fuid' AND uid_two = '$uid'")) {
-                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
-                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> reject your follow request.';
+                        $notiText = '<span class="text-secondary font-weight-bold">'.$row['name'].'</span> reject your follow request.';
 
                         $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '3')");
                     }
@@ -1731,9 +1731,9 @@ switch ($action) {
             }
             elseif ($action == 'cancelFollowFriend') {
                 if ($result = $mysqli -> query("DELETE FROM friends WHERE uid_one = '$uid' AND uid_two = '$fuid'")) {
-                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$fuid'")) {
+                    if ($result = $mysqli -> query("SELECT name FROM users WHERE uid = '$uid'")) {
                         $row = $result -> fetch_array(MYSQLI_ASSOC);
-                        $notiText = '<span class="text-primary font-weight-bold">'.$row['name'].'</span> have canceled their follow request.';
+                        $notiText = '<span class="text-secondary font-weight-bold">'.$row['name'].'</span> have canceled their follow request.';
 
                         $mysqli -> query("INSERT INTO notifications (uid, message, nType) VALUES ('$fuid', '$notiText', '4')");
                     }

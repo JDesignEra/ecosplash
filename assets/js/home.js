@@ -67,7 +67,7 @@ httpPost('./assets/db/db.php', data, function(data) {
 
             for (var event in data.events[date]) {
                 var pEvent = doc.createElement('p');
-                pEvent.innerHTML = '<span class="font-weight-bold text-primary">' + data.events[date][event].event + '</span> at <span class="font-weight-bold text-primary">' + data.events[date][event].time + '</span> located at <span class="font-weight-bold text-primary">' + data.events[date][event].location + '</span></p>';
+                pEvent.innerHTML = '<span class="font-weight-bold text-primary">' + data.events[date][event].event + '</span> at <span class="font-weight-bold text-primary">' + data.events[date][event].time + '</span> located at <a class="font-weight-bold text-secondary" href="./find_event/?postal=' + data.events[date][event].postal + '">' + data.events[date][event].location + '</a></p>';
 
                 focus.appendChild(pEvent);
                 i++;

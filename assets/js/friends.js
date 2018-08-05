@@ -11,7 +11,7 @@ data.append('uid', uid);
 data.append('action', 'getFriends');
 
 httpPost('./assets/db/db.php', data, function(data) {
-    // console.log(data);  // Debugging Purpose
+     console.log(data);  // Debugging Purpose
     if (data.success) {
         if (data.friends) {
             httpGetDoc('./assets/templates/friends/friends_row.html', function(content) {
@@ -38,7 +38,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                             friendsRow = content.getElementsByClassName('row')[0].cloneNode();
                         }
 
-                        if ((friendsCount != 0 && friendsCount % 4 == 0) || (friendsRow && fi == data.friends.fid.length - 1)) {
+                        if (friendsCount == 2 || (friendsCount != 0 && friendsCount % 3 == 0) || (friendsRow && fi == data.friends.fid.length - 1)) {
                             doc.getElementById('friends').appendChild(friendsRow);
                         }
 
@@ -76,7 +76,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                             requestRow = content.getElementsByClassName('row')[0].cloneNode();
                         }
 
-                        if ((requestCount != 0 && requestCount % 4 == 0) || (requestRow && fi == data.friends.fid.length - 1)) {
+                        if (requestCount == 2 || (requestCount != 0 && requestCount % 3 == 0) || (requestRow && fi == data.friends.fid.length - 1)) {
                             doc.getElementById('requests').appendChild(requestRow);
                         }
 
@@ -111,7 +111,7 @@ httpPost('./assets/db/db.php', data, function(data) {
                                 addBtn.innerHTML = 'Decline Follow Request';
 
                                 /* decline btn onclick */
-                                friendBtnOnClick(addBtn, 'cancelFollowFriend', 'Follow Request Cancel;ed', 'You have successfully canceled your follow request.');
+                                friendBtnOnClick(addBtn, 'cancelFollowFriend', 'Follow Request Canceled', 'You have successfully canceled your follow request.');
                                 requestCol.getElementsByClassName('card-footer')[0].appendChild(addBtn);
 
                                 var btnFocus = requestCol.querySelector('button');
@@ -158,9 +158,11 @@ addWindowOnload(function() {
 
                     if (uv.type == 0) {
                         col.querySelector('h5.ecopoints').innerHTML = uv.ecoPoints;
+                        col.querySelector('p.accType').innerHTML = 'User';
                     }
                     else {
                         col.querySelector('#ePoints').remove();
+                        col.querySelector('p.accType').innerHTML = 'Organization';
                     }
 
                     if (uv.status == 'request') {
@@ -205,7 +207,8 @@ addWindowOnload(function() {
                         row = content.getElementsByClassName('row')[0].cloneNode();
                     }
 
-                    if ((ui != 0 && ui % 4 == 0) || ui == data.users.length - 1) {
+                    if ((ui == 2 || (ui != 0 && ui % 3 == 0)) || ui == data.users.length - 1) {
+                        console.log(ui);
                         doc.getElementById('all').appendChild(row);
                     }
 
