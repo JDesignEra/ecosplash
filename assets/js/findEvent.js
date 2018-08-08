@@ -59,6 +59,7 @@ if (navigator.geolocation) {
     var icon = doc.createElement('i');
     icon.classList.add('fas', 'fa-street-view', 'fa-4x', 'text-secondary');
 
+    /* Create initial user marker */
     userMarker = new mapboxgl.Marker({
         element: icon,
         color: '#4DB6AC'
@@ -66,6 +67,7 @@ if (navigator.geolocation) {
     .setLngLat([103.8, 1.35])
     .addTo(map);
 
+    /* user location  watcher */
     var centerUserOnce = true;
     navigator.geolocation.watchPosition(function(pos) {
         var lat = pos.coords.latitude,
@@ -89,7 +91,7 @@ if (navigator.geolocation) {
             map.flyTo({ center: [this.getAttribute('data-lng'), this.getAttribute('data-lat')] });
         }
 
-        /* if url parmeter exist */
+        /* if url parameter exist */
         var postal = (window.location.href.indexOf('?') != -1 ? window.location.href.split('?')[1].split('=')[1] : '');
         if (postal) {
             window.history.replaceState({}, document.title, './display_code/');

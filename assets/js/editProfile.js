@@ -142,6 +142,7 @@ focus.ondragover = function(e) {
 focus.ondrop = function(e) {
     e.preventDefault();
 
+    doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.remove('d-block');
     doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.add('d-none');
     doc.querySelector('#uploadPhoto h5#action-text').classList.add('d-none');
     doc.querySelector('#uploadPhoto h5#loading-text').classList.remove('d-none');
@@ -150,12 +151,14 @@ focus.ondrop = function(e) {
     if (e.dataTransfer.files.length > 1) {
         doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').innerHTML = 'Only 1 image upload is allowed!';
         doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.remove('d-none');
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.add('d-block');
         doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
         doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
     }
     else if (file.size > 2097152) {
         doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').innerHTML = 'Image size cannot exceed 2MB!';
         doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.remove('d-none');
+        doc.querySelector('#uploadPhotoModal #uploadPhoto .feedback').classList.add('d-block');
         doc.querySelector('#uploadPhoto h5#action-text').classList.remove('d-none');
         doc.querySelector('#uploadPhoto h5#loading-text').classList.add('d-none');
     }

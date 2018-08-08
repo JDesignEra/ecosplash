@@ -16,6 +16,7 @@ if (localStorage.getItem('accType') || sessionStorage.getItem('accType')) {
 }
 
 /* today's weather */
+// Alt Key FCF3U9Xnmk1q178auAekAaH2oFEifTEo
 httpGet('https://dataservice.accuweather.com/currentconditions/v1/300597?apikey=CAWQjoOpwTwnuOVCHwTaYy2lus6hFTTh', function(data) {
     // console.log(data[0]);  // Debugging Purpose
     if (data[0]) {

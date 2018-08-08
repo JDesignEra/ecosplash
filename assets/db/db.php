@@ -1039,7 +1039,7 @@ switch ($action) {
                             }
                         }
                         else {
-                            $errors['code'] = 'You did not joined this event.';
+                            $errors['code'] = 'You have not joined this event.';
                         }
                     }
                 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2018 at 01:14 AM
+-- Generation Time: Aug 08, 2018 at 08:45 AM
 -- Server version: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -352,8 +352,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `email`, `password`, `name`, `bio`, `type`, `ecoPoints`, `newNotifications`, `dailyQuiz`, `dailyTask`, `ecoPointsMonth`, `fpCode`) VALUES
-(1, 'tgm.joel@gmail.com', '$2y$10$FfCgngRVkP6969kbRB9hde7SQw1Bx.x9k2dLLaBUOKKA5gAvLXKIy', 'Joel', 'A freelance full-stack developer/designer, and have been in the world of freelancing since 2012.\r\nHave a deep passion for UI/UX designs and programming languages.', 0, 27957, 0, 0, '00000', 31507, NULL),
-(2, 'joel.jdesignera@gmail.com', '$2y$10$Y8e0dMksupBKm1R0cZf0Ku.lM/jD0Aul9t5hFk3AuQ/vafNgytmZ6', 'JDesign', 'A new era of design', 1, 0, 0, 0, '00000', 0, NULL),
+(1, 'tgm.joel@gmail.com', '$2y$10$pMfTcINZhmLYXTJLIh1qZ.9Zm4gP0heJ5k9FjhaGiDCUZBS44MWLW', 'Joel', 'A freelance full-stack developer/designer, and have been in the world of freelancing since 2012.\r\nHave a deep passion for UI/UX designs and programming languages.', 0, 27957, 0, 0, '00000', 31507, NULL),
+(2, 'joel.jdesignera@gmail.com', '$2y$10$yTCMCMMltYTR6K9IkrmgPu.E4lP2uW26XFiaI5iUNT.Zu/QBmGveO', 'JDesign', 'A new era of design', 1, 0, 0, 0, '00000', 0, NULL),
 (3, 'yk2796@gmail.com', '$2y$10$u7FlyeBCQI7B9AdPxJ3sYuol8ylCJyI9IcjZJeYH0L8MXaXNFRIxO', 'Yong Kai', 'In nature nothing exists alone.', 0, 840, 0, 0, '00000', 1840, NULL),
 (4, 'arman154khan@gmail.com', '$2y$10$d88lzfQN68GLXIaEHA/Gee..rXY8aA/8Vs5Ki7RsCYVIPXz.WZrPu', 'Arman Khan', 'A Polytechnic that wants to be Clean and Green wherever possible!', 0, 2685, 0, 0, '00000', 2685, NULL),
 (6, 'lim.wilson97@gmail.com', '$2y$10$twZ0WIoB41UNqA/b1jPGse3Plp0KVLaQcQ5fUgk0lTjkJC31khYI2', 'Wilson Lim', '', 0, 1230, 0, 0, '00000', 1230, NULL),

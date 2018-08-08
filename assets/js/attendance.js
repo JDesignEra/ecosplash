@@ -60,7 +60,7 @@ if (eid) {
                         data.append('action', 'updateAttendance');
 
                         httpPost('./assets/db/db.php', data, function(data) {
-                            console.log(data);  // Debugging Purpose
+                            // console.log(data);  // Debugging Purpose
 
                             if (data.success) {
                                 var modal = doc.getElementById('successModal');
